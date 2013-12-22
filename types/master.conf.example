@@ -1,0 +1,28 @@
+#
+# Coniguration for the master bot, rename to 'master.conf' after configuration.
+#
+
+# Server address and port
+net.servername=192.168.0.30
+net.serverport=4444
+
+# Various login-related information
+# THIS NAME MUST HAVE ALREADY BEEN REGISTERED
+login.username=OpenCore
+login.password=opencore*sysop
+#login.autorun=?obscene
+login.chats=your,chats,here
+
+# Send players these commands when they enter the arena?
+enter.sendwatchdamage=1
+enter.sendeinfo=1
+enter.sendinfo=1
+
+# A space-delimited list of libraries to load when the bot starts
+core.libraries=test
+
+# Spew Packets
+debug.spewpackets=0
+# Show packets that don't have handlers
+debug.showuhandledpackets=0
+
