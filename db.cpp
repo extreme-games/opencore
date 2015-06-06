@@ -1,10 +1,12 @@
 
 #include <pthread.h>
 #include <semaphore.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "mysql/mysql.h"
+#include "mysql/errmsg.h"
 #include "bsd/queue.h"
 
 #include "libopencore.hpp"
@@ -38,6 +40,7 @@ struct db_result {
 	void* user_data;
 	char name[24];
 	int type;
+	char *query;
 };
 TAILQ_HEAD(result_head, db_result);
 
@@ -114,7 +117,7 @@ resultset_alloc(unsigned int nrows, unsigned int ncols)
 		rs[row] = (char**)calloc(ncols, sizeof(char*));
 		if (!rs[row]) {
 			// allocation failed
-			while (row != 0) {
+			while (row > 0) {
 				free(rs[--row]);
 			}
 			free(rs);
@@ -154,7 +157,7 @@ db_entrypoint(void *unused)
 
 	const ticks_ms_t reconnect_interval = 60 * 1000;
 	ticks_ms_t last_connect_ticks = get_ticks_ms() - reconnect_interval;
-	MYSQL *mysql = mysql_real_connect(&lmysql, server, username, password, dbname, port, 0, CLIENT_COMPRESS);
+	MYSQL *mysql = NULL;
 	
 	bool running = true;
 	while (running) {
@@ -162,11 +165,22 @@ db_entrypoint(void *unused)
 		sem_wait(&g_sem);
 
 		// acquire the mysql connection if its not connected
-		if (!mysql) {
-			if (get_ticks_ms() - last_connect_ticks >= reconnect_interval) {
-				mysql = mysql_real_connect(&lmysql, server, username, password, dbname, port, 0, CLIENT_COMPRESS);
-				if (!mysql) Log(OP_SMOD, "DB reconnection failure");
+		if (get_ticks_ms() - last_connect_ticks >= reconnect_interval) {
+			MYSQL *m = mysql_real_connect(&lmysql, server, username, password, dbname, port, 0, CLIENT_COMPRESS | CLIENT_MULTI_RESULTS);
+			unsigned int last_error = mysql_errno(&lmysql);	
+
+			if (m) {
+				mysql = m;
+				Log(OP_SMOD, "Connected to DB");
+			} else if (last_error == CR_ALREADY_CONNECTED) {
+				// reconnection
+				mysql = m;
+			} else {
+				mysql = NULL;
+				Log(OP_SMOD, "DB reconnection failure");
 			}
+			
+			last_connect_ticks = get_ticks_ms();
 		}
 
 		pthread_mutex_lock(&g_mtx);
@@ -192,34 +206,50 @@ db_entrypoint(void *unused)
 					dbr->type = dbq->type;
 					strncpy(dbr->name, dbq->name, sizeof(dbr->name));
 					dbr->user_data = dbq->user_data;
-					if (mysql_real_query(&lmysql, dbq->query, strlen(dbq->query)) == 0) {
-						MYSQL_RES *result = mysql_store_result(&lmysql);
-						if (result) {
-							nrows = mysql_num_rows(result);
-							ncols = mysql_num_fields(result);
+					
+					// only store the first result from call statements, change this later
+					bool stored_result = false;
+					if (mysql_real_query(mysql, dbq->query, strlen(dbq->query)) == 0) {
+						do {
+							MYSQL_RES *result = mysql_store_result(mysql);
+							if (result) {
+								// result set returned
+								nrows = mysql_num_rows(result);
+								ncols = mysql_num_fields(result);
 
-							char ***rs = resultset_alloc(nrows, ncols);
-							if (rs) {
-								MYSQL_ROW row;
-								unsigned int current_row = 0;
-								while ((row = mysql_fetch_row(result))) {
-									for (unsigned int i = 0; i < ncols; ++i) {
-										rs[current_row][i] = row[i] ? strdup(row[i]) : NULL;
+								char ***rs = resultset_alloc(nrows, ncols);
+								if (rs) {
+									MYSQL_ROW row;
+									unsigned int current_row = 0;
+									while ((row = mysql_fetch_row(result))) {
+										for (unsigned int i = 0; i < ncols; ++i) {
+											rs[current_row][i] = row[i] ? strdup(row[i]) : NULL;
+										}
+										++current_row;
 									}
-									++current_row;
+								} else {
+									Log(OP_SMOD, "Error allocating DB resultset");
+								}
+
+								mysql_free_result(result);
+
+								if (!stored_result) {
+									dbr->nrows = nrows;
+									dbr->ncols = ncols;
+									dbr->rs = rs;
+									dbr->success = true;
+
+									stored_result = true;
 								}
 							} else {
-								Log(OP_SMOD, "Error allocating DB resultset");
+								// no resultset / error
 							}
-
-							mysql_free_result(result);
-
-							dbr->nrows = nrows;
-							dbr->ncols = ncols;
-							dbr->rs = rs;
-							dbr->success = true;
-						}
+						} while (mysql_next_result(mysql) == 0);
 					}
+
+					// pass the query pointer over
+					dbr->query = dbq->query;
+					dbq->query = NULL;
 
 					// pass the db results back to the appropriate context or free it
 					DB_CONTEXT *dbc = dbq->dbc;
@@ -227,18 +257,23 @@ db_entrypoint(void *unused)
 					if (dbc->running) {
 						TAILQ_INSERT_TAIL(&dbc->result_list_head, dbr, entry);
 						pthread_mutex_unlock(&dbc->mtx);
-					} else if (dbc->npending == 0) {
-						// db isnt running and no more queries are pending or will be created
-						pthread_mutex_unlock(&dbc->mtx);
-						if (dbc) dbc_free(dbc);
-						if (dbr) {
-							resultset_free(dbr->rs, nrows, ncols);
+					} else {
+						if (dbc->npending == 0) {
+							pthread_mutex_unlock(&dbc->mtx);
+							// db isnt running and no more queries are pending or will be created
+							if (dbr->rs) resultset_free(dbr->rs, nrows, ncols);
+							if (dbr->query) free(dbr->query);
 							free(dbr);
+						} else {
+							pthread_mutex_unlock(&dbc->mtx);
 						}
+						pthread_mutex_destroy(&dbc->mtx);
+						dbc_free(dbc);
 					}
+				} else {
+					free(dbq->query);
 				}
 
-				free(dbq->query);
 				free(dbq);
 			}
 			pthread_mutex_lock(&g_mtx);
@@ -278,6 +313,7 @@ db_instance_shutdown()
 	DB_CONTEXT *dbc = dbc_get();
 	pthread_mutex_lock(&dbc->mtx);
 	dbc->running = false;
+	//TODO: This needs to clear out the dbc list and export events for queries still in queue
 	pthread_mutex_unlock(&dbc->mtx);
 }
 
@@ -386,6 +422,61 @@ db_shutdown()
 			Log(OP_SMOD, "Unable to join with DB thread");	
 		}
 	}
+}
+
+
+int
+QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+
+	int rv = -1;
+
+	int size = vsnprintf(NULL, 0, fmt, ap);
+	if (size >= 0) {
+		char *query = (char*)malloc(size + 1);
+		if (query) {
+			if (vsnprintf(query, size + 1, fmt, ap) < size + 1) {
+				rv = Query(query_type, user_data, name, query);
+			}
+			
+			free(query);
+		}
+	}
+
+	va_end(ap);
+	
+	return rv;
+}
+
+
+void
+QueryEscape(char *result, size_t result_sz, const char *str)
+{
+	if (result_sz < strlen(str)*2 + 1) {
+		if (result_sz > 0) *result = '\0';
+		Log(OP_SMOD, "Invalid length passed to QueryEscape()");
+		return;
+	}
+
+	while (*str) {
+		switch (*str) {
+		case '\\':
+		case '\'':
+		case '"':
+		case '\0':
+		case '\n':
+		case '\r':
+		case 0x1A:
+		*result++ = '\\';
+		/* FALLTRHOUGH */
+		default:
+			*result++ = *str++;
+			break;
+		};
+	}
+	*result = '\0';
 }
 
 

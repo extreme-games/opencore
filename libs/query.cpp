@@ -72,7 +72,7 @@ GameEvent(CORE_DATA *cd)
 		free(cd->user_data);
 		break;
 	case EVENT_QUERY_RESULT:
-		RmtMessageFmt(cd->query_name, "Rows: %u Cols: %u", cd->query_nrows, cd->query_ncols);
+		RmtMessageFmt(cd->query_name, "Success:%s Rows:%u Cols:%u", cd->query_success ? "Yes" : "No", cd->query_nrows, cd->query_ncols);
 		for (size_t row = 0; row < cd->query_nrows; ++row) {
 			char result[256];
 			memset(result, 0, sizeof(result));

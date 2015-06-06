@@ -728,6 +728,8 @@ void	ReplyFmt(const char *fmt, ...);
  * Database functions.
  */
 int Query(int query_type, void *user_data, const char *name, const char *query);
+int QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...);
+void QueryEscape(char *result, size_t result_sz, const char *str);
 
 /*
  * Copy a field from a string into a buffer.
