@@ -27,6 +27,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "util.hpp"
+
 #define CMPFNC strcmp
 #define ICMPFNC strcasecmp
 
