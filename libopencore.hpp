@@ -172,7 +172,7 @@
 extern "C" {
 
 /* This must match the core's version string */	
-#define CORE_VERSION "0.18"
+#define CORE_VERSION "0.20pr1"
 
 typedef uint32_t ticks_ms_t;
 typedef uint32_t ticks_hs_t;
@@ -325,6 +325,8 @@ typedef uint32_t ticks_hs_t;
  * Happens when the server is showing clients the arena list.
  */
 #define EVENT_ARENA_LIST	20	/* arena_list, arena_list_count */
+
+#define EVENT_QUERY_RESULT 21 /* query_success, query_resultset, query_user_data, query_nrows, query_ncols */
 
 typedef uint16_t FREQ;
 #define FREQ_NONE		(FREQ)0xFFFF
@@ -517,6 +519,14 @@ struct core_data
 	uint8_t	  transfer_direction;	/* TRANSFER_S2C or TRANSFER_C2S */
 	char	 *transfer_filename;	/* file name */
 
+	bool		   query_success;
+	char		***query_resultset;
+	void		  *query_user_data;
+	char		   query_name[24];
+	unsigned int   query_nrows;
+	unsigned int   query_ncols;
+	int			   query_type;
+
 	char	 ac_old_arena[16];	/* arena change old arena */
 
 	ARENA_LIST *arena_list;	/* EVENT_ARENA_LIST */
@@ -568,6 +578,7 @@ struct LIB_DATA_ {
 
 	GameEvent_cb cb;
 };
+
 
 /*
  * This is the callback prototype used for commands. Commands must all be
@@ -712,6 +723,11 @@ void	FreqMessageFmt(PLAYER *p, const char *fmt, ...);
  */
 void	Reply(const char *msg);
 void	ReplyFmt(const char *fmt, ...);
+
+/*
+ * Database functions.
+ */
+int Query(int query_type, void *user_data, const char *name, const char *query);
 
 /*
  * Copy a field from a string into a buffer.

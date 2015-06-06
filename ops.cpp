@@ -54,7 +54,6 @@ int
 GetOpLevel(char *name)
 {
 	int level = 0;
-	op_name_t op = name;
 	
 	pthread_mutex_lock(&g_op_map_mutex);
 	op_map_t::iterator iter = g_op_map.find(name);
@@ -101,7 +100,6 @@ load_op_file()
 	if (f) {
 		pthread_mutex_lock(&g_op_map_mutex);
 		g_op_map.clear();
-		pthread_mutex_unlock(&g_op_map_mutex);
 		
 		char buf[256];
 		while (get_line(f, buf, 256) != EOF) {
@@ -114,9 +112,7 @@ load_op_file()
 					entry_value.level = AtoiArg(buf, 1, ':');
 					if (entry_value.level >= 1 &&
 							entry_value.level <= 9) {
-						pthread_mutex_lock(&g_op_map_mutex);
 						g_op_map.insert(std::make_pair(entry_name, entry_value));
-						pthread_mutex_unlock(&g_op_map_mutex);
 					} else
 						LogFmt(OP_SMOD, "Ignoring invalid op level for %s", name);
 				}
@@ -124,6 +120,7 @@ load_op_file()
 		}
 
 		fclose(f);
+		pthread_mutex_unlock(&g_op_map_mutex);
 	} else
 		return -1;
 

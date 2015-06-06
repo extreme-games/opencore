@@ -486,7 +486,7 @@ cmd_about(CORE_DATA *cd)
 	THREAD_DATA *td = (THREAD_DATA*)get_thread_data();
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
-	RmtMessageFmt(cd->cmd_name, "opencore %s (%s %s) Copyright 2008 cycad",
+	RmtMessageFmt(cd->cmd_name, "opencore %s (%s %s) Copyright 2006-2015 cycad <cycad@greencams.net>",
 	    CORE_VERSION, __DATE__, __TIME__);
 
 	RmtMessage(cd->cmd_name, "");

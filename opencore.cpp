@@ -55,6 +55,7 @@
 #include "cmd.hpp"	/* command related functions */
 #include "cmdexec.hpp"	/* for cmd_exec */
 #include "config.hpp"	/* config-file functions */
+#include "db.hpp"
 #include "encrypt.hpp"	/* encryption facilities */
 #include "lib.hpp"	/* library functions */
 #include "log.hpp"	/* logging */
@@ -88,7 +89,6 @@ static int	open_socket(THREAD_DATA::net_t *n);
 static int	pull_packets(packet_list_t *l, uint8_t *buf, int len, bool cluster);
 static void	send_outgoing_packets(THREAD_DATA *td);
 static void	mainloop(THREAD_DATA *td);
-static void	close_socket(THREAD_DATA *td);
 static void	write_packet(THREAD_DATA *td, uint8_t *pkt, int pktl);
 static uint32_t	gen_valid_mid(uint32_t d);
 static void	register_commands(THREAD_DATA *td);
@@ -105,20 +105,19 @@ uint32_t	g_machineid = 0;
 static pkt_handler	g_pkt_core_handlers[256];
 static pkt_handler	g_pkt_game_handlers[256];
 
+
 static
 uint64_t
 hash_buf(void *buf, int sz)
 {
 	uint8_t *p = (uint8_t*)buf;
-
 	uint64_t res = 0;
 	for (int i = 0; i < sz; ++i) {
 		res = 31 * res + p[i];
 	}
-
-
 	return res;
 }
+
 
 static
 uint32_t
@@ -192,6 +191,7 @@ main(int argc, char *argv[])
 	load_op_file();
 
 	log_init();
+	db_init();
 	botman_init();
 
 	/* run the master bot */
@@ -206,6 +206,7 @@ main(int argc, char *argv[])
 	botman_mainloop();
 
 	botman_shutdown();
+	db_shutdown();
 	log_shutdown();
 
 	pthread_key_delete(g_tls_key);
@@ -222,7 +223,7 @@ disconnect_from_server(THREAD_DATA *td)
 	pkt_send_disconnect();
 	send_outgoing_packets(td);
 
-	close_socket(td);
+	close(td->net->fd);
 
 	td->net->ticks->disconnected = get_ticks_ms();
 	td->net->state = NS_DISCONNECTED;
@@ -428,7 +429,7 @@ try_get_next_file(THREAD_DATA *td)
 
 	if (ci->in_use == 0 && ci->file_list->empty() == false) {
 		DOWNLOAD_ENTRY *fe = &*ci->file_list->begin();
-		LogFmt(OP_SMOD, "Downloding file: %s", fe->name);
+		LogFmt(OP_SMOD, "Downloading file: %s", fe->name);
 		if (strlen(fe->initiator) > 0) {
 			RmtMessageFmt("Initiating queued transfer: %s", fe->name);
 		}
@@ -765,12 +766,12 @@ BotEntryPoint(void *arg)
 
 	init_thread_data(td);
 
+	db_instance_init();
 	cmd_instance_init(td);
 	player_instance_init(td);
 	libman_instance_init(td);
 
 	register_commands(td);
-
 
 	/* load the bots libraries */
 	int num_plugins = DelimCount(td->libstring, ' ') + 1;
@@ -790,6 +791,7 @@ BotEntryPoint(void *arg)
 	player_instance_shutdown(td);
 	libman_instance_shutdown(td);
 	cmd_instance_shutdown(td);
+	db_instance_shutdown();
 
 	botman_bot_exiting(td->botman_handle);
 
@@ -800,12 +802,6 @@ BotEntryPoint(void *arg)
 	return NULL;
 }
 
-static
-void
-close_socket(THREAD_DATA *td)
-{
-	close(td->net->fd);
-}
 
 static
 void
@@ -854,8 +850,6 @@ mainloop(THREAD_DATA *td)
 				libman_export_event(td, EVENT_TICK, NULL);
 				acc -= STEP_INTERVAL;
 			}
-
-			continue;
 		}
 
 		/* if the bot is disconnected, see if it is time to reconnect */
@@ -870,9 +864,15 @@ mainloop(THREAD_DATA *td)
 			}
 		}
 
+		/* user up to STEP_INTERVAL ms for the db thread */
+		ticks_ms_t ticks_taken = get_ticks_ms() - ticks;
+		ticks_ms_t db_ticks = ticks_taken > STEP_INTERVAL ? STEP_INTERVAL : STEP_INTERVAL - ticks_taken;
+		db_instance_export_events(db_ticks);
+
 		/* read a packet or wait for a timeout */
-		if (poll(n->pfd, 1,	/* wait on next packet */
-		    (int)(STEP_INTERVAL - acc)) > 0) {
+		ticks_taken = get_ticks_ms() - ticks;
+		int timeout = ticks_taken > STEP_INTERVAL ? STEP_INTERVAL : STEP_INTERVAL - ticks_taken;
+		while (poll(n->pfd, 1, timeout) > 0) {
 			/* process incoming packet, data is waiting */
 			pktl = (int)read(n->fd, pkt, MAX_PACKET);
 			if (pktl >= 0) {
@@ -882,12 +882,10 @@ mainloop(THREAD_DATA *td)
 				if (n->encrypt->use_encryption) {
 					if (pkt[0] == 0x00) {
 						if (pktl >= 2) {
-							decrypt_buffer(td,
-							    &pkt[2], pktl-2);
+							decrypt_buffer(td, &pkt[2], pktl-2);
 						}
 					} else {
-						decrypt_buffer(td, &pkt[1],
-						    pktl-1);
+						decrypt_buffer(td, &pkt[1], pktl-1);
 					}
 				}
 
@@ -897,6 +895,8 @@ mainloop(THREAD_DATA *td)
 
 				process_incoming_packet(td, pkt, pktl);
 			}
+
+			ticks_taken = get_ticks_ms() - lticks;
 		}
 
 		/* update the tick count after potential sleeping */
@@ -973,13 +973,12 @@ mainloop(THREAD_DATA *td)
 			++iter;
 		}
 
-#define FLUSH_CHECK_INTERVAL (60 * 60 * 1000)
 		/* free absent players if its time */
-		if (ticks - td->arena->ticks->last_player_flush > FLUSH_CHECK_INTERVAL) {
-			player_free_absent_players(td, FLUSH_CHECK_INTERVAL);
+		ticks_ms_t flush_check_interval = 60 * 60 * 1000;
+		if (ticks - td->arena->ticks->last_player_flush > flush_check_interval) {
+			player_free_absent_players(td, flush_check_interval);
 			td->arena->ticks->last_player_flush = ticks;
 		}
-#undef FLUSH_CHECK_INTERVAL
 
 		/* write packets generated during loop iteration */
 		send_outgoing_packets(td);

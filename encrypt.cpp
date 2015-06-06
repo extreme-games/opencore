@@ -35,6 +35,7 @@ init_encryption(THREAD_DATA *td)
 	}
 }
 
+
 void
 encrypt_buffer(THREAD_DATA *td, uint8_t *buf, int len)
 {
@@ -58,6 +59,7 @@ encrypt_buffer(THREAD_DATA *td, uint8_t *buf, int len)
 		}
 	}
 }
+
 
 void
 decrypt_buffer(THREAD_DATA *td, uint8_t *buf, int len)
