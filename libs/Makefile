@@ -35,5 +35,5 @@ chat.so: $(SOURCEFILES)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) chat.cpp -lncurses $(LIBS)
 
 clean:
-	rm -fr *.o *.do basicbot.so features.so rabbit.so chat.so
+	rm -fr *.o *.do basicbot.so features.so rabbit.so chat.so query.so
 
