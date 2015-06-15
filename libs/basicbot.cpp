@@ -2,7 +2,7 @@
  * A simple bot that welcomes you to an arena.
  */
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #ifdef __cplusplus
 extern "C" {

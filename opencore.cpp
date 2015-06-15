@@ -46,11 +46,11 @@
 
 #include <list>		/* for std::list */
 
-#include "libopencore.hpp" /* libopencore */
+#include "opencore.hpp" /* opencore */
 
 #include "bsd/queue.h"	/* for queue/list definitions */
 
-#include "opencore.hpp"	/* bot definitions */
+#include "core.hpp"	/* bot definitions */
 #include "botman.hpp"	/* for bot management */
 #include "cmd.hpp"	/* command related functions */
 #include "cmdexec.hpp"	/* for cmd_exec */

@@ -31,7 +31,7 @@
 #include "player.hpp"
 
 #include "lib.hpp"
-#include "opencore.hpp"
+#include "core.hpp"
 #include "util.hpp"
 
 /*

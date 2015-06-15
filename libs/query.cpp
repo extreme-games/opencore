@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #ifdef __cplusplus
 extern "C" {

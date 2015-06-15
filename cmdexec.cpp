@@ -36,8 +36,8 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "libopencore.hpp"
 #include "opencore.hpp"
+#include "core.hpp"
 
 void
 cmd_exec(CORE_DATA *cd)

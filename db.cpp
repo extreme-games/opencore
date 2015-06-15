@@ -9,7 +9,7 @@
 #include "mysql/errmsg.h"
 #include "bsd/queue.h"
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #include "config.hpp"
 #include "lib.hpp"

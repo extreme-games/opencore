@@ -25,7 +25,7 @@
 #define _LIB_HPP
 
 #include "lib.hpp"
-#include "opencore.hpp"
+#include "core.hpp"
 
 /* opaque lib_entry type */
 typedef struct lib_entry LIB_ENTRY;

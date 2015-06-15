@@ -24,7 +24,7 @@
 #ifndef _CMDEXEC_HPP
 #define _CMDEXEC_HPP
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 void cmd_exec(CORE_DATA *cd);
 

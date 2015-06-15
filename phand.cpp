@@ -31,11 +31,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #include "phand.hpp"
 
-#include "opencore.hpp"
+#include "core.hpp"
 #include "cmd.hpp"
 #include "encrypt.hpp"
 #include "lib.hpp"

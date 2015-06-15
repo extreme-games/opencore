@@ -36,9 +36,9 @@
 
 #include "botman.hpp"
 
-#include "libopencore.hpp"
-
 #include "opencore.hpp"
+
+#include "core.hpp"
 #include "config.hpp"
 #include "util.hpp"
 

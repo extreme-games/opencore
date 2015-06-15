@@ -26,7 +26,7 @@
 
 #include <stdio.h>
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 /* get a line from file f */
 int get_line(FILE *f, char *buf, int size);

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../libopencore.hpp"
+#include "../opencore.hpp"
 #include <stdarg.h>
 #include <time.h>
 #include  "ncurses.h"

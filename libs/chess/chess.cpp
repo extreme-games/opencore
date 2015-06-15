@@ -34,7 +34,7 @@
 #include <string.h>
 #include <strings.h>
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #if 0
 // This small program is used to generate the LVZ file data.

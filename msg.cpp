@@ -25,9 +25,9 @@
 
 #include "msg.hpp"
 
-#include "libopencore.hpp"
-
 #include "opencore.hpp"
+
+#include "core.hpp"
 #include "lib.hpp"
 #include "log.hpp"
 #include "psend.hpp"

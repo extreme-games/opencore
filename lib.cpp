@@ -32,7 +32,7 @@
 
 #include "lib.hpp"
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #include "cmd.hpp"
 #include "log.hpp"

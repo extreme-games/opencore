@@ -24,8 +24,8 @@
 #ifndef _LOG_HPP
 #define _LOG_HPP
 
-#include "libopencore.hpp"
 #include "opencore.hpp"
+#include "core.hpp"
 
 void log_init();
 void log_shutdown();

@@ -26,7 +26,7 @@
 
 #include <pthread.h>
 
-#include "opencore.hpp"
+#include "core.hpp"
 
 typedef
 void (*pkt_handler)(THREAD_DATA*, uint8_t*, int);

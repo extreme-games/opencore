@@ -32,7 +32,7 @@
 #include <netinet/in.h> /* for sockaddr_in */
 #include <poll.h>
 
-#include "libopencore.hpp"
+#include "core.hpp"
 
 #include "parsers.hpp"
 #include "pkt.hpp"
