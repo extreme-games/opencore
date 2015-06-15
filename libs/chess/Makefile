@@ -6,9 +6,9 @@ CXX = g++
 
 CXXFLAGS =  -g -Wall -pthread -shared -fPIC
 
-INCLUDEDIRS = -I. -Iinclude -I..
+INCLUDEDIRS = -I. -Iinclude -I../..
 
-LIBDIRS = -L..
+LIBDIRS = -L../..
 
 LIBS = -lpthread 
 
