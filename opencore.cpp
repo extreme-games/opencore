@@ -930,7 +930,8 @@ mainloop(THREAD_DATA *td)
 
 		/* send periodic info/einfo */
 		if (n->state == NS_CONNECTED) {
-			if (td->periodic->info && ticks - td->periodic->last_info >= td->periodic->info) {
+			// subtract 10000 to offset this by 10 seconds from *einfo to avoid filling buffers with commands/responses
+			if (td->periodic->info && ticks - (td->periodic->last_info - 10000U) >= td->periodic->info) {
 				int nhere = player_get_phere(td);
 				PLAYER *parray = player_get_parray(td);
 				for (int i = 0; i < nhere; ++i) {
