@@ -148,6 +148,17 @@ td2cd(CORE_DATA *cd, THREAD_DATA *td)
 	cd->spec_count = td->arena->spec_count;
 }
 
+static
+inline
+void
+try_set_pinfo(CORE_DATA *cd, LIB_ENTRY *le) {
+	cd->p1_pinfo = NULL;
+	cd->p2_pinfo = NULL;
+	if (cd && cd->pinfo_base && cd->parray) {
+		cd->p1_pinfo = GetPlayerInfo(cd, cd->p1);
+		cd->p2_pinfo = GetPlayerInfo(cd, cd->p2);
+	}
+}
 
 void
 libman_export_command(THREAD_DATA *td, LIB_ENTRY *le, CORE_DATA *cd, Command_cb func)
@@ -157,6 +168,7 @@ libman_export_command(THREAD_DATA *td, LIB_ENTRY *le, CORE_DATA *cd, Command_cb 
 	/* the core has commands so le is not always valid, this should be changed */
 	if (le) {
 		le2cd(cd, le);
+		try_set_pinfo(cd, le);
 	}
 
 	cd->event = EVENT_COMMAND;
@@ -177,6 +189,7 @@ libman_export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le
 
 	td2cd(cd, td);
 	le2cd(cd, le);
+	try_set_pinfo(cd, le);
 
 	cd->event = event;
 
@@ -208,6 +221,7 @@ libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd)
 	LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
 		/* set lib-specific data into core_data */
 		le2cd(cd, le);
+		try_set_pinfo(cd, le);
 
 		td->lib_entry = le;
 		le->GameEvent(cd);

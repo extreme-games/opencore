@@ -488,7 +488,9 @@ struct core_data
 	int	  event;	/* the event being exported */
 
 	PLAYER   *p1;		/* player 1 */
+	void     *p1_pinfo; /* pinfo pointer */
 	PLAYER	 *p2;		/* player 2 */
+	void     *p2_pinfo; /* pinfo pointer */
 
 	char	 *msg;		/* the content of the message */
 	char	 *msg_name;	/* the name of the player, may be "" (zone/arena msgs */
