@@ -382,7 +382,7 @@ pkt_handle_game_0x03(THREAD_DATA *td, uint8_t *buf, int len)
 
 		PLAYER *p;
 		if ((p = player_player_entered(td, name, squad, pid, freq, ship)) != NULL) {
-			if (strncasecmp(name, td->bot_name) == 0)
+			if (strcasecmp(name, td->bot_name) == 0)
 				PrivMessage(p, "*bandwidth 1000000");
 			if (td->enter->send_watch_damage) PrivMessage(p, "*watchdamage");
 			if (td->enter->send_einfo) PrivMessage(p, "*einfo");
