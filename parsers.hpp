@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 
+#include "opencore.hpp"
+
 typedef struct rmt_msg_ rmt_msg_t;
 struct rmt_msg_
 {
@@ -53,85 +55,8 @@ struct alert_
  */
 bool parse_rmt_alert(char *source, alert_t *alert);
 
-typedef struct info_ info_t;
-struct info_ {
-	char		name[24];
-	uint32_t	ip;
-	int		timezonebias;
-	uint16_t	freq;
-	int		demo;
-	uint32_t	mid;
-
-	struct {
-		uint32_t current;
-		uint32_t low;
-		uint32_t high;
-		uint32_t average;
-	} ping[1];
-
-	struct {
-		float	s2c;
-		float	c2s;
-		float	s2c_wep;
-	} ploss[1];
-
-	struct {
-		uint32_t	f1;
-		uint32_t	f2;
-		uint32_t	f3;
-		uint32_t	f4;
-
-		struct {
-			uint32_t	slow;
-			uint32_t	fast;
-			float		pct;
-			uint32_t	total_slow;
-			uint32_t	total_fast;
-			float		total_pct;
-		} c2s[1], s2c[1];
-	} stats[1];
-
-	struct {
-		struct {
-			uint32_t days;
-			uint32_t hours;
-			uint32_t minutes;
-		} session[1], total[1];	
-
-		struct {
-			unsigned month;
-			unsigned day;
-			unsigned year;
-
-			unsigned hours;
-			unsigned minutes;
-			unsigned seconds;
-		} created[1];	
-	} usage[1];
-
-	uint32_t	bytes_per_second;
-	uint32_t	low_bandwidth;
-	uint32_t	message_logging;
-	char		connect_type[32];
-};
-//Bytes/Sec:9  LowBandwidth:0  MessageLogging:0  ConnectType:Unknown	
 
 bool parse_info(char *str, int line, info_t *info);
-
-typedef struct einfo_ einfo_t;
-struct einfo_ {
-	char name[24];
-	uint32_t userid;
-
-	struct {
-		uint16_t x;
-		uint16_t y;
-	} res[1];
-
-	uint32_t idle_seconds;
-	uint32_t timer_drift;
-};
-
 bool parse_einfo(char *str, einfo_t *info);
 
 #endif

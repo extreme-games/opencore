@@ -495,15 +495,8 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 			if (parse_einfo(raw_msg, &einfo) == true) {
 				PLAYER *p = player_find_by_name(td, einfo.name, MATCH_HERE);
 				if (p) {
-					p->einfo->valid = 1;
-
-					p->einfo->userid = einfo.userid;
-
-					p->einfo->res->x = einfo.res->x;
-					p->einfo->res->y = einfo.res->y;
-
-					p->einfo->idle_ticks = (ticks_ms_t)einfo.idle_seconds * 1000;
-					p->einfo->timer_drift = einfo.timer_drift;
+					p->einfo_valid = 1;
+					*p->einfo = einfo;
 
 					CORE_DATA *cd = libman_get_core_data(td);
 					cd->p1 = p;
@@ -517,18 +510,8 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 					PLAYER *p = player_find_by_name(td, info->name, MATCH_HERE);
 					if (p) {
 						/* store info data */
-						p->info->valid = 1;
-
-						p->info->mid = info->mid;
-
-						p->info->ping->current = (ticks_ms_t)info->ping->current * 1000;
-						p->info->ping->low = (ticks_ms_t)info->ping->low * 1000;
-						p->info->ping->high = (ticks_ms_t)info->ping->high * 1000;
-						p->info->ping->average = (ticks_ms_t)info->ping->average * 1000;
-
-						p->info->ploss->s2c = info->ploss->s2c;
-						p->info->ploss->c2s = info->ploss->c2s;
-						p->info->ploss->s2c_wep = info->ploss->s2c_wep;
+						p->info_valid = 1;
+						*p->info = *info;
 
 						CORE_DATA *cd = libman_get_core_data(td);
 						cd->p1 = p;

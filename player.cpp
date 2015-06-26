@@ -339,8 +339,8 @@ player_player_entered(THREAD_DATA *td, char *name, char *squad, PLAYER_ID pid, F
 	 * an arena you can tell the entry might be old because of his
 	 * absense).
 	 */
-	p->info->valid = 0;
-	p->einfo->valid = 0;
+	p->info_valid = 0;
+	p->einfo_valid = 0;
 		
 	/* initialize thread data if the bot is entering */	
 	if (strcasecmp(p->name, td->bot_name) == 0) {

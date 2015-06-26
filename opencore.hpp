@@ -413,6 +413,82 @@ struct arena_list
 	int current_arena;	/* set if this is the arena the bot is in */
 };
 
+typedef struct einfo_ einfo_t;
+struct einfo_ {
+	char name[24];
+	uint32_t userid;
+
+	struct {
+		uint16_t x;
+		uint16_t y;
+	} res[1];
+
+	uint32_t idle_seconds;
+	uint32_t timer_drift;
+};
+
+typedef struct info_ info_t;
+struct info_ {
+	char		name[24];
+	uint32_t	ip;
+	int		timezonebias;
+	uint16_t	freq;
+	int		demo;
+	uint32_t	mid;
+
+	struct {
+		uint32_t current;
+		uint32_t low;
+		uint32_t high;
+		uint32_t average;
+	} ping[1];
+
+	struct {
+		float	s2c;
+		float	c2s;
+		float	s2c_wep;
+	} ploss[1];
+
+	struct {
+		uint32_t	f1;
+		uint32_t	f2;
+		uint32_t	f3;
+		uint32_t	f4;
+
+		struct {
+			uint32_t	slow;
+			uint32_t	fast;
+			float		pct;
+			uint32_t	total_slow;
+			uint32_t	total_fast;
+			float		total_pct;
+		} c2s[1], s2c[1];
+	} stats[1];
+
+	struct {
+		struct {
+			uint32_t days;
+			uint32_t hours;
+			uint32_t minutes;
+		} session[1], total[1];	
+
+		struct {
+			unsigned month;
+			unsigned day;
+			unsigned year;
+
+			unsigned hours;
+			unsigned minutes;
+			unsigned seconds;
+		} created[1];	
+	} usage[1];
+
+	uint32_t	bytes_per_second;
+	uint32_t	low_bandwidth;
+	uint32_t	message_logging;
+	char		connect_type[32];
+};
+
 /*
  * Contains player data.
  */
@@ -444,39 +520,11 @@ struct PLAYER_ {
 
 	uint8_t		in_arena;	/* non-zero if player is in the arena */
 
-	struct {
-		int valid;		/* non-zero when the entry is valid */
+	info_t      info[1];
+	int         info_valid;
 
-		uint32_t mid;		/* machine id */
-		uint32_t ip;		/* ip address in host format */
-
-		struct {
-			ticks_ms_t current;	
-			ticks_ms_t low;
-			ticks_ms_t high;
-			ticks_ms_t average;
-		} ping[1];
-
-		struct {
-			float s2c;
-			float c2s;
-			float s2c_wep;
-		} ploss[1];
-
-	} info[1];
-
-	struct {
-		int	valid;		/* non-zero when the entry is valid */
-
-		uint32_t userid;	/* user id */
-		struct {
-			uint16_t x;
-			uint16_t y;
-		} res[1];
-
-		ticks_ms_t	idle_ticks;
-		uint32_t	timer_drift;
-	} einfo[1];
+	einfo_t     einfo[1];
+	int         einfo_valid;
 };
 
 /*
