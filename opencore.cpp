@@ -609,19 +609,20 @@ cmd_go(CORE_DATA *cd)
 	Go(cd->cmd_argv[1]);
 }
 
+#define CORE_NAME "core"
 static
 void
 register_commands(THREAD_DATA *td)
 {
 	if (strcmp(td->bot_type, "master") == 0) {
-		RegisterCommand("!die", "Core", 9,
+		RegisterCommand("!die", CORE_NAME, 9,
 		    CMD_PRIVATE | CMD_REMOTE,
 		    NULL,
 		    "Shut down the bot core",
 		    "This shuts down the bot core and all running bots.",
 		    cmd_die);
 	} else {
-		RegisterCommand("!stopbot", "Core", 2,
+		RegisterCommand("!stopbot", CORE_NAME, 2,
 		    CMD_PRIVATE | CMD_REMOTE,
 		    NULL,
 		    "Stops this bot",
@@ -629,91 +630,91 @@ register_commands(THREAD_DATA *td)
 		    cmd_stopbot);
 	}
 
-	RegisterCommand("!startbot", "Core", 2,
+	RegisterCommand("!startbot", CORE_NAME, 2,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "<type> <arena>",
 	    "Start a bot",
 	    "Start a bot of <type> into <arena>",
 	    cmd_startbot);
 
-	RegisterCommand("!go", "Core", 2,
+	RegisterCommand("!go", CORE_NAME, 2,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "<arena>",
 	    "Change the bot's arena",
 	    "Change the bot's arena",
 	    cmd_go);
 
-	RegisterCommand("!getfile", "Core", 7,
+	RegisterCommand("!getfile", CORE_NAME, 7,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "<filename>",
 	    "Force the bot to download <filename>",
 	    "Force the bot to download <filename>",
 	    cmd_getfile);
 
-	RegisterCommand("!putfile", "Core", 7,
+	RegisterCommand("!putfile", CORE_NAME, 7,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "<filename>",
 	    "Force the bot to upload <filename>",
 	    "Force the bot to upload <filename>",
 	    cmd_putfile);
 	
-	RegisterCommand("!listbots", "Core", 2,
+	RegisterCommand("!listbots", CORE_NAME, 2,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "List the running bots",
 	    "List the running bots",
 	    cmd_listbots);
 
-	RegisterCommand("!types", "Core", 1,
+	RegisterCommand("!types", CORE_NAME, 1,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "List types of bots tha can be started",
 	    "List types of bots tha can be started",
 	    cmd_types);
 
-	RegisterCommand("!loadtypes", "Core", OP_HSMOD,
+	RegisterCommand("!loadtypes", CORE_NAME, OP_HSMOD,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Load the bot types file",
 	    "Load the bot types file",
 	    cmd_loadtypes);
 
-	RegisterCommand("!log", "Core", 2,
+	RegisterCommand("!log", CORE_NAME, 2,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Show the bot's log",
 	    "Show the bot's log",
 	    cmd_log);
 
-	RegisterCommand("!cmdlog", "Core", 2,
+	RegisterCommand("!cmdlog", CORE_NAME, 2,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Show the bot's command log",
 	    "Show the bot's command log",
 	    cmd_cmdlog);
 
-	RegisterCommand("!about", "Core", 0,
+	RegisterCommand("!about", CORE_NAME, 0,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Show core and library information",
 	    "Shows information about the core and libraries.",
 	    cmd_about);
 
-	RegisterCommand("!inslib", "Core", 9,
+	RegisterCommand("!inslib", CORE_NAME, 9,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "<lib name>",
 	    "Load a module into the bot",
 	    "Load a module into the bot",
 	    cmd_inslib);
 
-	RegisterCommand("!rmlib", "Core", 9,
+	RegisterCommand("!rmlib", CORE_NAME, 9,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "<lib name>",
 	    "Unload a library from the bot",
 	    "Unload a library from the bot",
 	    cmd_rmlib);
 
-	RegisterCommand("!help", "Core", 0,
+	RegisterCommand("!help", CORE_NAME, 0,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    "[class | command]",
 	    "Show available commands",
@@ -722,7 +723,7 @@ register_commands(THREAD_DATA *td)
 	    "its usage and long description are shown.",
 	    cmd_help);
 
-	RegisterCommand("!sysinfo", "Core", 0,
+	RegisterCommand("!sysinfo", CORE_NAME, 0,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Show system information",
@@ -731,21 +732,21 @@ register_commands(THREAD_DATA *td)
 	    "over the last 1, 5, and 15 minutes.",
 	    cmd_sysinfo);
 
-	RegisterCommand("!loadops", "Core", 5,
+	RegisterCommand("!loadops", CORE_NAME, 5,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Load op file",
 	    "Reload the op file. This affects all bots.",
 	    cmd_loadops);
 
-	RegisterCommand("!listops", "Core", 1,
+	RegisterCommand("!listops", CORE_NAME, 1,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "List bot ops",
 	    "List bot ops at or below your access level",
 	    cmd_listops);
 
-	RegisterCommand("!exec", "Core", 9,
+	RegisterCommand("!exec", CORE_NAME, 9,
 	    CMD_PRIVATE | CMD_REMOTE,
 	    NULL,
 	    "Execute a shell command",
