@@ -340,13 +340,13 @@ void	queue_packet_large(PACKET *p, int priority); /* large packets are always se
 /*
  * Gets a file from the server.
  */
-void	queue_get_file(THREAD_DATA *td, const char *filename, const char *initiator);
+int		queue_get_file(THREAD_DATA *td, const char *filename, const char *initiator);
 void	try_get_next_file(THREAD_DATA *td);
 
 /*
  * Tries to send a file to the server.
  */
-void	queue_send_file(THREAD_DATA *td, const char *filename, const char *initiator);
+int		queue_send_file(THREAD_DATA *td, const char *filename, const char *initiator);
 void	try_send_next_file(THREAD_DATA *td);
 
 /*

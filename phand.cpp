@@ -204,6 +204,15 @@ pkt_handle_core_0x06(THREAD_DATA *td, uint8_t *buf, int len)
 	}
 }
 
+void
+pkt_handle_core_0x07(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	if (len >= 2) {
+		Log(OP_MOD, "Received core disconnect from server");
+		disconnect_from_server(td);
+	}
+}
+
 /* disconnect packet */
 void
 pkt_handle_core_0x0d(THREAD_DATA *td, uint8_t *buf, int len)
@@ -469,10 +478,17 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 			/* file upload completed handler */
 			if (strncmp(raw_msg, "File received: ", strlen("File received: ")) == 0) {
 				THREAD_DATA::net_t::send_file_data_t *sfd = td->net->send_file_data;
-				if (strcasecmp(&raw_msg[strlen("File received: ")], sfd->cur_filename) == 0) {
+				/* TODO: this should probably happen when the ack for the final chunk packet is sent, instead of being triggered
+				 * by an arena message */
+				/* 15 char max:      	cycad> *putfile #abcdefghijk.lvl
+										Sending file: #abcdefghijk.lvl
+										File received: #abcdefghijk.lv
+				*/
+				if (strncasecmp(&raw_msg[strlen("File received: ")], sfd->cur_filename, 15) == 0) {
 					sfd->in_use = 0;
 
 					/* notify initiator */
+					LogFmt(OP_SMOD, "File uploaded: %s", sfd->cur_filename);
 					if (strlen(sfd->cur_initiator) > 0) {
 						RmtMessageFmt(sfd->cur_initiator, "File uploaded: %s", sfd->cur_filename);
 					}
@@ -704,6 +720,8 @@ pkt_handle_game_0x19(THREAD_DATA *td, uint8_t *buf, int len)
 		/* make sure the file to be uploaded was intended to be sent... */
 		if (strcmp(filename, td->net->send_file_data->cur_filename) == 0) {
 			do_send_file(td);
+		} else {
+			LogFmt(OP_SMOD, "Ignoring file upload request from server (Expected:%s  Received:)", td->net->send_file_data->cur_filename, filename);
 		}
 	}
 }

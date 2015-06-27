@@ -69,7 +69,7 @@
 
 #define STEP_INTERVAL 100	/* main loop runs every x ms, same with EVENT_TICK */
 #define RELIABLE_RETRANSMIT_INTERVAL	1000
-#define DEFERRED_PACKET_SEND_INTERVAL	30	/* 1 deferred packet gets sent per this interval , at 480byte blocks, this is 16000 bytes per second */
+#define DEFERRED_PACKET_SEND_INTERVAL	15	/* 1 deferred packet gets sent per this interval , at 480byte blocks, this is 16000 bytes per second */
 
 /* as of OpenBSD 4.0 the implementation of getaddrinfo isnt reentrant */
 #ifdef LOCK_GETADDRINFO
@@ -160,7 +160,7 @@ main(int argc, char *argv[])
 	g_pkt_core_handlers[0x04] = pkt_handle_core_0x04;
 	g_pkt_core_handlers[0x05] = pkt_handle_core_0x05;
 	g_pkt_core_handlers[0x06] = pkt_handle_core_0x06;
-	//g_pkt_core_handlers[0x07] = pkt_handle_core_0x07;	file sends dont work
+	g_pkt_core_handlers[0x07] = pkt_handle_core_0x07;
 	//g_pkt_core_handlers[0x08] = pkt_handle_core_0x08;
 	//g_pkt_core_handlers[0x09] = pkt_handle_core_0x09;
 	g_pkt_core_handlers[0x0A] = pkt_handle_core_0x0A;
@@ -242,23 +242,26 @@ cmd_getfile(CORE_DATA *cd)
 	}
 
 	THREAD_DATA *td = get_thread_data();
-	queue_get_file(td, cd->cmd_argv[1], cd->cmd_name);
-
-	ReplyFmt("Queued file download: %s", cd->cmd_argv[1]);
+	if (queue_get_file(td, cd->cmd_argv[1], cd->cmd_name)) {
+		ReplyFmt("Queued file download: %s", cd->cmd_argv[1]);
+	} else {
+		ReplyFmt("Failed to queue file for download: %s", cd->cmd_argv[1]);
+	}
 }
 
 void
 cmd_putfile(CORE_DATA *cd)
 {
-
 	if (cd->cmd_argc != 2) {
 		Reply("Usage: !putfile <filename>");
 		return;
 	}
 
-	queue_send_file(get_thread_data(), cd->cmd_argv[1], cd->cmd_name);
-
-	ReplyFmt("Queued file upload: %s", cd->cmd_argv[1]);
+	if (queue_send_file(get_thread_data(), cd->cmd_argv[1], cd->cmd_name)) {
+		ReplyFmt("Queued file upload: %s", cd->cmd_argv[1]);
+	} else {
+		ReplyFmt("Failed to queue file for upload: %s", cd->cmd_argv[1]);
+	}
 }
 
 int
@@ -269,9 +272,8 @@ QueueGetFile(const char *filename, const char *initiator)
 	}
 
 	THREAD_DATA *td = get_thread_data();
-	queue_get_file(td, filename, initiator);
 
-	return 1;
+	return queue_get_file(td, filename, initiator);
 }
 
 int
@@ -282,15 +284,16 @@ QueueSendFile(const char *filename, const char *initiator)
 	}
 
 	THREAD_DATA *td = get_thread_data();
-	queue_send_file(td, filename, initiator);
 
-	return 1;
+	return queue_send_file(td, filename, initiator);
 }
 
-void
+int
 queue_get_file(THREAD_DATA *td, const char *filename, const char *initiator)
 {
 	THREAD_DATA::net_t::chunk_in_t *ci = td->net->chunk_i;
+
+	if (strlen(filename) > 15) return 0;
 
 	DOWNLOAD_ENTRY f;
 	strlcpy(f.name, filename, 16);
@@ -298,7 +301,11 @@ queue_get_file(THREAD_DATA *td, const char *filename, const char *initiator)
 	strlcpy(f.initiator, initiator ? initiator : "", 24);
 	ci->file_list->push_back(f);
 
+	LogFmt(OP_SMOD, "Queued file download: %s", filename);
+
 	try_get_next_file(td);
+
+	return 1;
 }
 
 
@@ -318,18 +325,24 @@ queue_get_file(THREAD_DATA *td, const char *filename, const char *initiator)
  * It is written as one giant packet encoded in a stream.
  * This can transfer up to 20mb files.
  */
-void
+int
 queue_send_file(THREAD_DATA *td, const char *filename, const char *initiator)
 {
 	THREAD_DATA::net_t::send_file_data_t *sfd = td->net->send_file_data;
+
+	if (strlen(filename) > 15) return 0;
 
 	UPLOAD_DATA *ud = (UPLOAD_DATA*)xmalloc(sizeof(UPLOAD_DATA));
 		
 	strlcpy(ud->filename, filename, 64);
 	strlcpy(ud->initiator, initiator ? initiator : "", 24);
 
+	LogFmt(OP_SMOD, "Queued file upload: %s", filename);
+
 	sfd->upload_list->push_back(ud);
 	try_send_next_file(td);
+
+	return 1;
 }
 
 void
@@ -337,15 +350,20 @@ try_send_next_file(THREAD_DATA *td)
 {
 	THREAD_DATA::net_t::send_file_data_t *sfd = td->net->send_file_data;
 
-	if (sfd->in_use == 0 && sfd->upload_list->empty() == false) {
+	if (sfd->in_use == 0 && !sfd->upload_list->empty()) {
 		UPLOAD_DATA *ud = *sfd->upload_list->begin();
 
 		sfd->in_use = 1;
 
-		PubMessageFmt("*putfile %s", ud->filename);
-
 		strlcpy(sfd->cur_initiator, ud->initiator, 64);
 		strlcpy(sfd->cur_filename, ud->filename, 24);
+
+		PubMessageFmt("*putfile %s", sfd->cur_filename);
+
+		LogFmt(OP_SMOD, "Initiated file upload: %s", sfd->cur_filename);
+		if (strlen(sfd->cur_initiator) > 0) {
+			RmtMessageFmt(sfd->cur_initiator, "Initiated file upload: %s", sfd->cur_filename);
+		}
 
 		sfd->upload_list->erase(sfd->upload_list->begin());
 		free(ud);
@@ -412,11 +430,6 @@ do_send_file(THREAD_DATA *td)
 	}
 
 	free(buf);
-
-	LogFmt(OP_SMOD, "Initiated file upload: %s", filename);
-	if (initiator) {
-		RmtMessageFmt(initiator, "Initiated file upload: %s", filename);
-	}
 }
 
 /*
@@ -431,9 +444,9 @@ try_get_next_file(THREAD_DATA *td)
 
 	if (ci->in_use == 0 && ci->file_list->empty() == false) {
 		DOWNLOAD_ENTRY *fe = &*ci->file_list->begin();
-		LogFmt(OP_SMOD, "Downloading file: %s", fe->name);
+		LogFmt(OP_SMOD, "Initiating file download: %s", fe->name);
 		if (strlen(fe->initiator) > 0) {
-			RmtMessageFmt("Initiating queued transfer: %s", fe->name);
+			RmtMessageFmt(fe->initiator, "Initiating file download: %s", fe->name);
 		}
 		PubMessageFmt("*getfile %s", fe->name);
 		strlcpy(ci->initiator, fe->initiator, 24);
@@ -1082,7 +1095,9 @@ send_outgoing_packets(THREAD_DATA *td)
 		 * so it gets sent out immediately
 		 */
 
-		if (n->queues->d_prio->empty() == false) {
+		/* TODO: This should be rate limited based on packet size, not interval */
+		size_t ndeferred = 0;
+		while (!n->queues->d_prio->empty() && ndeferred++ < 3) { // send 3 packets per interval
 			PACKET *p = *n->queues->d_prio->begin();
 			n->queues->d_prio->erase(n->queues->d_prio->begin());
 
