@@ -28,6 +28,7 @@ void pkt_send_ack(uint32_t ack_id);
 void pkt_send_arena_login(uint8_t ship, char *arena);
 void pkt_send_client_key(int32_t client_key);
 void pkt_send_disconnect();
+void pkt_send_namereg(char *username, char *email);
 void pkt_send_login(char *botname, char *password, 
     uint32_t machine_id, uint8_t newuser, uint32_t permission_id);
 void pkt_send_message(THREAD_DATA *td, MSG_TYPE type,

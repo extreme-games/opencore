@@ -626,38 +626,35 @@ pkt_handle_game_0x0A(THREAD_DATA *td, uint8_t *buf, int len)
 		if (td->net->state == NS_LOGGINGIN) {
 			uint8_t login_response;
 			uint32_t server_version;
-			extract_packet(buf, "AACCCCAACCCC", NULL,
+			uint8_t send_namereg;
+			extract_packet(buf, "AACCCCAACCCC",
+				NULL,
 			    &login_response,
 			    &server_version,
 			    NULL,
 			    NULL,
 			    NULL,
 			    NULL,
-			    NULL,
+			    &send_namereg,
 			    NULL,
 			    NULL,
 			    NULL,
 			    NULL
 			    );
 
-			switch(login_response) {
+			switch (login_response) {
+				case 0x01: /* unregistered name */
+					pkt_send_login(td->bot_name, td->login->password, g_machineid, 1, g_permissionid);
+					break;
 				case 0x00: /* login ok */
+					if (send_namereg) {
+						pkt_send_namereg(td->bot_name, td->bot_email);
+						LogFmt(OP_MOD, "Registering new name: %s", td->bot_name);
+					}
 				case 0x05: /* permission only */
 				case 0x06: /* spectate only */
 					Log(OP_MOD, "Logged in to server");
 					td->net->state = NS_CONNECTED;
-					break;
-				case 0x01: /* unknown user -- create one */
-					/* XXX: this requires the bot to submit registration information! */
-					Log(OP_MOD, "Unknown botname, names must be pre-registered");
-					StopBot("Unknown botname");
-					return;
-#if 0
-					Log(OP_HSMOD, "Unknown botname, registering name");
-					pkt_send_login(td->login->botname, td->login->password,
-					    td->host->machine_id, 1, td->host->permission_id);
-					pkt_send_sync_request();
-#endif
 					break;
 				default:
 					StopBotFmt("Unable to log in to server, " \

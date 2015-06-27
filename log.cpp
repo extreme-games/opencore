@@ -151,6 +151,7 @@ log_string(THREAD_DATA *td, OP_LEVEL lvl, char *str)
 	}
 	if (g_logfile) {
 		fprintf(g_logfile, "%s\n", log[logi]->text);
+		fflush(g_logfile);
 	}
 	logi = (logi + 1) % LOG_LINES;
 	pthread_mutex_unlock(&log_mtx);

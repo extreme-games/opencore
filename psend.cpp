@@ -113,6 +113,50 @@ pkt_send_disconnect()
 	queue_packet(p, SP_NORMAL);
 }
 
+void
+pkt_send_namereg(char *regname, char *regemail)
+{
+	PACKET *p = allocate_packet(766);
+
+	char name[32] = { 0 };
+	char username[40] = { 0 };
+	char email[64] = { 0 };
+	char city[32] = { 0 };
+	char state[24] = { 0 };
+
+	strncpy(name, regname, sizeof(name)-1);
+	strncpy(email, regemail, sizeof(email)-1);
+	strncpy(username, regname, sizeof(username)-1);
+	strncpy(city, "internet", sizeof(city)-1);
+	strncpy(state, "internet", sizeof(state)-1);
+
+	char block_data[14][40];
+	memset(block_data, 0, sizeof(block_data));
+	for (size_t i = 0; i < 14; ++i) {
+		strncpy(block_data[i], "OpenCore", 40);
+	}
+
+	build_packet(p->data, "AZZZZAAAAACBBZZ",
+	    0x17,
+	    name, 32,
+		email, 64,
+		city, 32,
+		state, 24,
+		(rand() > RAND_MAX/2) ? 'M' : 'F',
+		69,
+		1,
+		1,
+		1,
+		586,
+		0xC000,
+		2036,
+		username, 40,
+		block_data, 14 * 40
+	    );
+
+	queue_packet_large(p, SP_HIGH);
+}
+
 /*
  * Send a login packet to the server.
  *

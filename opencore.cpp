@@ -161,6 +161,8 @@ main(int argc, char *argv[])
 	g_pkt_core_handlers[0x05] = pkt_handle_core_0x05;
 	g_pkt_core_handlers[0x06] = pkt_handle_core_0x06;
 	//g_pkt_core_handlers[0x07] = pkt_handle_core_0x07;	file sends dont work
+	//g_pkt_core_handlers[0x08] = pkt_handle_core_0x08;
+	//g_pkt_core_handlers[0x09] = pkt_handle_core_0x09;
 	g_pkt_core_handlers[0x0A] = pkt_handle_core_0x0A;
 	g_pkt_core_handlers[0x0E] = pkt_handle_core_0x0E;
 
@@ -397,7 +399,7 @@ do_send_file(THREAD_DATA *td)
 
 	/* send initial stream start */
 	while (bytes_left > 0) {
-		int nout = MIN(bytes_left, 480);
+		int nout = MIN(bytes_left, 220); // must fit into a cluster header
 		PACKET *p = allocate_packet(6 + nout);
 		build_packet(p->data, "AACZ",
 		    0x00,
@@ -1044,6 +1046,8 @@ pull_packets(packet_list_t *l, uint8_t *buf, int len, bool cluster)
 		/* if theres room in the packet for cluster+cluster len */
 		if (p->len + ch_size <= len - offset) {
 			if (cluster) {
+				assert(p->len <= 0xFF);
+				if (p->len > 0xFF) abort();
 				bytes_placed = build_packet(
 				    &buf[offset], "AZ", p->len, p->data, p->len);
 			} else {
@@ -1209,6 +1213,8 @@ open_socket(THREAD_DATA::net_t *n)
 void
 queue_packet(PACKET *p, int priority)
 {
+	assert(p->len <= 255);
+
 	THREAD_DATA::net_t *n = get_thread_data()->net;
 
 	if (priority == SP_HIGH)
@@ -1219,6 +1225,34 @@ queue_packet(PACKET *p, int priority)
 		LogFmt(OP_HSMOD, "Upgrading unreliable deferred packet to reliable");
 		n->queues->d_prio->push_back(p);
 	}
+}
+
+
+void
+queue_packet_large(PACKET *p, int priority)
+{
+	// chunk packets need to be sent in succession
+	if (priority == SP_DEFERRED) priority = SP_NORMAL;
+
+	// break the packet down into chunks
+	int offset = 0;
+	while (offset < p->len) {
+		// also must fit into a cluster packet
+		int chunk_size = MIN(p->len - offset, 240); // min size must be < guard clauses in queue_packet and queue_packet_reliable
+		PACKET *q = allocate_packet(chunk_size + 2);
+		build_packet(q->data, "AAZ",
+			0x00,
+			(offset + chunk_size < p->len) ? 0x08 : 0x09,
+			&p->data[offset],
+			chunk_size
+			);
+
+		queue_packet_reliable(q, priority);
+
+		offset += chunk_size;
+	}
+
+	free_packet(p);
 }
 
 /*

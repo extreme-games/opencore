@@ -86,6 +86,7 @@ struct THREAD_DATA_
 
 	PLAYER_ID	 bot_pid;	/* the bot's pid */
 	char		 bot_name[24];	/* the bot's name */
+	char		 bot_email[64];	/* the bot's email */
 	char		 bot_type[16];	/* the bot's type */
 	SHIP		 bot_ship;	/* the bot's ship */
 	FREQ		 bot_freq;	/* the bot's freq */
@@ -334,6 +335,7 @@ void	process_incoming_packet(THREAD_DATA *td, uint8_t *buf, int len);
  */
 void	queue_packet(PACKET *p, int priority);
 void	queue_packet_reliable(PACKET *p, int priority);
+void	queue_packet_large(PACKET *p, int priority); /* large packets are always sent reliably */
 
 /*
  * Gets a file from the server.

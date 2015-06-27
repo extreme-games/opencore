@@ -349,6 +349,7 @@ load_thread_config(THREAD_DATA *td, char *configfile)
 	struct THREAD_DATA::net_t *n = td->net;
 
 	get_config_string("login.username", td->bot_name, 24, "*", configfile);
+	get_config_string("login.email", td->bot_email, 24, "none@none.none", configfile);
 	get_config_string("login.password", td->login->password, 32, "", configfile);
 	get_config_string("login.autorun", td->login->autorun, 256, "", configfile);
 	get_config_string("login.chats", td->login->chats, 256, "", configfile);
