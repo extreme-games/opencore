@@ -951,7 +951,7 @@ mainloop(THREAD_DATA *td)
 				int nhere = player_get_phere(td);
 				PLAYER *parray = player_get_parray(td);
 				for (int i = 0; i < nhere; ++i) {
-					if (parray[i].in_arena && td->enter->send_info) {
+					if (parray[i].here && td->enter->send_info) {
 						PrivMessage(&parray[i], "*info");
 					}
 				}
@@ -963,7 +963,7 @@ mainloop(THREAD_DATA *td)
 				int nhere = player_get_phere(td);
 				PLAYER *parray = player_get_parray(td);
 				for (int i = 0; i < nhere; ++i) {
-					if (parray[i].in_arena && td->enter->send_einfo) {
+					if (parray[i].here && td->enter->send_einfo) {
 						PrivMessage(&parray[i], "*einfo");
 					}
 				}

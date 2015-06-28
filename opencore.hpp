@@ -172,7 +172,7 @@
 extern "C" {
 
 /* This must match the core's version string */	
-#define CORE_VERSION "0.20pr1"
+#define CORE_VERSION "1.0"
 
 typedef uint32_t ticks_ms_t;
 typedef uint32_t ticks_hs_t;
@@ -518,7 +518,7 @@ struct PLAYER_ {
 
 	uint8_t		status;		/* player's status (bitfield) see STATUS_xxx */
 
-	uint8_t		in_arena;	/* non-zero if player is in the arena */
+	uint8_t		here;	    /* non-zero if player is in the arena */
 
 	info_t      info[1];
 	int         info_valid;
@@ -734,7 +734,7 @@ int	GetOpLevel(char *name);
  *
  * FindPlayerName:
  * Find a player with the name of 'name'.  The player may
- * or may not be in the arena. PLAYER.in_arena will be set to 1
+ * or may not be in the arena. PLAYER.here will be set to 1
  * if the player is in the arena.
  *
  * FindPlayerPid:
