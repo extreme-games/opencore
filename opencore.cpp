@@ -1338,6 +1338,7 @@ SetPosition(uint16_t x, uint16_t y, uint16_t xv, uint16_t yv)
 	td->net->ticks->last_pos_update_sent = get_ticks_ms();
 }
 
+
 void
 StopBot(char *reason) 
 {
@@ -1346,6 +1347,7 @@ StopBot(char *reason)
 	LogFmt(OP_MOD, "Shutting down: %s", reason ? reason : "Unspecified");
 	td->running = -1;
 }
+
 
 void
 StopBotFmt(char *fmt, ...)
@@ -1359,5 +1361,14 @@ StopBotFmt(char *fmt, ...)
 	StopBot(buf);
 
 	va_end(ap);
+}
+
+
+void
+SendPlayer(PLAYER *p, const char *arena)
+{
+	THREAD_DATA *td = get_thread_data();
+	
+	if (p->here) PrivMessageFmt(p, "*sendto %s,%s,%.15s", td->net->serverip, td->net->serverport, td->arena ? arena : "");
 }
 

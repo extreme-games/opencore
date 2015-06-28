@@ -176,8 +176,8 @@ struct THREAD_DATA_
 		struct sockaddr_in	serv_sin;	/* sockaddr struct for the server */
 
 		char	servername[128];		/* server name to connect to */
-		char	serverport[8];			/* servers port number */
-		char	serverip[INET_ADDRSTRLEN];	/* servers ip address */
+		char	serverport[8];			/* servers port number (sanitized) */
+		char	serverip[INET_ADDRSTRLEN];	/* servers ip address (sanitized) */
 
 		/*
 		 * Contains all temporal data, including intervals.

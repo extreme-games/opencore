@@ -775,6 +775,11 @@ void	Reply(const char *msg);
 void	ReplyFmt(const char *fmt, ...);
 
 /*
+ * Send a player to an arena (wraps *sendto).  Arena is optional.
+ */
+void	SendPlayer(PLAYER *p, const char *arena);
+
+/*
  * Database functions.
  */
 int Query(int query_type, void *user_data, const char *name, const char *query);
