@@ -880,14 +880,14 @@ mainloop(THREAD_DATA *td)
 			}
 		}
 
-		/* user up to STEP_INTERVAL ms for the db thread */
+		/* use up to STEP_INTERVAL ms for the db thread */
 		ticks_ms_t ticks_taken = get_ticks_ms() - ticks;
 		ticks_ms_t db_ticks = ticks_taken > STEP_INTERVAL ? STEP_INTERVAL : STEP_INTERVAL - ticks_taken;
 		db_instance_export_events(db_ticks);
 
 		/* read a packet or wait for a timeout */
 		ticks_taken = get_ticks_ms() - ticks;
-		int timeout = ticks_taken > STEP_INTERVAL ? STEP_INTERVAL : STEP_INTERVAL - ticks_taken;
+		int timeout = ticks_taken > STEP_INTERVAL ? 0 : STEP_INTERVAL - ticks_taken;
 		while (poll(n->pfd, 1, timeout) > 0) {
 			/* process incoming packet, data is waiting */
 			pktl = (int)read(n->fd, pkt, MAX_PACKET);
@@ -915,7 +915,7 @@ mainloop(THREAD_DATA *td)
 			ticks_taken = get_ticks_ms() - lticks;
 		}
 
-		/* update the tick count after potential sleeping */
+		/* update the tick count after potential sleeping in poll() */
 		ticks = get_ticks_ms();
 
 		/* network state specfic actions */
