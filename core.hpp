@@ -244,6 +244,12 @@ struct THREAD_DATA_
 			uint32_t	packets_read;	/* packets received */
 		} stats[1];
 
+		struct stream_t
+		{
+			uint8_t data[1024 * 1024];
+			uint8_t offset;
+		} stream[1];
+
 		/*
 		 * Inbound stream data.
 		 */

@@ -49,6 +49,7 @@ void pkt_handle_core_0x04(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_core_0x05(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_core_0x06(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_core_0x07(THREAD_DATA *td, uint8_t *buf, int len);
+void pkt_handle_core_0x08_0x09(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_core_0x0A(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_core_0x0E(THREAD_DATA *td, uint8_t *buf, int len);
 

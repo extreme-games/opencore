@@ -161,8 +161,8 @@ main(int argc, char *argv[])
 	g_pkt_core_handlers[0x05] = pkt_handle_core_0x05;
 	g_pkt_core_handlers[0x06] = pkt_handle_core_0x06;
 	g_pkt_core_handlers[0x07] = pkt_handle_core_0x07;
-	//g_pkt_core_handlers[0x08] = pkt_handle_core_0x08;
-	//g_pkt_core_handlers[0x09] = pkt_handle_core_0x09;
+	g_pkt_core_handlers[0x08] = pkt_handle_core_0x08_0x09;
+	g_pkt_core_handlers[0x09] = pkt_handle_core_0x08_0x09;
 	g_pkt_core_handlers[0x0A] = pkt_handle_core_0x0A;
 	g_pkt_core_handlers[0x0E] = pkt_handle_core_0x0E;
 
@@ -544,6 +544,9 @@ init_thread_data(THREAD_DATA *td)
 	n->encrypt->client_key = -rand_r(&td->rand_seed);
 	n->encrypt->server_key = 0;
 	n->encrypt->use_encryption = 0;
+	
+	memset(n->stream->data, 0, sizeof(n->stream->data));
+	n->stream->offset = 0;
 
 	n->ticks->last_deferred_flush = ticks;
 	n->ticks->last_pkt_received = ticks;
@@ -1307,6 +1310,7 @@ queue_packet_reliable(PACKET *p, int priority)
 		assert(0);
 	}
 }
+
 
 /*
  * This function dispatches packets to their appropriate handlers.

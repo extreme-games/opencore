@@ -213,6 +213,27 @@ pkt_handle_core_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 	}
 }
 
+void
+pkt_handle_core_0x08_0x09(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	THREAD_DATA::net_t::stream_t *s = td->net->stream;
+	if (len >= 2) {
+		int stream_sz = len - 2;
+		if (s->offset + stream_sz <= (int)sizeof(s->data)) {
+			memcpy(&s->data[s->offset], buf, stream_sz);
+			s->offset += stream_sz;
+		} else {
+			Log(OP_SMOD, "Ignoring stream too large and truncating content");
+		}
+
+		// 0x00 0x09 packet received, process the stream
+		if (buf[1] == 0x09) {
+			process_incoming_packet(td, s->data, s->offset);
+			s->offset = 0;
+		}
+	}
+}
+
 /* disconnect packet */
 void
 pkt_handle_core_0x0d(THREAD_DATA *td, uint8_t *buf, int len)
