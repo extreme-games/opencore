@@ -352,9 +352,10 @@ db_instance_export_events(ticks_ms_t max_time)
 {
 	DB_CONTEXT *dbc = dbc_get();
 	ticks_ms_t base = get_ticks_ms();
+	DB_RESULT *dbr = NULL;
 	do {
 		pthread_mutex_lock(&dbc->mtx);
-		DB_RESULT *dbr = TAILQ_FIRST(&dbc->result_list_head);
+		dbr = TAILQ_FIRST(&dbc->result_list_head);
 		if (dbr) TAILQ_REMOVE(&dbc->result_list_head, dbr, entry);
 		dbc->npending -= 1;
 		pthread_mutex_unlock(&dbc->mtx);
