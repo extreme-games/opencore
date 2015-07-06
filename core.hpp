@@ -98,6 +98,7 @@ struct THREAD_DATA_
 
 	char	libstring[8192];		/* ' '-delimited string of libraries to load */
 	char	arena_change_request[16];	/* name of the arena requested */
+	char    configfile[256]; /* the bots config file */
 
 	/*
 	 * Contains information that pertains to the logging in process.

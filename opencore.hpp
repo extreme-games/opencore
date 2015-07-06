@@ -838,6 +838,13 @@ int	IsPriv(char *arena);		/* priv */
 ticks_ms_t	GetTicksMs();
 
 /*
+ * Get a configuration integer value from the bots config.
+ */
+int	GetConfigInt(char *key, int default_value);
+void GetConfigString(char *key, char *dest, int dst_sz, char *default_value);
+bool ConfigKeyExists(char *key);
+
+/*
  * Retrieve a player-specific pinfo struct.  This is only valid if
  * LIB_PINFO_SIZE is set.
  */

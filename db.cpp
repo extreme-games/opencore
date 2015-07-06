@@ -410,12 +410,12 @@ db_init()
 	pthread_mutex_lock(&g_mtx);
 
 	// read the config
-	g_running = get_config_int("database.enabled", 0, DB_CONFIG_FILE) != 0;
-	get_config_string("database.username", username, sizeof(username), "user", DB_CONFIG_FILE);
-	get_config_string("database.password", password, sizeof(password), "password", DB_CONFIG_FILE);
-	get_config_string("database.server", server, sizeof(server), "localhost", DB_CONFIG_FILE);
-	get_config_string("database.dbname", dbname, sizeof(dbname), "db", DB_CONFIG_FILE);
-	port = get_config_int("database.port", 3306, DB_CONFIG_FILE);
+	g_running = config_get_int("database.enabled", 0, DB_CONFIG_FILE) != 0;
+	config_get_string("database.username", username, sizeof(username), "user", DB_CONFIG_FILE);
+	config_get_string("database.password", password, sizeof(password), "password", DB_CONFIG_FILE);
+	config_get_string("database.server", server, sizeof(server), "localhost", DB_CONFIG_FILE);
+	config_get_string("database.dbname", dbname, sizeof(dbname), "db", DB_CONFIG_FILE);
+	port = config_get_int("database.port", 3306, DB_CONFIG_FILE);
 
 	// spawn the db thread
 	if (g_running && pthread_create(&g_dbthread, NULL, db_entrypoint, NULL) != 0) {

@@ -163,10 +163,10 @@ StartBot(char *type, char *arena, char *owner)
 	int op_level = owner ? GetOpLevel(owner) : 9;
 
 	/* load configurables */
-	int reqlevelpub = get_config_int("bot.reqlevelpub", 2, configfile);
-	int reqlevelsub = get_config_int("bot.reqlevelsub", 2, configfile);
-	int reqlevelpriv = get_config_int("bot.reqlevelpriv", 2, configfile);
-	int maxbots = get_config_int("login.maxbots", 0, configfile);
+	int reqlevelpub = config_get_int("bot.reqlevelpub", 2, configfile);
+	int reqlevelsub = config_get_int("bot.reqlevelsub", 2, configfile);
+	int reqlevelpriv = config_get_int("bot.reqlevelpriv", 2, configfile);
+	int maxbots = config_get_int("login.maxbots", 0, configfile);
 
 	/* check for the owners proper access levels */
 	if (IsPub(arena) && reqlevelpub > op_level) {
@@ -183,6 +183,7 @@ StartBot(char *type, char *arena, char *owner)
 	load_thread_config(td, configfile);
 	strlcpy(td->login->arenaname, arena, 16);
 	strlcpy(td->bot_type, type, 16);
+	strlcpy(td->configfile, configfile, 256);
 
 	/* check to make sure too many bots dont already exist */
 	pthread_mutex_lock(&type_list_mtx);
@@ -348,25 +349,25 @@ load_thread_config(THREAD_DATA *td, char *configfile)
 {
 	struct THREAD_DATA::net_t *n = td->net;
 
-	get_config_string("login.username", td->bot_name, 24, "*", configfile);
-	get_config_string("login.email", td->bot_email, 24, "none@none.none", configfile);
-	get_config_string("login.password", td->login->password, 32, "", configfile);
-	get_config_string("login.autorun", td->login->autorun, 256, "", configfile);
-	get_config_string("login.chats", td->login->chats, 256, "", configfile);
+	config_get_string("login.username", td->bot_name, 24, "*", configfile);
+	config_get_string("login.email", td->bot_email, 24, "none@none.none", configfile);
+	config_get_string("login.password", td->login->password, 32, "", configfile);
+	config_get_string("login.autorun", td->login->autorun, 256, "", configfile);
+	config_get_string("login.chats", td->login->chats, 256, "", configfile);
 
-	get_config_string("core.libraries", td->libstring, 8192, "", configfile);
+	config_get_string("core.libraries", td->libstring, 8192, "", configfile);
 
-	get_config_string("net.servername", n->servername, 128, "*", configfile);
-	get_config_string("net.serverport", n->serverport, 8, "65000", configfile);
+	config_get_string("net.servername", n->servername, 128, "*", configfile);
+	config_get_string("net.serverport", n->serverport, 8, "65000", configfile);
 
 
-	td->periodic->info = get_config_int("periodic.infoseconds", 0, configfile);
+	td->periodic->info = config_get_int("periodic.infoseconds", 0, configfile);
 	if (td->periodic->info && td->periodic->info < 60) {
 		td->periodic->info = 60;
 	}
 	td->periodic->info *= 1000;
 
-	td->periodic->einfo = get_config_int("periodic.einfoseconds", 0, configfile);
+	td->periodic->einfo = config_get_int("periodic.einfoseconds", 0, configfile);
 	if (td->periodic->einfo && td->periodic->einfo < 60) {
 		td->periodic->einfo = 60;
 	}
@@ -374,16 +375,16 @@ load_thread_config(THREAD_DATA *td, char *configfile)
 
 
 	td->debug->spew_packets =
-	    get_config_int("debug.spewpackets", 0, configfile);
+	    config_get_int("debug.spewpackets", 0, configfile);
 	td->debug->show_unhandled_packets = 
-	    get_config_int("debug.showuhandledpackets", 0, configfile);
+	    config_get_int("debug.showuhandledpackets", 0, configfile);
 
 	td->enter->send_watch_damage =
-	    (uint8_t)get_config_int("enter.sendwatchdamage", 0, configfile);
+	    (uint8_t)config_get_int("enter.sendwatchdamage", 0, configfile);
 	td->enter->send_einfo =
-	    (uint8_t)get_config_int("enter.sendeinfo", 0, configfile);
+	    (uint8_t)config_get_int("enter.sendeinfo", 0, configfile);
 	td->enter->send_info =
-	    (uint8_t)get_config_int("enter.sendinfo", 0, configfile);
+	    (uint8_t)config_get_int("enter.sendinfo", 0, configfile);
 }
 
 /*
@@ -418,7 +419,7 @@ ftw_cb(const char *fpath, const struct stat *sb, int typeflag)
 	free(tmp);
 
 	snprintf(te->configfile, 256, "%s", fpath);
-	get_config_string("bot.description", te->description, 256, "No description", (char*)fpath);
+	config_get_string("bot.description", te->description, 256, "No description", (char*)fpath);
 
 	/* add entry to list */
 	pthread_mutex_lock(&type_list_mtx);
