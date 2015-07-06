@@ -378,7 +378,7 @@ db_instance_export_events(ticks_ms_t max_time)
 			free(dbr);
 		}
 
-	} while (get_ticks_ms() - base <= max_time);
+	} while (dbr && get_ticks_ms() - base <= max_time);
 }
 
 
