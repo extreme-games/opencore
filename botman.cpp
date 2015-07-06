@@ -354,7 +354,7 @@ load_thread_config(THREAD_DATA *td, char *configfile)
 	get_config_string("login.autorun", td->login->autorun, 256, "", configfile);
 	get_config_string("login.chats", td->login->chats, 256, "", configfile);
 
-	get_config_string("core.libraries", td->libstring, 512, "", configfile);
+	get_config_string("core.libraries", td->libstring, 8192, "", configfile);
 
 	get_config_string("net.servername", n->servername, 128, "*", configfile);
 	get_config_string("net.serverport", n->serverport, 8, "65000", configfile);

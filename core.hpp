@@ -96,7 +96,7 @@ struct THREAD_DATA_
 		uint16_t	y;
 	} bot_vel[1];
 
-	char	libstring[512];		/* ' '-delimited string of libraries to load */
+	char	libstring[8192];		/* ' '-delimited string of libraries to load */
 	char	arena_change_request[16];	/* name of the arena requested */
 
 	/*
