@@ -183,7 +183,12 @@ StartBot(char *type, char *arena, char *owner)
 	load_thread_config(td, configfile);
 	strlcpy(td->login->arenaname, arena, 16);
 	strlcpy(td->bot_type, type, 16);
-	strlcpy(td->configfile, configfile, 256);
+	strlcpy(td->config->filename, configfile, 256);
+	struct stat attr;
+	memset(&attr, 0, sizeof(struct stat));
+	if (stat(configfile, &attr) == 0 ) {
+		td->config->last_modified_time = attr.st_mtime;
+	}
 
 	/* check to make sure too many bots dont already exist */
 	pthread_mutex_lock(&type_list_mtx);

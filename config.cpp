@@ -170,7 +170,7 @@ GetConfigInt(char *key, int default_value)
 {
 	THREAD_DATA *td = get_thread_data();
 
-	return config_get_int(key, default_value, td->configfile);
+	return config_get_int(key, default_value, td->config->filename);
 }
 
 
@@ -179,7 +179,7 @@ GetConfigString(char *key, char *dest, int dst_sz, char *default_value)
 {
 	THREAD_DATA *td = get_thread_data();
 
-	config_get_string(key, dest, dst_sz, default_value, td->configfile);
+	config_get_string(key, dest, dst_sz, default_value, td->config->filename);
 }
 
 
@@ -188,7 +188,7 @@ ConfigKeyExists(char *key)
 {
 	THREAD_DATA *td = get_thread_data();
 
-	return config_key_exists(key, td->configfile);
+	return config_key_exists(key, td->config->filename);
 }
 
 

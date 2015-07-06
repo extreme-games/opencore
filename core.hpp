@@ -30,6 +30,7 @@
 #include <sys/queue.h>
 
 #include <netinet/in.h> /* for sockaddr_in */
+#include <unistd.h>
 #include <poll.h>
 
 #include "core.hpp"
@@ -98,7 +99,11 @@ struct THREAD_DATA_
 
 	char	libstring[8192];		/* ' '-delimited string of libraries to load */
 	char	arena_change_request[16];	/* name of the arena requested */
-	char    configfile[256]; /* the bots config file */
+
+	struct config_t {
+		char   filename[256]; /* the bots config file */
+		time_t last_modified_time;	
+	} config[1];
 
 	/*
 	 * Contains information that pertains to the logging in process.

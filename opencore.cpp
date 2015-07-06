@@ -70,6 +70,7 @@
 #define STEP_INTERVAL 100	/* main loop runs every x ms, same with EVENT_TICK */
 #define RELIABLE_RETRANSMIT_INTERVAL	1000
 #define DEFERRED_PACKET_SEND_INTERVAL	15	/* 1 deferred packet gets sent per this interval , at 480byte blocks, this is 16000 bytes per second */
+#define CONFIG_MTIME_POLL_INTERVAL 5000
 
 /* as of OpenBSD 4.0 the implementation of getaddrinfo isnt reentrant */
 #ifdef LOCK_GETADDRINFO
@@ -842,8 +843,9 @@ mainloop(THREAD_DATA *td)
 	acc = 0;
 	ticks = get_ticks_ms();
 	lticks = ticks;
-	ticks_ms_t last_botman_checkin = get_ticks_ms();
-	ticks_ms_t last_botman_stopcheck = get_ticks_ms();
+	ticks_ms_t last_botman_checkin = ticks;
+	ticks_ms_t last_botman_stopcheck = ticks;
+	ticks_ms_t last_config_mtime_check = ticks;
 	while (td->running >= 0) {
 		ticks = get_ticks_ms();
 		acc += ticks - lticks;
@@ -881,6 +883,19 @@ mainloop(THREAD_DATA *td)
 				usleep(50000);	/* 50ms */
 				continue;
 			}
+		}
+
+		/* see if the config file has been modified and if so send a reread event */
+		if (ticks - last_config_mtime_check >= CONFIG_MTIME_POLL_INTERVAL) {
+			struct stat attr;
+			memset(&attr, 0, sizeof(struct stat));
+			if (stat(td->config->filename, &attr) == 0) {
+				if (td->config->last_modified_time != attr.st_mtime) {
+					libman_export_event(td, EVENT_CONFIG_CHANGE, NULL);
+					td->config->last_modified_time = attr.st_mtime;
+				}
+			}
+			last_config_mtime_check = ticks;
 		}
 
 		/* use up to STEP_INTERVAL ms for the db thread */

@@ -328,6 +328,9 @@ typedef uint32_t ticks_hs_t;
 
 #define EVENT_QUERY_RESULT 21 /* query_success, query_resultset, query_user_data, query_nrows, query_ncols */
 
+#define EVENT_CONFIG_CHANGE 22
+
+
 typedef uint16_t FREQ;
 #define FREQ_NONE		(FREQ)0xFFFF
 
