@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "mysql/mysql.h"
 #include "mysql/errmsg.h"
@@ -152,7 +153,7 @@ db_entrypoint(void *unused)
 	mysql_init(&lmysql);
 
 	// set connection options
-	bool opt_reconnect = true;
+	const bool opt_reconnect = true;
 	mysql_options(&lmysql, MYSQL_OPT_RECONNECT, &opt_reconnect);
 
 	const ticks_ms_t reconnect_interval = 60 * 1000;
@@ -162,25 +163,53 @@ db_entrypoint(void *unused)
 	bool running = true;
 	while (running) {
 		// wait for an event
-		sem_wait(&g_sem);
+		struct timespec abstimeout;
+		clock_gettime(CLOCK_REALTIME, &abstimeout);
+		abstimeout.tv_sec += 30;
+		bool keepalive = false;
+		if (sem_timedwait(&g_sem, &abstimeout) == -1 && errno == ETIMEDOUT) {
+			// if the wait timed out, just submit a keep alive to the db
+			keepalive = true;
+		}
 
 		// acquire the mysql connection if its not connected
 		if (get_ticks_ms() - last_connect_ticks >= reconnect_interval) {
-			MYSQL *m = mysql_real_connect(&lmysql, server, username, password, dbname, port, 0, CLIENT_COMPRESS | CLIENT_MULTI_RESULTS);
+			MYSQL *m = mysql_real_connect(&lmysql, server, username, password, dbname, port, 0, CLIENT_COMPRESS | CLIENT_MULTI_RESULTS | CLIENT_INTERACTIVE);
 			unsigned int last_error = mysql_errno(&lmysql);	
 
 			if (m) {
 				mysql = m;
 				Log(OP_SMOD, "Connected to DB");
 			} else if (last_error == CR_ALREADY_CONNECTED) {
-				// reconnection
-				mysql = m;
+				// db was already connected
+				mysql = &lmysql;
 			} else {
 				mysql = NULL;
 				Log(OP_SMOD, "DB reconnection failure");
 			}
 			
 			last_connect_ticks = get_ticks_ms();
+		}
+
+		/* no db connection */
+		if (!mysql) continue;
+
+		/* only submit a keepalive */
+		if (keepalive) {
+			// keep alive
+			keepalive = true;
+			const char *keepalive_query = "SELECT 1;";
+			if (mysql_real_query(mysql, keepalive_query, strlen(keepalive_query)) == 0) {
+				do {
+					MYSQL_RES *result = mysql_store_result(mysql);
+					if (result) {
+						while (mysql_fetch_row(result))
+							;
+						mysql_free_result(result);
+					}
+				} while (mysql_next_result(mysql) == 0);
+			}
+			continue;
 		}
 
 		pthread_mutex_lock(&g_mtx);
