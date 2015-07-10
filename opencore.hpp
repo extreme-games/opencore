@@ -169,7 +169,9 @@
 #include <stdlib.h>
 
 /* C linkage for functions */
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 /* This must match the core's version string */	
 #define CORE_VERSION "1.0"
