@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #define GAME_LENGTH_MS		((ticks_ms_t)(2 * 60 * 1000))
 #define SPAM_INTERVAL_MS	((ticks_ms_t)(15 * 1000))

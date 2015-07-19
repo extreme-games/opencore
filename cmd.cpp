@@ -48,7 +48,7 @@ struct CMD_CALLBACK_DATA_
 {
 	SPLAY_ENTRY(CMD_CALLBACK_DATA_)	entry;	/* splay tree entry */
 
-	Command_cb	 func;			/* the function callback */
+	int 		 id;			/* command id */
 	char		 cmd_name[16];		/* name of the command */
 	int		 cmd_level;		/* required op access level to use this command */
 	CMD_TYPE	 cmd_type;		/* which type of messages this bot responds to (CMD_*) */
@@ -56,7 +56,7 @@ struct CMD_CALLBACK_DATA_
 	char		 cmd_args[32];		/* argument grammar */
 	char		 cmd_desc[128];		/* one-line description of the command */
 	char		 cmd_ldesc[256];	/* long description of the command */
-	void		*lib_entry;		/* library id of the owning callback */
+	LIB_ENTRY	*lib_entry;		/* library id of the owning callback */
 } CMD_CALLBACK_DATA;
 int ccd_cmp(struct CMD_CALLBACK_DATA_ *lhs, struct CMD_CALLBACK_DATA_ *rhs);
 
@@ -79,9 +79,8 @@ get_mod_tld(THREAD_DATA *td)
 SPLAY_PROTOTYPE(cmd_tree, CMD_CALLBACK_DATA_, entry, ccd_cmp);
 SPLAY_GENERATE(cmd_tree, CMD_CALLBACK_DATA_, entry, ccd_cmp);
 
-static CMD_CALLBACK_DATA*	allocate_ccd(char *cmd_text, char *cmd_class, int cmd_level,
-				    uint8_t cmd_type, char *cmd_args, char *cmd_desc,
-				    char *cmd_ldesc, Command_cb func, void *lib_ptr);
+static CMD_CALLBACK_DATA*	allocate_ccd(int id, char *cmd_text, char *cmd_class, int cmd_level,
+				    uint8_t cmd_type, char *cmd_args, char *cmd_desc, char *cmd_ldesc, LIB_ENTRY *lib_ptr);
 static void			free_ccd(CMD_CALLBACK_DATA *ccd);
 
 void
@@ -124,23 +123,23 @@ cmd_instance_shutdown(THREAD_DATA *td)
 	
 	CMD_CALLBACK_DATA *ccd, *next;
 	for (ccd = SPLAY_MIN(cmd_tree, &mod_tld->tree_head); ccd != NULL; ccd = next) {
-	   next = SPLAY_NEXT(cmd_tree, &mod_tld->tree_head, ccd);
-	   SPLAY_REMOVE(cmd_tree, &mod_tld->tree_head, ccd);
-	   free(ccd);
+		next = SPLAY_NEXT(cmd_tree, &mod_tld->tree_head, ccd);
+		SPLAY_REMOVE(cmd_tree, &mod_tld->tree_head, ccd);
+		free(ccd);
 	}
 	
 	free(mod_tld);
 }
 
 void 
-RegisterCommand(char *cmd_text, char *cmd_class, int cmd_level,
-		uint8_t cmd_type, char *cmd_args, char *cmd_desc, char *cmd_ldesc, Command_cb func) 
+RegisterCommand(int id, char *cmd_text, char *cmd_class, int cmd_level,
+		uint8_t cmd_type, char *cmd_args, char *cmd_desc, char *cmd_ldesc) 
 {
 	THREAD_DATA *td = get_thread_data();
 	MOD_TL_DATA *mod_tld = get_mod_tld(td);
 
-	CMD_CALLBACK_DATA *ccd = allocate_ccd(cmd_text, cmd_class, cmd_level, cmd_type,
-			cmd_args, cmd_desc, cmd_ldesc, func, td->lib_entry);
+	CMD_CALLBACK_DATA *ccd = allocate_ccd(id, cmd_text, cmd_class, cmd_level, cmd_type,
+			cmd_args, cmd_desc, cmd_ldesc, td->lib_entry);
 
 	/* insert ccd into the tree if it doesnt exist */
 	struct CMD_CALLBACK_DATA_ *retval = SPLAY_INSERT(cmd_tree, &mod_tld->tree_head, ccd);
@@ -156,12 +155,13 @@ RegisterCommand(char *cmd_text, char *cmd_class, int cmd_level,
  */
 static
 CMD_CALLBACK_DATA*
-allocate_ccd(char *cmd_name, char *cmd_class, int cmd_level,
+allocate_ccd(int id, char *cmd_name, char *cmd_class, int cmd_level,
     uint8_t cmd_type, char *cmd_args, char *cmd_desc,
-    char *cmd_ldesc, Command_cb func, void *lib_entry)
+    char *cmd_ldesc, LIB_ENTRY *lib_entry)
 {
 	CMD_CALLBACK_DATA *ccd = (CMD_CALLBACK_DATA*)malloc(sizeof(CMD_CALLBACK_DATA));
 
+	ccd->id = id;
 	strlcpy(ccd->cmd_name, cmd_name, 16);
 	strlcpy(ccd->cmd_class, cmd_class, 8);
 	ccd->cmd_level = cmd_level;
@@ -169,7 +169,6 @@ allocate_ccd(char *cmd_name, char *cmd_class, int cmd_level,
 	strlcpy(ccd->cmd_args, cmd_args ? cmd_args : "(No Arguments)", 32);
 	strlcpy(ccd->cmd_desc, cmd_desc ? cmd_desc : "", 128);
 	strlcpy(ccd->cmd_ldesc, cmd_ldesc ? cmd_ldesc : "None", 256);
-	ccd->func = func;
 	ccd->lib_entry = lib_entry;
 
 	return ccd;
@@ -294,6 +293,7 @@ handle_command(THREAD_DATA *td, PLAYER *p,
 			log_logcmd(td->bot_name, (*td->arena->name) ? td->arena->name : (char*)"No Arena", op_name, op_level, cmdstr);
 
 			CORE_DATA *cd = libman_get_core_data(td);
+			cd->cmd_id = ccd->id;
 			cd->cmd_name = op_name;
 			cd->cmd_type = cmd_type;
 			cd->cmd_argc = argc;
@@ -302,14 +302,13 @@ handle_command(THREAD_DATA *td, PLAYER *p,
 			cd->cmd_argr = argr;
 			cd->p1 = p;
 
-			libman_export_command(td, (LIB_ENTRY*)ccd->lib_entry, cd, ccd->func);
+			libman_export_event_lib(td, EVENT_COMMAND, cd, ccd->lib_entry);
 		} else {
 			char *type = "";
 			if (cmd_type == CMD_REMOTE) type = "remote";
-			if (cmd_type == CMD_PUBLIC) type = "public";
-			if (cmd_type == CMD_PRIVATE) type = "private";
-			RmtMessageFmt(op_name, 
-			    "This command is not available through %s messages.", type);
+			else if (cmd_type == CMD_PUBLIC) type = "public";
+			else if (cmd_type == CMD_PRIVATE) type = "private";
+			RmtMessageFmt(op_name, "This command is not available through %s messages.", type);
 		}
 	} else if (nmatches >= 2) {
 		RmtMessageFmt(op_name, "Matches: %s", matches);
@@ -317,8 +316,9 @@ handle_command(THREAD_DATA *td, PLAYER *p,
 		cmd_unknown = 1;
 	}
 	
-	if (cmd_unknown == 1 && cmd_type != CMD_PUBLIC && cmd_type != CMD_CHAT)
+	if (cmd_unknown == 1 && (cmd_type == CMD_REMOTE || cmd_type == CMD_PRIVATE)) {
 		RmtMessageFmt(op_name, "Unknown command, see \"!help\" for a command listing");
+	}
 }
 
 void

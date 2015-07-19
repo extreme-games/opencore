@@ -31,7 +31,7 @@
 #include "player.hpp"
 
 #include "lib.hpp"
-#include "opencore.hpp"
+#include "core.hpp"
 #include "util.hpp"
 
 /*
@@ -41,7 +41,7 @@
  * have not gone through EVENT_DEADSLOT.
  *
  * As such searching for a player by name may return a player who
- * isn't in the arena. PLAYER.in_arena will be set based on his
+ * isn't in the arena. PLAYER.here will be set based on his
  * presence.
  */
 
@@ -132,7 +132,7 @@ build_trees(THREAD_DATA *td)
 		n->p = p;
 		RB_INSERT(name_tree, &mod_tld->name_tree_head, n);
 
-		if (p->in_arena) {
+		if (p->here) {
 			n = (struct player_node*)malloc(sizeof(struct player_node));
 			n->p = p;
 			RB_INSERT(pid_tree, &mod_tld->pid_tree_head, n);
@@ -180,7 +180,7 @@ player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks)
 	for (int i = 0; i < mod_tld->phere; ++i) {
 		p = &mod_tld->parray[i];
 		
-		if (p->in_arena == 0 && ticks - p->leave_tick >= gone_ticks) {
+		if (p->here == 0 && ticks - p->leave_tick >= gone_ticks) {
 			/* event_deadslot */
 			CORE_DATA *cd = libman_get_core_data(td);
 			cd->p1 = p;
@@ -194,7 +194,7 @@ player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks)
 	for (int i = 0; i < mod_tld->phere; ++i) {
 		p = &mod_tld->parray[i];
 		
-		if (p->in_arena == 0 && ticks - p->leave_tick >= gone_ticks) {
+		if (p->here == 0 && ticks - p->leave_tick >= gone_ticks) {
 			/* player is being removed, do not copy his data */
 		} else {
 			/* copy pinfo and player pointer over to new location */
@@ -251,7 +251,7 @@ rebuild_player_lists(THREAD_DATA *td)
 	for (int i = 0; i < mod_tld->phere; ++i) {
 		PLAYER *p = &mod_tld->parray[i];
 
-		if (p->in_arena) {
+		if (p->here) {
 			player_ll_here_add(&td->arena->here_first, &td->arena->here_last, p);
 
 			if (p->ship == SHIP_NONE) {
@@ -308,7 +308,7 @@ player_player_entered(THREAD_DATA *td, char *name, char *squad, PLAYER_ID pid, F
 
 		++mod_tld->phere;
 		seen_before = false;
-	} else if (p->in_arena) {
+	} else if (p->here) {
 		return NULL;
 	}
 
@@ -323,7 +323,7 @@ player_player_entered(THREAD_DATA *td, char *name, char *squad, PLAYER_ID pid, F
 	p->ship = ship;
 	p->pid = pid;
 
-	p->in_arena = 1;
+	p->here = 1;
 	p->enter_tick = get_ticks_ms();
 
 	if (p->ship == SHIP_NONE) {
@@ -339,8 +339,8 @@ player_player_entered(THREAD_DATA *td, char *name, char *squad, PLAYER_ID pid, F
 	 * an arena you can tell the entry might be old because of his
 	 * absense).
 	 */
-	p->info->valid = 0;
-	p->einfo->valid = 0;
+	p->info_valid = 0;
+	p->einfo_valid = 0;
 		
 	/* initialize thread data if the bot is entering */	
 	if (strcasecmp(p->name, td->bot_name) == 0) {
@@ -454,7 +454,7 @@ player_player_left(THREAD_DATA *td, PLAYER_ID pid)
 		cd->old_ship = p->ship;
 		cd->p1 = p;
 
-		p->in_arena = 0;
+		p->here = 0;
 		p->leave_tick = get_ticks_ms();
 		p->pid = PID_NONE;
 		p->freq = FREQ_NONE;
@@ -494,7 +494,7 @@ player_simulate_player_leaves(THREAD_DATA *td)
 	PLAYER *p; 
 	for (int i = 0; i < mod_tld->phere; ++i) {
 		p = &mod_tld->parray[i];
-		if (p->in_arena)
+		if (p->here)
 			player_player_left(td, p->pid);
 	}   
 }
@@ -571,10 +571,10 @@ player_find_by_name(THREAD_DATA *td, const char *name, MATCH_TYPE match_type)
 		*pcache = res;
 
 		/* apply flags */
-		if ((match_type & MATCH_HERE) == 0 && res->in_arena) {
+		if ((match_type & MATCH_HERE) == 0 && res->here) {
 			res = NULL;
 		}
-		if ((match_type & MATCH_GONE) == 0 && res->in_arena == 0) {
+		if ((match_type & MATCH_GONE) == 0 && res->here == 0) {
 			res = NULL;
 		}
 	}

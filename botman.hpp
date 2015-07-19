@@ -24,7 +24,7 @@
 #ifndef _BOTMAN_HPP
 #define _BOTMAN_HPP
 
-#include "opencore.hpp"
+#include "core.hpp"
 
 #define BOTMAN_CHECKIN_INTERVAL		5000
 #define BOTMAN_STOPCHECK_INTERVAL	250

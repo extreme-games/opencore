@@ -5,7 +5,7 @@
 #ifndef _ENCRYPT_HPP
 #define _ENCRYPT_HPP
 
-#include "opencore.hpp"
+#include "core.hpp"
 
 void init_encryption(THREAD_DATA *td);
 

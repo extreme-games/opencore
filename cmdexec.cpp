@@ -36,8 +36,36 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "libopencore.hpp"
 #include "opencore.hpp"
+#include "core.hpp"
+
+#define OM_REPLY 0
+#define OM_PUB 1
+#define OM_ALERT 2
+
+static
+void
+output_line(int output_mode, char *fmt, ...)
+{
+	char buf[300];
+
+	va_list ap;
+	va_start(ap, fmt);
+
+	vsnprintf(buf, sizeof(buf)-1, fmt, ap);
+	buf[sizeof(buf)-1] = '\0';
+
+	if (output_mode == OM_PUB) {
+		PubMessageFmt("Shell: %s", buf);
+	} else if (output_mode == OM_ALERT) {
+		PubMessageFmt("?alert %s", buf);
+	} else if (output_mode == OM_REPLY) {
+		ReplyFmt("Shell: %s", buf);
+	}
+
+	va_end(ap);
+}
+
 
 void
 cmd_exec(CORE_DATA *cd)
@@ -62,20 +90,19 @@ cmd_exec(CORE_DATA *cd)
 		return;
 	}
 
-	int to_pub = 0;
+	int output_mode = OM_REPLY;
+	char *cmd = cd->cmd_argr[1];
 	if (strcmp(cd->cmd_argv[1], "-o") == 0 && cd->cmd_argc > 2) {
-		to_pub = 1;
+		output_mode = OM_PUB;
+		cmd = cd->cmd_argr[2];
+	} else if (strcmp(cd->cmd_argv[1], "-a") == 0 && cd->cmd_argc > 2) {
+		output_mode = OM_ALERT;
+		cmd = cd->cmd_argr[2];
 	}
-
-	int o = to_pub ? 1 : 0;
 
 	pid_t pid = fork();
 	if (pid == -1) {
-		if (to_pub) {
-			PubMessageFmt("Error forking");
-		} else {
-			Reply("Error forking");
-		}
+		output_line(output_mode, "Error forking");
 		return;
 	} else if (pid == 0) {
 		/* close unused portions of pipes */
@@ -110,10 +137,11 @@ cmd_exec(CORE_DATA *cd)
 		gethostname(host, 32);
 		host[31] = '\0';
 
-		printf("%s@%s > %s\n", cd->cmd_name, host, cd->cmd_argr[1 + o]);
+		printf("%s@%s > %s\n", cd->cmd_name, host, cmd);
 
-		execl(shell, shell, "-c", cd->cmd_argr[1 + o], NULL);
+		execl(shell, shell, "-c", cmd, NULL);
 
+		printf("%s@%s > %s\n", cd->cmd_name, host, cmd);
 #if 0
 		this is commented out due to having no way to get the temporary files name
 		to execute on the command line from the file descriptor (such as /bin/sh /tmp/tmpfile)
@@ -176,11 +204,7 @@ cmd_exec(CORE_DATA *cd)
 		bzero(&uts, sizeof(struct utsname));
 		uname(&uts);
 
-		if (to_pub) {
-			PubMessageFmt("Shell: %s@%s:%s > %s", cd->bot_name, uts.nodename, getenv("PWD"), cd->cmd_argr[1 + o]);
-		} else {
-			ReplyFmt("Shell: %s@%s:%s > %s", cd->bot_name, uts.nodename, getenv("PWD"), cd->cmd_argr[1 + o]);
-		}
+		output_line(output_mode, "%s@%s:%s > %s", cd->bot_name, uts.nodename, getenv("PWD"), cmd);
 
 		do {
 			r = read(cstdout[0], &buf[i], 1);
@@ -192,11 +216,7 @@ cmd_exec(CORE_DATA *cd)
 
 			if (buf[i] == '\n') {
 				buf[i] = '\0';
-				if (to_pub) {
-					PubMessageFmt("Shell: %s", buf);
-				} else {
-					ReplyFmt("Shell: %s", buf);
-				}
+				output_line(output_mode, "%s", buf);
 				i = 0;
 				++lines;
 			} else {
@@ -205,12 +225,10 @@ cmd_exec(CORE_DATA *cd)
 		} while (r == 1 && lines < 100);
 
 		if (lines == 100) {
-			if (to_pub) {
-				PubMessageFmt("[Output truncated at 100 lines]");
-			} else {
-				ReplyFmt("[Output truncated at 100 lines]");
-			}
-		} 
+			output_line(output_mode, "%s", "[Output truncated at 100 lines]");
+		} else {
+			output_line(output_mode, "%s@%s:%s > ", cd->bot_name, uts.nodename, getenv("PWD"));
+		}
 
 		close(cstdout[0]);
 		close(cstdin[1]);

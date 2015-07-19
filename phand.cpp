@@ -31,11 +31,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #include "phand.hpp"
 
-#include "opencore.hpp"
+#include "core.hpp"
 #include "cmd.hpp"
 #include "encrypt.hpp"
 #include "lib.hpp"
@@ -201,6 +201,36 @@ pkt_handle_core_0x06(THREAD_DATA *td, uint8_t *buf, int len)
 	if (len >= 10) {
 		extract_packet(buf, "AACC", NULL, NULL, NULL, NULL);
 		n->ticks->last_sync_received = get_ticks_ms();
+	}
+}
+
+void
+pkt_handle_core_0x07(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	if (len >= 2) {
+		Log(OP_MOD, "Received core disconnect from server");
+		disconnect_from_server(td);
+	}
+}
+
+void
+pkt_handle_core_0x08_0x09(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	THREAD_DATA::net_t::stream_t *s = td->net->stream;
+	if (len >= 2) {
+		int stream_sz = len - 2;
+		if (s->offset + stream_sz <= (int)sizeof(s->data)) {
+			memcpy(&s->data[s->offset], buf, stream_sz);
+			s->offset += stream_sz;
+		} else {
+			Log(OP_SMOD, "Ignoring stream too large and truncating content");
+		}
+
+		// 0x00 0x09 packet received, process the stream
+		if (buf[1] == 0x09) {
+			process_incoming_packet(td, s->data, s->offset);
+			s->offset = 0;
+		}
 	}
 }
 
@@ -384,16 +414,13 @@ pkt_handle_game_0x03(THREAD_DATA *td, uint8_t *buf, int len)
 		if ((p = player_player_entered(td, name, squad, pid, freq, ship)) != NULL) {
 			if (strcasecmp(name, td->bot_name) == 0)
 				PrivMessage(p, "*bandwidth 1000000");
-			if (td->enter->send_watch_damage)
-				PrivMessage(p, "*watchdamage");
-			if (td->enter->send_einfo) {
-				PrivMessage(p, "*einfo");
-			}
-			if (td->enter->send_info) {
-				PrivMessage(p, "*info");
-			}
-		} else
+			if (td->enter->send_watch_damage) PrivMessage(p, "*watchdamage");
+			if (td->enter->send_einfo) PrivMessage(p, "*einfo");
+			if (td->enter->send_info) PrivMessage(p, "*info");
+			
+		} else {
 			Log(OP_HSMOD, "Received enter event for non-existent player");
+		}
 
 		offset += 64;
 	}
@@ -472,10 +499,17 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 			/* file upload completed handler */
 			if (strncmp(raw_msg, "File received: ", strlen("File received: ")) == 0) {
 				THREAD_DATA::net_t::send_file_data_t *sfd = td->net->send_file_data;
-				if (strcasecmp(&raw_msg[strlen("File received: ")], sfd->cur_filename) == 0) {
+				/* TODO: this should probably happen when the ack for the final chunk packet is sent, instead of being triggered
+				 * by an arena message */
+				/* 15 char max:      	cycad> *putfile #abcdefghijk.lvl
+										Sending file: #abcdefghijk.lvl
+										File received: #abcdefghijk.lv
+				*/
+				if (strncasecmp(&raw_msg[strlen("File received: ")], sfd->cur_filename, 15) == 0) {
 					sfd->in_use = 0;
 
 					/* notify initiator */
+					LogFmt(OP_SMOD, "File uploaded: %s", sfd->cur_filename);
 					if (strlen(sfd->cur_initiator) > 0) {
 						RmtMessageFmt(sfd->cur_initiator, "File uploaded: %s", sfd->cur_filename);
 					}
@@ -498,15 +532,8 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 			if (parse_einfo(raw_msg, &einfo) == true) {
 				PLAYER *p = player_find_by_name(td, einfo.name, MATCH_HERE);
 				if (p) {
-					p->einfo->valid = 1;
-
-					p->einfo->userid = einfo.userid;
-
-					p->einfo->res->x = einfo.res->x;
-					p->einfo->res->y = einfo.res->y;
-
-					p->einfo->idle_ticks = (ticks_ms_t)einfo.idle_seconds * 1000;
-					p->einfo->timer_drift = einfo.timer_drift;
+					p->einfo_valid = 1;
+					*p->einfo = einfo;
 
 					CORE_DATA *cd = libman_get_core_data(td);
 					cd->p1 = p;
@@ -520,18 +547,8 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 					PLAYER *p = player_find_by_name(td, info->name, MATCH_HERE);
 					if (p) {
 						/* store info data */
-						p->info->valid = 1;
-
-						p->info->mid = info->mid;
-
-						p->info->ping->current = (ticks_ms_t)info->ping->current * 1000;
-						p->info->ping->low = (ticks_ms_t)info->ping->low * 1000;
-						p->info->ping->high = (ticks_ms_t)info->ping->high * 1000;
-						p->info->ping->average = (ticks_ms_t)info->ping->average * 1000;
-
-						p->info->ploss->s2c = info->ploss->s2c;
-						p->info->ploss->c2s = info->ploss->c2s;
-						p->info->ploss->s2c_wep = info->ploss->s2c_wep;
+						p->info_valid = 1;
+						*p->info = *info;
 
 						CORE_DATA *cd = libman_get_core_data(td);
 						cd->p1 = p;
@@ -562,11 +579,9 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 					/* event_command */
 					if (msg_type == MSG_PUBLIC ||
 					    msg_type == MSG_PUBLIC_MACRO) {
-						handle_command(td, p,
-						    p->name, CMD_PUBLIC, raw_msg);
+						handle_command(td, p, p->name, CMD_PUBLIC, raw_msg);
 					} else if (msg_type == MSG_PRIVATE) {
-						handle_command(td, p,
-						    p->name, CMD_PRIVATE, raw_msg);
+						handle_command(td, p, p->name, CMD_PRIVATE, raw_msg);
 					}
 				}
 			}
@@ -598,8 +613,7 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 					export_msg(td, msg_type, NULL, 0, rm.name, rm.msg);
 					if (rm.msg[0] == CMD_CHAR) {
 						/* event_command */
-						handle_command(td, NULL, rm.name,
-						    CMD_REMOTE, rm.msg);
+						handle_command(td, NULL, rm.name, CMD_REMOTE, rm.msg);
 					}	
 				}
 			}
@@ -646,38 +660,35 @@ pkt_handle_game_0x0A(THREAD_DATA *td, uint8_t *buf, int len)
 		if (td->net->state == NS_LOGGINGIN) {
 			uint8_t login_response;
 			uint32_t server_version;
-			extract_packet(buf, "AACCCCAACCCC", NULL,
+			uint8_t send_namereg;
+			extract_packet(buf, "AACCCCAACCCC",
+				NULL,
 			    &login_response,
 			    &server_version,
 			    NULL,
 			    NULL,
 			    NULL,
 			    NULL,
-			    NULL,
+			    &send_namereg,
 			    NULL,
 			    NULL,
 			    NULL,
 			    NULL
 			    );
 
-			switch(login_response) {
+			switch (login_response) {
+				case 0x01: /* unregistered name */
+					pkt_send_login(td->bot_name, td->login->password, g_machineid, 1, g_permissionid);
+					break;
 				case 0x00: /* login ok */
+					if (send_namereg) {
+						pkt_send_namereg(td->bot_name, td->bot_email);
+						LogFmt(OP_MOD, "Registering new name: %s", td->bot_name);
+					}
 				case 0x05: /* permission only */
 				case 0x06: /* spectate only */
 					Log(OP_MOD, "Logged in to server");
 					td->net->state = NS_CONNECTED;
-					break;
-				case 0x01: /* unknown user -- create one */
-					/* XXX: this requires the bot to submit registration information! */
-					Log(OP_MOD, "Unknown botname, names must be pre-registered");
-					StopBot("Unknown botname");
-					return;
-#if 0
-					Log(OP_HSMOD, "Unknown botname, registering name");
-					pkt_send_login(td->login->botname, td->login->password,
-					    td->host->machine_id, 1, td->host->permission_id);
-					pkt_send_sync_request();
-#endif
 					break;
 				default:
 					StopBotFmt("Unable to log in to server, " \
@@ -727,6 +738,8 @@ pkt_handle_game_0x19(THREAD_DATA *td, uint8_t *buf, int len)
 		/* make sure the file to be uploaded was intended to be sent... */
 		if (strcmp(filename, td->net->send_file_data->cur_filename) == 0) {
 			do_send_file(td);
+		} else {
+			LogFmt(OP_SMOD, "Ignoring file upload request from server (Expected:%s  Received:)", td->net->send_file_data->cur_filename, filename);
 		}
 	}
 }

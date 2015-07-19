@@ -26,7 +26,7 @@
 #ifndef _OPS_HPP
 #define _OPS_HPP
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 #define OP_FILE "ops.conf"
 

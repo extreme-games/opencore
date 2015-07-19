@@ -24,11 +24,7 @@
 #ifndef _LIB_HPP
 #define _LIB_HPP
 
-#include "lib.hpp"
-#include "opencore.hpp"
-
-/* opaque lib_entry type */
-typedef struct lib_entry LIB_ENTRY;
+#include "core.hpp"
 
 /*
  * Instance init/shutdown functions
@@ -57,11 +53,6 @@ void	libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd);
  * Export an event to a specific library specified by 'le'.
  */
 void	libman_export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le);
-
-/*
- * Export a command to a library.
- */
-void	libman_export_command(THREAD_DATA *td, LIB_ENTRY *le, CORE_DATA *cd, Command_cb func);
 
 /*
  * Load a library into the core.

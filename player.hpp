@@ -24,9 +24,9 @@
 #ifndef _PLAYER_HPP
 #define _PLAYER_HPP
 
-#include "opencore.hpp"
+#include "core.hpp"
 
-#include "libopencore.hpp"
+#include "opencore.hpp"
 
 void	player_instance_init(THREAD_DATA *td);
 void	player_instance_shutdown(THREAD_DATA *td);

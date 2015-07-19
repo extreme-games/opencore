@@ -1,5 +1,5 @@
 #
-# Coniguration for the master bot, rename to 'master.conf' after configuration.
+# Configuration for the master bot, rename to 'master.conf' after configuration.
 #
 
 # Server address and port
@@ -7,9 +7,9 @@ net.servername=192.168.0.30
 net.serverport=4444
 
 # Various login-related information
-# THIS NAME MUST HAVE ALREADY BEEN REGISTERED
 login.username=OpenCore
 login.password=opencore*sysop
+login.email=none@none.none
 #login.autorun=?obscene
 login.chats=your,chats,here
 

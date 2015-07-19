@@ -24,9 +24,9 @@
 #ifndef _CMD_HPP
 #define _CMD_HPP
 
-#include "libopencore.hpp"
-
 #include "opencore.hpp"
+
+#include "core.hpp"
 
 /*
  * Called for each command.

@@ -25,9 +25,9 @@
 
 #include "msg.hpp"
 
-#include "libopencore.hpp"
-
 #include "opencore.hpp"
+
+#include "core.hpp"
 #include "lib.hpp"
 #include "log.hpp"
 #include "psend.hpp"
@@ -154,7 +154,7 @@ RmtMessage(const char *name, const char *msg)
 {
 	THREAD_DATA *td = get_thread_data();
 	PLAYER *p = player_find_by_name(td, name, MATCH_HERE | MATCH_GONE);
-	if (p != NULL && p->in_arena) {
+	if (p != NULL && p->here) {
 		PrivMessage(p, msg);
 	} else {
 		rmt_message(td, name, msg);

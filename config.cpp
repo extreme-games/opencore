@@ -27,13 +27,13 @@
 #include <stdlib.h>
 
 #include "util.hpp" /* for get_line() */
+#include "core.hpp"
+#include "config.hpp"
 
-int get_config_int(char *key, int default_value, char *filename);
-void get_config_string(char *key, char *result, int max_len, char *default_value, char *filename);
-
+/* FIXME: refactor config_Xxx functions to share the same parsing code */
 /* FIXME: cache files, reopening a file each time is inefficient */
 int
-get_config_int(char *key, int default_value, char *filename) 
+config_get_int(char *key, int default_value, char *filename) 
 {
 	/* this is the default value to return */
 	int result = default_value;
@@ -69,7 +69,7 @@ get_config_int(char *key, int default_value, char *filename)
 
 /* FIXME: cache files, reopening a file each time is inefficient */
 void
-get_config_string(char *key, char *dest,
+config_get_string(char *key, char *dest,
 		int max_len, char *default_value, char *filename)
 {
 	/* this is the default value to return */
@@ -107,7 +107,44 @@ get_config_string(char *key, char *dest,
 	strlcpy(dest, result, max_len);
 }
 
+
+bool
+config_key_exists(char *key, char *filename) 
+{
+	/* this is the default value to return */
+	bool result = false;
+
+	/* open the file */
+	FILE *f = fopen(filename, "rb");
+	if (f) {
+		/* continually read lines until our the key is found */
+		char line[512];
+		while (get_line(f, line, 512) != EOF) {
+			/* if the beginning of the line is the key */
+			if (strncasecmp(line, key, strlen(key)) == 0) {
+				int offset = strlen(key);
+				/* skip any trailing whitespace in the key */
+				while (isspace(line[offset+1]))
+					++offset;
+
+				/* if the line has an = char, then it is the key */ 
+				if (line[offset] == '=') {
+					result = true;
+					break;
+				}
+			}
+		}
+
+		/* close the open file descriptor */
+		fclose(f);
+	}
+
+	return result;
+}
+
 /* gets a line from the file, returns the last character read */
+#if 0
+static
 int
 get_config_line(FILE *f, char *buf, int size)
 { 
@@ -125,6 +162,35 @@ get_config_line(FILE *f, char *buf, int size)
 
 	return c;
 }
+#endif
+
+
+int
+GetConfigInt(char *key, int default_value)
+{
+	THREAD_DATA *td = get_thread_data();
+
+	return config_get_int(key, default_value, td->config->filename);
+}
+
+
+void
+GetConfigString(char *key, char *dest, int dst_sz, char *default_value)
+{
+	THREAD_DATA *td = get_thread_data();
+
+	config_get_string(key, dest, dst_sz, default_value, td->config->filename);
+}
+
+
+bool
+ConfigKeyExists(char *key)
+{
+	THREAD_DATA *td = get_thread_data();
+
+	return config_key_exists(key, td->config->filename);
+}
+
 
 /* EOF */
 
