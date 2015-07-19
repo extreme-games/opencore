@@ -14,13 +14,10 @@ LIBS = -lpthread
 
 DFLAGS = -g
 
-SOURCEFILES = basicbot.cpp features.cpp rabbit.cpp chat.cpp query.cpp greet.cpp
+SOURCEFILES = features.cpp rabbit.cpp chat.cpp bank.cpp query.cpp greet.cpp idle.cpp github.cpp
 
 default:
-	make basicbot.so features.so rabbit.so chat.so query.so greet.so
-
-basicbot.so: $(SOURCEFILES)
-	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) basicbot.cpp $(LIBS)
+	make features.so rabbit.so chat.so bank.so query.so greet.so idle.so github.so
 
 features.so: $(SOURCEFILES)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) features.cpp $(LIBS)
@@ -28,8 +25,17 @@ features.so: $(SOURCEFILES)
 query.so: $(SOURCEFILES)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) query.cpp $(LIBS)
 
+github.so: $(SOURCEFILES)
+	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) github.cpp $(LIBS)
+
+bank.so: $(SOURCEFILES)
+	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) bank.cpp $(LIBS)
+
 greet.so: $(SOURCEFILES)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) greet.cpp $(LIBS)
+
+idle.so: $(SOURCEFILES)
+	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) idle.cpp $(LIBS)
 
 rabbit.so: $(SOURCEFILES)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) rabbit.cpp $(LIBS)
@@ -38,5 +44,5 @@ chat.so: $(SOURCEFILES)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) chat.cpp -lncurses $(LIBS)
 
 clean:
-	rm -fr *.o *.do basicbot.so features.so rabbit.so chat.so query.so greet.so
+	rm -fr *.o *.do features.so rabbit.so chat.so bank.so query.so greet.so idle.so github.so
 

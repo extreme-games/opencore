@@ -33,8 +33,7 @@
 #include <unistd.h>
 #include <poll.h>
 
-#include "core.hpp"
-
+#include "opencore.hpp"
 #include "parsers.hpp"
 #include "pkt.hpp"
 
@@ -66,6 +65,10 @@ enum NS_TYPE {
 
 #define CMD_CHAR	('!')	/* commands sent to the bot must begin with this */
 
+#define CORE_NAME "core"	/* the name used internally by the core */
+
+typedef struct lib_entry LIB_ENTRY; /* forward declaration for lib module opaque type */
+
 /*
  * Used by each bot to hold its bot-specific data.  This struct contains many other
  * structures. Their descriptions can be found by their declarations.
@@ -75,7 +78,7 @@ struct THREAD_DATA_
 {
 	int		 running;	/* if this is less than 0, the bot will exit */
 
-	void		*lib_entry;	/*
+	LIB_ENTRY	*lib_entry;	/*
 					 * The current library that controls execution,
 					 * NULL if execution is controlled by the core 
 					 */
@@ -375,5 +378,6 @@ void	do_send_file(THREAD_DATA *td);
 
 /* change arena */
 void	go(THREAD_DATA *td, SHIP ship, char *arena);
+
 #endif
 

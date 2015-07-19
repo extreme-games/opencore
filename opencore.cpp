@@ -46,6 +46,8 @@
 
 #include <list>		/* for std::list */
 
+#include <Python.h>
+
 #include "opencore.hpp" /* opencore */
 
 #include "bsd/queue.h"	/* for queue/list definitions */
@@ -66,6 +68,8 @@
 #include "phand.hpp"	/* packet handlers */
 #include "psend.hpp"	/* packet senders */
 #include "util.hpp"	/* delim_args */
+
+#include "opencore_swig.hpp"
 
 #define STEP_INTERVAL 100	/* main loop runs every x ms, same with EVENT_TICK */
 #define RELIABLE_RETRANSMIT_INTERVAL	1000
@@ -92,7 +96,6 @@ static void	send_outgoing_packets(THREAD_DATA *td);
 static void	mainloop(THREAD_DATA *td);
 static void	write_packet(THREAD_DATA *td, uint8_t *pkt, int pktl);
 static uint32_t	gen_valid_mid(uint32_t d);
-static void	register_commands(THREAD_DATA *td);
 
 /* global data */
 pthread_key_t	g_tls_key;	/* the global tls data key */
@@ -141,6 +144,13 @@ gen_valid_mid(uint32_t d)
 int
 main(int argc, char *argv[])
 {
+	Py_Initialize();
+	init_opencore();
+	PyObject *sysPath = PySys_GetObject("path");
+	PyObject *libDir = PyString_FromString(".");
+	PyList_Append(sysPath, libDir);
+	Py_DECREF(libDir);
+
 	if (pthread_key_create(&g_tls_key, NULL) != 0) {
 		Log(OP_SMOD, "Error creating thread-specific storage");
 		exit(-1);
@@ -213,6 +223,8 @@ main(int argc, char *argv[])
 	log_shutdown();
 
 	pthread_key_delete(g_tls_key);
+
+	Py_Finalize();
 
 	return 0;
 }
@@ -626,151 +638,97 @@ cmd_go(CORE_DATA *cd)
 	Go(cd->cmd_argv[1]);
 }
 
-#define CORE_NAME "core"
+#define CMD_NONE 0
+#define CMD_DIE 1
+#define CMD_STOPBOT 2
+#define CMD_GETFILE 3
+#define CMD_PUTFILE 4
+#define CMD_LISTBOTS 5
+#define CMD_TYPES 6
+#define CMD_LOADTYPES 7
+#define CMD_LOG 8
+#define CMD_CMDLOG 9
+#define CMD_ABOUT 10
+#define CMD_INSLIB 11
+#define CMD_RMLIB 12
+#define CMD_HELP 13
+#define CMD_SYSINFO 14
+#define CMD_LOADOPS 15
+#define CMD_LISTOPS 16
+#define CMD_EXEC 17
+#define CMD_STARTBOT 18
+#define CMD_GO 19
+
+
 static
 void
-register_commands(THREAD_DATA *td)
+register_commands()
 {
-	if (strcmp(td->bot_type, "master") == 0) {
-		RegisterCommand("!die", CORE_NAME, 9,
-		    CMD_PRIVATE | CMD_REMOTE,
-		    NULL,
-		    "Shut down the bot core",
-		    "This shuts down the bot core and all running bots.",
-		    cmd_die);
+	bool is_master = strcmp(get_thread_data()->bot_type, "master") == 0;
+
+	if (is_master) {
+		RegisterCommand(CMD_DIE, "!die", CORE_NAME, 9, CMD_PRIVATE | CMD_REMOTE, NULL, "Shut down the bot core", "This shuts down the bot core and all running bots.");
+		RegisterCommand(CMD_STARTBOT, "!startbot", CORE_NAME, 2, CMD_PRIVATE | CMD_REMOTE, "<type> <arena>", "Start a bot", "Start a bot of <type> into <arena>");
+		RegisterCommand(CMD_GETFILE, "!getfile", CORE_NAME, 7, CMD_PRIVATE | CMD_REMOTE, "<filename>", "Force the bot to download <filename>", "Force the bot to download <filename>");
+		RegisterCommand(CMD_PUTFILE, "!putfile", CORE_NAME, 7, CMD_PRIVATE | CMD_REMOTE, "<filename>", "Force the bot to upload <filename>", "Force the bot to upload <filename>");
+		RegisterCommand(CMD_LISTBOTS, "!listbots", CORE_NAME, 2, CMD_PRIVATE | CMD_REMOTE, NULL, "List the running bots", "List the running bots");
+		RegisterCommand(CMD_TYPES, "!types", CORE_NAME, 1, CMD_PRIVATE | CMD_REMOTE, NULL, "List types of bots tha can be started", "List types of bots tha can be started");
+		RegisterCommand(CMD_LOADTYPES, "!loadtypes", CORE_NAME, OP_HSMOD, CMD_PRIVATE | CMD_REMOTE, NULL, "Load the bot types file", "Load the bot types file");
+		RegisterCommand(CMD_SYSINFO, "!sysinfo", CORE_NAME, 2, CMD_PRIVATE | CMD_REMOTE, NULL, "Show system information", "Show system information, including load averages. Load averages are the average number of processes in the system process queue over the last 1, 5, and 15 minutes.");
+		RegisterCommand(CMD_LOADOPS, "!loadops", CORE_NAME, 5, CMD_PRIVATE | CMD_REMOTE, NULL, "Load op file", "Reload the op file. This affects all bots.");
+		RegisterCommand(CMD_EXEC, "!exec", CORE_NAME, 9, CMD_PRIVATE | CMD_REMOTE, NULL, "Execute a shell command", "Execute a shell command and spew the output");
 	} else {
-		RegisterCommand("!stopbot", CORE_NAME, 2,
-		    CMD_PRIVATE | CMD_REMOTE,
-		    NULL,
-		    "Stops this bot",
-		    "Stops this bot",
-		    cmd_stopbot);
+		RegisterCommand(CMD_STOPBOT, "!stopbot", CORE_NAME, 2, CMD_PRIVATE | CMD_REMOTE, NULL, "Stops this bot", "Stops this bot");
+		RegisterCommand(CMD_GO, "!go", CORE_NAME, 7, CMD_PRIVATE | CMD_REMOTE, "<arena>", "Change the bot's arena", "Change the bot's arena");
 	}
 
-	RegisterCommand("!startbot", CORE_NAME, 2,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "<type> <arena>",
-	    "Start a bot",
-	    "Start a bot of <type> into <arena>",
-	    cmd_startbot);
-
-	RegisterCommand("!go", CORE_NAME, 2,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "<arena>",
-	    "Change the bot's arena",
-	    "Change the bot's arena",
-	    cmd_go);
-
-	RegisterCommand("!getfile", CORE_NAME, 7,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "<filename>",
-	    "Force the bot to download <filename>",
-	    "Force the bot to download <filename>",
-	    cmd_getfile);
-
-	RegisterCommand("!putfile", CORE_NAME, 7,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "<filename>",
-	    "Force the bot to upload <filename>",
-	    "Force the bot to upload <filename>",
-	    cmd_putfile);
-	
-	RegisterCommand("!listbots", CORE_NAME, 2,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "List the running bots",
-	    "List the running bots",
-	    cmd_listbots);
-
-	RegisterCommand("!types", CORE_NAME, 1,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "List types of bots tha can be started",
-	    "List types of bots tha can be started",
-	    cmd_types);
-
-	RegisterCommand("!loadtypes", CORE_NAME, OP_HSMOD,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Load the bot types file",
-	    "Load the bot types file",
-	    cmd_loadtypes);
-
-	RegisterCommand("!log", CORE_NAME, 2,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Show the bot's log",
-	    "Show the bot's log",
-	    cmd_log);
-
-	RegisterCommand("!cmdlog", CORE_NAME, 2,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Show the bot's command log",
-	    "Show the bot's command log",
-	    cmd_cmdlog);
-
-	RegisterCommand("!about", CORE_NAME, 0,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Show core and library information",
-	    "Shows information about the core and libraries.",
-	    cmd_about);
-
-	RegisterCommand("!inslib", CORE_NAME, 9,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "<lib name>",
-	    "Load a module into the bot",
-	    "Load a module into the bot",
-	    cmd_inslib);
-
-	RegisterCommand("!rmlib", CORE_NAME, 9,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "<lib name>",
-	    "Unload a library from the bot",
-	    "Unload a library from the bot",
-	    cmd_rmlib);
-
-	RegisterCommand("!help", CORE_NAME, 0,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    "[class | command]",
-	    "Show available commands",
-	    "This displays all commands. If a class is specified, all "			\
-	    "commands in that class are shown. If a command is specified, "		\
-	    "its usage and long description are shown.",
-	    cmd_help);
-
-	RegisterCommand("!sysinfo", CORE_NAME, 0,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Show system information",
-	    "Show system information, including load averages. Load averages "		\
-	    "are the average number of processes in the system process queue "		\
-	    "over the last 1, 5, and 15 minutes.",
-	    cmd_sysinfo);
-
-	RegisterCommand("!loadops", CORE_NAME, 5,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Load op file",
-	    "Reload the op file. This affects all bots.",
-	    cmd_loadops);
-
-	RegisterCommand("!listops", CORE_NAME, 1,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "List bot ops",
-	    "List bot ops at or below your access level",
-	    cmd_listops);
-
-	RegisterCommand("!exec", CORE_NAME, 9,
-	    CMD_PRIVATE | CMD_REMOTE,
-	    NULL,
-	    "Execute a shell command",
-	    "Execute a shell command and spew the output",
-	    cmd_exec);
-
+	RegisterCommand(CMD_LOG, "!log", CORE_NAME, 2, CMD_PRIVATE | CMD_REMOTE, NULL, "Show the bot's log", "Show the bot's log");
+	RegisterCommand(CMD_CMDLOG, "!cmdlog", CORE_NAME, 2, CMD_PRIVATE | CMD_REMOTE, NULL, "Show the bot's command log", "Show the bot's command log");
+	RegisterCommand(CMD_ABOUT, "!about", CORE_NAME, 0, CMD_PRIVATE | CMD_REMOTE, NULL, "Show core and library information", "Shows information about the core and libraries.");
+	RegisterCommand(CMD_INSLIB, "!inslib", CORE_NAME, 9, CMD_PRIVATE | CMD_REMOTE, "<lib name>", "Load a module into the bot", "Load a module into the bot");
+	RegisterCommand(CMD_RMLIB, "!rmlib", CORE_NAME, 9, CMD_PRIVATE | CMD_REMOTE, "<lib name>", "Unload a library from the bot", "Unload a library from the bot");
+	RegisterCommand(CMD_HELP, "!help", CORE_NAME, 0, CMD_PRIVATE | CMD_REMOTE, "[class | command]", "Show available commands", "This displays all commands. If a class is specified, all commands in that class are shown. If a command is specified, its usage and long description are shown.");
+	RegisterCommand(CMD_LISTOPS, "!listops", CORE_NAME, 1, CMD_PRIVATE | CMD_REMOTE, NULL, "List bot ops", "List bot ops at or below your access level");
 }
+
+
+void
+GameEvent(CORE_DATA *cd)
+{
+	switch (cd->event) {
+	case EVENT_START:
+		RegisterPlugin(CORE_VERSION, CORE_NAME, "cycad", CORE_VERSION, __DATE__, __TIME__, "core handler", 0);
+		register_commands();
+		break;
+	case EVENT_COMMAND:
+		switch (cd->cmd_id) {
+		case CMD_DIE: cmd_die(cd); break;
+		case CMD_STOPBOT: cmd_stopbot(cd); break;
+		case CMD_GETFILE: cmd_getfile(cd); break;
+		case CMD_PUTFILE: cmd_putfile(cd); break;
+		case CMD_LISTBOTS: cmd_listbots(cd); break;
+		case CMD_TYPES: cmd_types(cd); break;
+		case CMD_LOADTYPES: cmd_loadtypes(cd); break;
+		case CMD_LOG: cmd_log(cd); break;
+		case CMD_CMDLOG: cmd_cmdlog(cd); break;
+		case CMD_ABOUT: cmd_about(cd); break;
+		case CMD_INSLIB: cmd_inslib(cd); break;
+		case CMD_RMLIB: cmd_rmlib(cd); break;
+		case CMD_HELP: cmd_help(cd); break;
+		case CMD_SYSINFO: cmd_sysinfo(cd); break;
+		case CMD_LOADOPS: cmd_loadops(cd); break;
+		case CMD_LISTOPS: cmd_listops(cd); break;
+		case CMD_EXEC: cmd_exec(cd); break;
+		case CMD_STARTBOT: cmd_startbot(cd); break;
+		case CMD_GO: cmd_go(cd); break;
+		default: break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 
 /*
  * Each bot's entry point. 'arg' must be a dynamically allocated THREAD_ARG
@@ -791,7 +749,8 @@ BotEntryPoint(void *arg)
 	player_instance_init(td);
 	libman_instance_init(td);
 
-	register_commands(td);
+	/* load the core pseudo-plugin */
+	libman_load_library(td, NULL);
 
 	/* load the bots libraries */
 	int num_plugins = DelimCount(td->libstring, ' ') + 1;

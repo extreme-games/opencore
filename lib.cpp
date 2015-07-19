@@ -29,6 +29,7 @@
 #include <stdarg.h>
 
 #include "bsd/queue.h"
+#include <Python.h>
 
 #include "lib.hpp"
 
@@ -40,6 +41,7 @@
 #include "player.hpp"
 #include "util.hpp"
 
+#include "opencore_swig.hpp"
 
 typedef struct timer_entry TIMER_ENTRY;
 struct timer_entry 
@@ -57,11 +59,16 @@ struct timer_entry
 
 LIST_HEAD(timer_head, timer_entry);
 
+#define TYPE_UNKNOWN 0
+#define TYPE_NATIVE 1
+#define TYPE_PYTHON 2
+
 struct lib_entry
 {
 	LIST_ENTRY(lib_entry) entry;
 
-	void	 *handle;		/* handle to the library from dlopen() */
+	int       registered;		/* true once the library successfully calls RegisterPlugin() */
+
 	char	  libname[64];		/* library name */
 
 					/* these are filled in by register_library() */
@@ -80,7 +87,18 @@ struct lib_entry
 	timer_head	timer_list_head;	/* list of library-owned timers */
 	int		timer_id;		/* the next timer id to be used */
 
-	GameEvent_cb GameEvent;		/* entry point to the dll */
+	int	  type;			/* TYPE_NATIVE, TYPE_PYTHON */
+	union {
+		struct {
+			GameEvent_cb	 GameEvent;		/* entry point to the dll */
+			void	 	*handle;		/* handle to the library from dlopen(), may be NULL if in the core */
+		} native_data[1];
+
+		struct {
+			PyObject *pModule;
+			PyObject *pGameEvent;	/* python callback */
+		} python_data[1];
+	};
 }; 
 
 LIST_HEAD(lib_head, lib_entry);
@@ -160,50 +178,82 @@ try_set_pinfo(CORE_DATA *cd, LIB_ENTRY *le) {
 	}
 }
 
-void
-libman_export_command(THREAD_DATA *td, LIB_ENTRY *le, CORE_DATA *cd, Command_cb func)
-{
-	td2cd(cd, td);
 
-	/* the core has commands so le is not always valid, this should be changed */
-	if (le) {
-		le2cd(cd, le);
-		try_set_pinfo(cd, le);
+void
+RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t pinfo_size)
+{
+	THREAD_DATA *td = get_thread_data();
+	LIB_ENTRY *le = td->lib_entry;
+
+	if (le->registered) StopBot("Bot attempted to register twice");
+	if (strcmp(CORE_VERSION, oc_version) != 0) {
+		LogFmt(OP_SMOD, "%s: Core version mismatch, core is %s, library is %s", le->libname, CORE_VERSION, version);
+		return;
 	}
 
-	cd->event = EVENT_COMMAND;
-
-	td->lib_entry = le;
-	func(cd);
-	td->lib_entry = NULL;
-
-	if (le)
-		cd2le(le, cd);
+	strlcpy(le->intname, plugin_name, 16);
+	strlcpy(le->author, author, 16);
+	strlcpy(le->version, version, 8);
+	strlcpy(le->date, date, 24);
+	strlcpy(le->time, time, 24);
+	strlcpy(le->description, description, 24);
+	le->pinfo_size = pinfo_size;
+	le->registered = 1;
 }
 
-void
-libman_export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le)
-{
-	if (cd == NULL)
-		cd = libman_get_core_data(td);
 
-	td2cd(cd, td);
+static
+void
+export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le, bool set_thread_data)
+{
+	// NOTE: this is special cased to only export start events to unregistered cores
+	if (!le->registered && event != EVENT_START) return;
+
+	if (cd == NULL) cd = libman_get_core_data(td);
+
+	if (set_thread_data) td2cd(cd, td);
 	le2cd(cd, le);
 	try_set_pinfo(cd, le);
 
 	cd->event = event;
 
 	td->lib_entry = le;
-	le->GameEvent(cd);
+
+	if (le->type == TYPE_NATIVE) {
+		le->native_data->GameEvent(cd);
+	} else if (le->type == TYPE_PYTHON) {
+		PyObject *pArgs = PyTuple_New(1);
+		if (pArgs) {
+			PyObject *pArg = wrap_old_core_data(cd);
+			if (pArg) {
+				PyTuple_SetItem(pArgs, 0, pArg);
+				PyObject *pResult = PyObject_CallObject(le->python_data->pGameEvent, pArgs);
+				if (pResult) Py_DECREF(pResult);
+			} else { // couldnt make argument
+				LogFmt(OP_MOD, "%s: Unable to make argument for event call", le->libname);
+				PyErr_Print();
+			}
+			Py_DECREF(pArgs);
+		} else { // couldnt create tuple for arguments
+			LogFmt(OP_MOD, "%s: Unable to make tuple for argument", le->libname);
+			PyErr_Print();
+		}
+	} else {
+		assert(0);
+	}
 	td->lib_entry = NULL;
 
 	cd2le(le, cd);
 }
 
-/*
- * This does not call export_event_lib to prevent unnecessary calls
- * to td2cd.
- */
+
+void
+libman_export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le)
+{
+	export_event_lib(td, event, cd, le, true);
+}
+
+
 void
 libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd)
 {
@@ -212,22 +262,12 @@ libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd)
 	if (cd == NULL)
 		cd = libman_get_core_data(td);
 
-	/* set thread-specific data into core_data */
+	/* set thread-specific data into core_data once */
 	td2cd(cd, td);
-
-	cd->event = event;
 
 	LIB_ENTRY *le;
 	LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
-		/* set lib-specific data into core_data */
-		le2cd(cd, le);
-		try_set_pinfo(cd, le);
-
-		td->lib_entry = le;
-		le->GameEvent(cd);
-		td->lib_entry = NULL;
-
-		cd2le(le, cd);
+		export_event_lib(td, event, cd, le, false);
 	}
 }
 
@@ -265,6 +305,7 @@ libman_realloc_pinfo_array(THREAD_DATA *td, int new_count)
 	mod_tld->pinfo_nslots = new_count;
 }
 
+
 void
 libman_move_pinfo_entry(THREAD_DATA *td, int dest_index, int source_index)
 {
@@ -280,78 +321,126 @@ libman_move_pinfo_entry(THREAD_DATA *td, int dest_index, int source_index)
         }
 }
 
-/* this could probably be made prettier */
+
 void
 libman_load_library(THREAD_DATA *td, char *libname)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
 	LIB_ENTRY *le;
-	char filename[64];
-	strlcpy(filename, libname, 64);
-	strlcat(filename, ".so", 64);
+	bool core_load = libname == NULL;
+	if (!libname) libname = CORE_NAME;
 
-	void *handle = dlopen(filename, RTLD_NOW);
-	if (handle) {
-		LIB_DATA *ld = (LIB_DATA*)dlsym(handle, "REGISTRATION_INFO");
+	le = (LIB_ENTRY*)xzmalloc(sizeof(LIB_ENTRY));
+	strlcpy(le->libname, libname, 64);
+	LIST_INIT(&le->timer_list_head);
+	le->type = TYPE_UNKNOWN;
 
-		if (ld == NULL) {
-			LogFmt(OP_SMOD, "%s: Registration info not found", libname);
-			dlclose(handle);
-		} else if (strcmp(CORE_VERSION, ld->oc_version) != 0) {
-			LogFmt(OP_SMOD, "%s: Core version mismatch, library is %s", libname, ld->oc_version);
-			dlclose(handle);
+	// try to load as native
+	void *handle = NULL;
+	if (!core_load) {
+		char filename[64] = { 0 };
+		snprintf(filename, sizeof(filename)-1, "%s.so", libname);
+		handle = dlopen(filename, RTLD_NOW);
+	}
+	if (handle || core_load) {
+		GameEvent_cb sym = core_load ? GameEvent : (GameEvent_cb)dlsym(handle, "GameEvent");
+		if (sym) {
+			le->type = TYPE_NATIVE;
+			le->native_data->GameEvent = sym;
+			le->native_data->handle = handle;
 		} else {
-			le = (LIB_ENTRY*)xzmalloc(sizeof(LIB_ENTRY));
+			if (handle) dlclose(handle);
+		}
+	}
 
-			le->handle = handle;
+	if (core_load && le->type != TYPE_NATIVE) {
+		// the core can only be native, fail
+		Log(OP_MOD, "Unable to load core");
+		free(le);
+		return;
+	}
 
-			le->GameEvent = ld->cb;
+	if (le->type == TYPE_UNKNOWN) { // still unloaded, try to load as python
+		PyObject *pName = PyString_FromString(libname);
+		PyObject *pModule = PyImport_Import(pName);
+		Py_DECREF(pName);
 
-			strlcpy(le->libname, libname, 64);
+		if (pModule) {
+			PyObject *pGameEvent = PyObject_GetAttrString(pModule, "GameEvent");
 
-			le->pinfo_size = ld->pinfo_size;
-
-			strlcpy(le->intname, ld->name, 16);
-			strlcpy(le->author, ld->author, 16);
-			strlcpy(le->version, ld->version, 8);
-			strlcpy(le->date, ld->date, 24);
-			strlcpy(le->time, ld->time, 24);
-			strlcpy(le->description, ld->description, 64);
-
-			LIST_INIT(&le->timer_list_head);
-
-			/* event_start */
-			libman_export_event_lib(td, EVENT_START, NULL, le);
-
-			/* setup pinfo */
-			int nslots = mod_tld->pinfo_nslots;
-			le->pinfo_base = (void**)calloc(nslots, sizeof(void*));
-			for (int i = 0; i < nslots; ++i)
-				le->pinfo_base[i] = malloc(le->pinfo_size);
-
-			/* setup parray */
-			PLAYER *parray = player_get_parray(td);
-			int phere = player_get_phere(td);
-			PLAYER *p;
-			/* if players are here (module was loaded while core
-			   was connected, export events for them */
-			for (int i = 0; i < phere; ++i) {
-				p = &parray[i];
-				CORE_DATA *cd = libman_get_core_data(td);
-
-				cd->p1 = p;
-				libman_export_event_lib(td, EVENT_FIRSTSEEN, cd, le);
-				libman_export_event_lib(td, EVENT_ENTER, cd, le);
+			if (pGameEvent) {
+				if (PyCallable_Check(pGameEvent)) {
+					le->type = TYPE_PYTHON;
+					le->python_data->pGameEvent = pGameEvent;
+					le->python_data->pModule = pModule;
+				} else {
+					Py_XDECREF(pGameEvent);
+					LogFmt(OP_MOD, "%s: GameEvent() is not callable", libname);
+				}
+			} else {
+				// function find failure
+				PyErr_Print();
+				
+				Log(OP_MOD, "Couldn't find python function");
 			}
 
-			LogFmt(OP_MOD, "%s: Loaded successfully", libname);
-			LIST_INSERT_HEAD(&mod_tld->lib_list_head, le, entry);
+			// loading failed, dont keep reference to module
+			if (le->type != TYPE_PYTHON) {
+				Py_DECREF(pModule);
+			}
+		} else {
+			// error loading module
+			PyErr_Print();
+			LogFmt(OP_MOD, "Unable to load module: %s", libname);
 		}
-	} else {
-		LogFmt(OP_MOD, "%s: Error loading file: %s", libname, dlerror());
 	}
+
+	/* module failed to load, axe it */
+	if (le->type == TYPE_UNKNOWN) {
+		LogFmt(OP_MOD, "%s: Failed to load", libname);
+		free(le);
+		return;
+	}
+
+	/* event_start */
+	bool unload = false;
+	libman_export_event_lib(td, EVENT_START, NULL, le);
+	if (le->registered) {
+		LogFmt(OP_MOD, "%s: Loaded successfully (%s)", le->libname, le->type == TYPE_NATIVE ? "Native" : le->type == TYPE_PYTHON ? "Python" : "Unknown");
+	} else {
+		/* plugin failed to register */
+		LogFmt(OP_MOD, "%s: Failed to register", le->libname);
+		unload = true;
+	}
+
+	/* setup pinfo */
+	int nslots = mod_tld->pinfo_nslots;
+	le->pinfo_base = (void**)calloc(nslots, sizeof(void*));
+	for (int i = 0; i < nslots; ++i) {
+		le->pinfo_base[i] = malloc(le->pinfo_size);
+	}
+
+	/* setup parray */
+	PLAYER *parray = player_get_parray(td);
+	int phere = player_get_phere(td);
+	PLAYER *p;
+	/* if players are here (module was loaded while core
+	   was connected, export events for them */
+	for (int i = 0; i < phere; ++i) {
+		p = &parray[i];
+		CORE_DATA *cd = libman_get_core_data(td);
+
+		cd->p1 = p;
+		libman_export_event_lib(td, EVENT_FIRSTSEEN, cd, le);
+		libman_export_event_lib(td, EVENT_ENTER, cd, le);
+	}
+
+	LIST_INSERT_HEAD(&mod_tld->lib_list_head, le, entry);
+
+	if (unload) unload_library(td, libname);
 }
+
 
 void
 KillTimer(long timer_id)
@@ -373,7 +462,7 @@ long
 SetTimer(ticks_ms_t duration, void *data1, void *data2)
 {
 	THREAD_DATA *td = get_thread_data();
-	LIB_ENTRY *le = (LIB_ENTRY*)td->lib_entry;
+	LIB_ENTRY *le = td->lib_entry;
 
 	TIMER_ENTRY *te = (TIMER_ENTRY*)malloc(sizeof(TIMER_ENTRY));
 
@@ -473,12 +562,19 @@ cmd_rmlib(CORE_DATA *cd)
 	THREAD_DATA *td = (THREAD_DATA*)get_thread_data();
 
 	if (cd->cmd_argc == 2) {
-		if (unload_library(td, cd->cmd_argv[1]) == 0)
-			RmtMessage(cd->cmd_name, "Library unloaded");
-		else
-			RmtMessage(cd->cmd_name, "Library is not loaded");
-	} else
+		char *libname = cd->cmd_argv[1];
+		if (strcmp(libname, CORE_NAME) != 0) {
+			if (unload_library(td, libname) == 0) {
+				RmtMessage(cd->cmd_name, "Library unloaded");
+			} else {
+				RmtMessage(cd->cmd_name, "Library is not loaded");
+			}
+		} else {
+			RmtMessage(cd->cmd_name, "core cannot be unloaded");
+		}
+	} else {
 		RmtMessageFmt(cd->cmd_name, "Usage: %s <lib name>", cd->cmd_argv[0]);
+	}
 }
 
 static
@@ -510,7 +606,7 @@ cmd_about(CORE_DATA *cd)
 
 	LIB_ENTRY *node;
 	LIST_FOREACH(node, &mod_tld->lib_list_head, entry) {
-		RmtMessageFmt(cd->cmd_name, "%-16.16s %-8.8s %s %s by %-16.16s  %s",
+		RmtMessageFmt(cd->cmd_name, "%-16.16s %-8.8s %-11.11s %-8.8s by %-16.16s  %s",
 		    node->libname,
 		    node->version,
 		    node->date,
@@ -553,7 +649,12 @@ unload_library(THREAD_DATA *td, char *libname)
 		free(le->pinfo_base[i]);
 	free(le->pinfo_base);
 		
-	dlclose(le->handle);
+	if (le->type == TYPE_NATIVE) {
+		if (le->native_data->handle) dlclose(le->native_data->handle);
+	} else if (le->type == TYPE_PYTHON) {
+		Py_XDECREF(le->python_data->pGameEvent);
+		Py_DECREF(le->python_data->pModule);
+	}
 
 	unregister_commands(td, le);
 

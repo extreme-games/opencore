@@ -203,7 +203,7 @@ pkt_send_message(THREAD_DATA *td, MSG_TYPE type,
     SOUND sound, PLAYER_ID target_pid, const char *msg)
 {
 	int msg_len = strlen(msg);
-	msg_len = MIN(msg_len, 247);
+	msg_len = MIN(msg_len, 243); // XXX should be 247 but long packets can get cluster or stream headers added on or something that adds 4 bytes, queue_packet() should be fixed
 
 	/* header + msg len + terminating null */
 	PACKET *p = allocate_packet(5 + msg_len + 1);

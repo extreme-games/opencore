@@ -563,6 +563,7 @@ struct core_data
 	void	 *timer_data1;	/* data1 as passed to SetTimer() */
 	void	 *timer_data2;	/* data2 as passed to SetTimer() */
 
+	int	  cmd_id;	/* id passed through RegisterCommand() */
 	char	 *cmd_name;	/* name of player issuing command */
 	CMD_TYPE  cmd_type;	/* type of command */
 	int	  cmd_argc;	/* number of arguments, including command name */
@@ -657,6 +658,7 @@ typedef void (*Command_cb)(CORE_DATA *cd);
 /*
  * Registers a command and its callback handler with the core. 
  *
+ * 'id' the commands id.
  * 'cmd_text' is the actual command. It must begin with a '!'.
  * 'cmd_class' a one-word class/category that the command shows up in
  *     when a player views !help.
@@ -669,11 +671,12 @@ typedef void (*Command_cb)(CORE_DATA *cd);
  *		enclose optional arguments.
  * 'cmd_desc' a short description of the plugin. May be NULL.
  * 'cmd_ldesc' a long description of the command. May be NULL.
- * 'func' the command handler callback.
  */
-void	RegisterCommand(char *cmd_text, char *cmd_class, int req_level,
+void	RegisterCommand(int id, char *cmd_text, char *cmd_class, int req_level,
 	    CMD_TYPE cmd_type, char *cmd_args, char *cmd_desc,
-	    char *cmd_ldesc, Command_cb func);
+	    char *cmd_ldesc);
+
+void	RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t pinfo_size);
 
 /*
  * Set a timer.  It will expire in 'duration' milliseconds, causing
@@ -870,9 +873,10 @@ void	*xzmalloc(size_t sz);
 void	strlwr(char *str);
 
 /*
- * Each of these must be defined in the library.
+ * This export must be defined in the library.
  */
-extern LIB_DATA REGISTRATION_INFO;	/* single word library name */
+extern void GameEvent(CORE_DATA *cd);
+
 
 #ifdef __cplusplus
 }

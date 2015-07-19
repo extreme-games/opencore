@@ -579,11 +579,9 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 					/* event_command */
 					if (msg_type == MSG_PUBLIC ||
 					    msg_type == MSG_PUBLIC_MACRO) {
-						handle_command(td, p,
-						    p->name, CMD_PUBLIC, raw_msg);
+						handle_command(td, p, p->name, CMD_PUBLIC, raw_msg);
 					} else if (msg_type == MSG_PRIVATE) {
-						handle_command(td, p,
-						    p->name, CMD_PRIVATE, raw_msg);
+						handle_command(td, p, p->name, CMD_PRIVATE, raw_msg);
 					}
 				}
 			}
@@ -615,8 +613,7 @@ pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len)
 					export_msg(td, msg_type, NULL, 0, rm.name, rm.msg);
 					if (rm.msg[0] == CMD_CHAR) {
 						/* event_command */
-						handle_command(td, NULL, rm.name,
-						    CMD_REMOTE, rm.msg);
+						handle_command(td, NULL, rm.name, CMD_REMOTE, rm.msg);
 					}	
 				}
 			}
