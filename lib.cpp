@@ -606,8 +606,9 @@ cmd_about(CORE_DATA *cd)
 
 	LIB_ENTRY *node;
 	LIST_FOREACH(node, &mod_tld->lib_list_head, entry) {
-		RmtMessageFmt(cd->cmd_name, "%-16.16s %-8.8s %-11.11s %-8.8s by %-16.16s  %s",
+		RmtMessageFmt(cd->cmd_name, "%-16.16s %c %-8.8s %-11.11s %-8.8s by %-16.16s  %s",
 		    node->libname,
+		    node->type == TYPE_NATIVE ? 'N' : node->type == TYPE_PYTHON ? 'P' : 'U',	
 		    node->version,
 		    node->date,
 		    node->time,

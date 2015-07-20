@@ -619,24 +619,6 @@ typedef void (*GameEvent_cb)(CORE_DATA *cd);
 
 
 /*
- * Contains library data.
- */
-typedef struct LIB_DATA_ LIB_DATA;
-struct LIB_DATA_ {
-	char	*name;
-	char	*author;
-	char	*version;
-	char	*date;
-	char	*time;
-	char	*description;
-	char	*oc_version;
-	int	 pinfo_size;
-
-	GameEvent_cb cb;
-};
-
-
-/*
  * This is the callback prototype used for commands. Commands must all be
  *  registered with the RegisterCommand() function.
  *

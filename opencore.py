@@ -758,48 +758,6 @@ class core_data(_object):
 core_data_swigregister = _opencore.core_data_swigregister
 core_data_swigregister(core_data)
 
-class LIB_DATA_(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, LIB_DATA_, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, LIB_DATA_, name)
-    __repr__ = _swig_repr
-    __swig_setmethods__["name"] = _opencore.LIB_DATA__name_set
-    __swig_getmethods__["name"] = _opencore.LIB_DATA__name_get
-    if _newclass:name = _swig_property(_opencore.LIB_DATA__name_get, _opencore.LIB_DATA__name_set)
-    __swig_setmethods__["author"] = _opencore.LIB_DATA__author_set
-    __swig_getmethods__["author"] = _opencore.LIB_DATA__author_get
-    if _newclass:author = _swig_property(_opencore.LIB_DATA__author_get, _opencore.LIB_DATA__author_set)
-    __swig_setmethods__["version"] = _opencore.LIB_DATA__version_set
-    __swig_getmethods__["version"] = _opencore.LIB_DATA__version_get
-    if _newclass:version = _swig_property(_opencore.LIB_DATA__version_get, _opencore.LIB_DATA__version_set)
-    __swig_setmethods__["date"] = _opencore.LIB_DATA__date_set
-    __swig_getmethods__["date"] = _opencore.LIB_DATA__date_get
-    if _newclass:date = _swig_property(_opencore.LIB_DATA__date_get, _opencore.LIB_DATA__date_set)
-    __swig_setmethods__["time"] = _opencore.LIB_DATA__time_set
-    __swig_getmethods__["time"] = _opencore.LIB_DATA__time_get
-    if _newclass:time = _swig_property(_opencore.LIB_DATA__time_get, _opencore.LIB_DATA__time_set)
-    __swig_setmethods__["description"] = _opencore.LIB_DATA__description_set
-    __swig_getmethods__["description"] = _opencore.LIB_DATA__description_get
-    if _newclass:description = _swig_property(_opencore.LIB_DATA__description_get, _opencore.LIB_DATA__description_set)
-    __swig_setmethods__["oc_version"] = _opencore.LIB_DATA__oc_version_set
-    __swig_getmethods__["oc_version"] = _opencore.LIB_DATA__oc_version_get
-    if _newclass:oc_version = _swig_property(_opencore.LIB_DATA__oc_version_get, _opencore.LIB_DATA__oc_version_set)
-    __swig_setmethods__["pinfo_size"] = _opencore.LIB_DATA__pinfo_size_set
-    __swig_getmethods__["pinfo_size"] = _opencore.LIB_DATA__pinfo_size_get
-    if _newclass:pinfo_size = _swig_property(_opencore.LIB_DATA__pinfo_size_get, _opencore.LIB_DATA__pinfo_size_set)
-    __swig_setmethods__["cb"] = _opencore.LIB_DATA__cb_set
-    __swig_getmethods__["cb"] = _opencore.LIB_DATA__cb_get
-    if _newclass:cb = _swig_property(_opencore.LIB_DATA__cb_get, _opencore.LIB_DATA__cb_set)
-    def __init__(self): 
-        this = _opencore.new_LIB_DATA_()
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _opencore.delete_LIB_DATA_
-    __del__ = lambda self : None;
-LIB_DATA__swigregister = _opencore.LIB_DATA__swigregister
-LIB_DATA__swigregister(LIB_DATA_)
-
 GameEvent = _opencore.GameEvent
 
 def RegisterCommand(*args):
@@ -985,10 +943,6 @@ ConfigKeyExists = _opencore.ConfigKeyExists
 def GetPlayerInfo(*args):
   return _opencore.GetPlayerInfo(*args)
 GetPlayerInfo = _opencore.GetPlayerInfo
-
-def strlwr(*args):
-  return _opencore.strlwr(*args)
-strlwr = _opencore.strlwr
 # This file is compatible with both classic and new-style classes.
 
 

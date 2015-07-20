@@ -2910,34 +2910,32 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_LIB_DATA_ swig_types[0]
-#define SWIGTYPE_p_PLAYER_ swig_types[1]
-#define SWIGTYPE_p_arena_list swig_types[2]
-#define SWIGTYPE_p_char swig_types[3]
-#define SWIGTYPE_p_core_data swig_types[4]
-#define SWIGTYPE_p_einfo_ swig_types[5]
-#define SWIGTYPE_p_einfo__res swig_types[6]
-#define SWIGTYPE_p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void swig_types[7]
-#define SWIGTYPE_p_f_p_struct_core_data__void swig_types[8]
-#define SWIGTYPE_p_info_ swig_types[9]
-#define SWIGTYPE_p_info__ping swig_types[10]
-#define SWIGTYPE_p_info__ploss swig_types[11]
-#define SWIGTYPE_p_info__stats swig_types[12]
-#define SWIGTYPE_p_info__stats_c2s swig_types[13]
-#define SWIGTYPE_p_info__stats_s2c swig_types[14]
-#define SWIGTYPE_p_info__usage swig_types[15]
-#define SWIGTYPE_p_info__usage_created swig_types[16]
-#define SWIGTYPE_p_info__usage_session swig_types[17]
-#define SWIGTYPE_p_info__usage_total swig_types[18]
-#define SWIGTYPE_p_p_char swig_types[19]
-#define SWIGTYPE_p_p_p_char swig_types[20]
-#define SWIGTYPE_p_p_void swig_types[21]
-#define SWIGTYPE_p_point swig_types[22]
-#define SWIGTYPE_p_uint16_t swig_types[23]
-#define SWIGTYPE_p_uint32_t swig_types[24]
-#define SWIGTYPE_p_uint8_t swig_types[25]
-static swig_type_info *swig_types[27];
-static swig_module_info swig_module = {swig_types, 26, 0, 0, 0, 0};
+#define SWIGTYPE_p_PLAYER_ swig_types[0]
+#define SWIGTYPE_p_arena_list swig_types[1]
+#define SWIGTYPE_p_char swig_types[2]
+#define SWIGTYPE_p_core_data swig_types[3]
+#define SWIGTYPE_p_einfo_ swig_types[4]
+#define SWIGTYPE_p_einfo__res swig_types[5]
+#define SWIGTYPE_p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void swig_types[6]
+#define SWIGTYPE_p_info_ swig_types[7]
+#define SWIGTYPE_p_info__ping swig_types[8]
+#define SWIGTYPE_p_info__ploss swig_types[9]
+#define SWIGTYPE_p_info__stats swig_types[10]
+#define SWIGTYPE_p_info__stats_c2s swig_types[11]
+#define SWIGTYPE_p_info__stats_s2c swig_types[12]
+#define SWIGTYPE_p_info__usage swig_types[13]
+#define SWIGTYPE_p_info__usage_created swig_types[14]
+#define SWIGTYPE_p_info__usage_session swig_types[15]
+#define SWIGTYPE_p_info__usage_total swig_types[16]
+#define SWIGTYPE_p_p_char swig_types[17]
+#define SWIGTYPE_p_p_p_char swig_types[18]
+#define SWIGTYPE_p_p_void swig_types[19]
+#define SWIGTYPE_p_point swig_types[20]
+#define SWIGTYPE_p_uint16_t swig_types[21]
+#define SWIGTYPE_p_uint32_t swig_types[22]
+#define SWIGTYPE_p_uint8_t swig_types[23]
+static swig_type_info *swig_types[25];
+static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -8885,7 +8883,6 @@ SWIGINTERN PyObject *_wrap_core_data_p1_pinfo_set(PyObject *SWIGUNUSEDPARM(self)
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8895,9 +8892,9 @@ SWIGINTERN PyObject *_wrap_core_data_p1_pinfo_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_p1_pinfo_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_p1_pinfo_set" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->p1_pinfo = arg2;
   resultobj = SWIG_Py_Void();
@@ -8989,7 +8986,6 @@ SWIGINTERN PyObject *_wrap_core_data_p2_pinfo_set(PyObject *SWIGUNUSEDPARM(self)
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8999,9 +8995,9 @@ SWIGINTERN PyObject *_wrap_core_data_p2_pinfo_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_p2_pinfo_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_p2_pinfo_set" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->p2_pinfo = arg2;
   resultobj = SWIG_Py_Void();
@@ -9746,7 +9742,6 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_set(PyObject *SWIGUNUSEDPARM(se
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9756,9 +9751,9 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_timer_data1_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_timer_data1_set" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->timer_data1 = arg2;
   resultobj = SWIG_Py_Void();
@@ -9798,7 +9793,6 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_set(PyObject *SWIGUNUSEDPARM(se
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9808,9 +9802,9 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_timer_data2_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_timer_data2_set" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->timer_data2 = arg2;
   resultobj = SWIG_Py_Void();
@@ -10510,7 +10504,6 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_set(PyObject *SWIGUNUSEDPAR
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -10520,9 +10513,9 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_query_user_data_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_query_user_data_set" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->query_user_data = arg2;
   resultobj = SWIG_Py_Void();
@@ -11704,7 +11697,6 @@ SWIGINTERN PyObject *_wrap_core_data_user_data_set(PyObject *SWIGUNUSEDPARM(self
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -11714,9 +11706,9 @@ SWIGINTERN PyObject *_wrap_core_data_user_data_set(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_user_data_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_user_data_set" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->user_data = arg2;
   resultobj = SWIG_Py_Void();
@@ -11947,577 +11939,6 @@ SWIGINTERN PyObject *core_data_swigregister(PyObject *SWIGUNUSEDPARM(self), PyOb
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_LIB_DATA__name_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__name_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__name_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__name_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->name) free((char*)arg1->name);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->name = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->name = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__name_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__name_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__name_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->name);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__author_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__author_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__author_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__author_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->author) free((char*)arg1->author);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->author = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->author = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__author_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__author_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__author_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->author);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__version_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__version_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__version_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__version_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->version) free((char*)arg1->version);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->version = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->version = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__version_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__version_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__version_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->version);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__date_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__date_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__date_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__date_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->date) free((char*)arg1->date);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->date = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->date = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__date_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__date_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__date_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->date);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__time_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__time_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__time_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__time_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->time) free((char*)arg1->time);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->time = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->time = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__time_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__time_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__time_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->time);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__description_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__description_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__description_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__description_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->description) free((char*)arg1->description);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->description = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->description = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__description_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__description_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__description_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->description);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__oc_version_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__oc_version_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__oc_version_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LIB_DATA__oc_version_set" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = (char *)(buf2);
-  if (arg1->oc_version) free((char*)arg1->oc_version);
-  if (arg2) {
-    size_t size = strlen((const char *)(arg2)) + 1;
-    arg1->oc_version = (char *)(char *)memcpy((char *)malloc((size)*sizeof(char)), (const char *)(arg2), sizeof(char)*(size));
-  } else {
-    arg1->oc_version = 0;
-  }
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__oc_version_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__oc_version_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__oc_version_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (char *) ((arg1)->oc_version);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__pinfo_size_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  int arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__pinfo_size_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__pinfo_size_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "LIB_DATA__pinfo_size_set" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = (int)(val2);
-  if (arg1) (arg1)->pinfo_size = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__pinfo_size_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  int result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__pinfo_size_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__pinfo_size_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (int) ((arg1)->pinfo_size);
-  resultobj = SWIG_From_int((int)(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__cb_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  GameEvent_cb arg2 = (GameEvent_cb) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:LIB_DATA__cb_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__cb_set" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  {
-    int res = SWIG_ConvertFunctionPtr(obj1, (void**)(&arg2), SWIGTYPE_p_f_p_struct_core_data__void);
-    if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "LIB_DATA__cb_set" "', argument " "2"" of type '" "GameEvent_cb""'"); 
-    }
-  }
-  if (arg1) (arg1)->cb = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_LIB_DATA__cb_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  GameEvent_cb result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:LIB_DATA__cb_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LIB_DATA__cb_get" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  result = (GameEvent_cb) ((arg1)->cb);
-  resultobj = SWIG_NewFunctionPtrObj((void *)(result), SWIGTYPE_p_f_p_struct_core_data__void);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_LIB_DATA_(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)":new_LIB_DATA_")) SWIG_fail;
-  result = (struct LIB_DATA_ *)calloc(1, sizeof(struct LIB_DATA_));
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_LIB_DATA_, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_LIB_DATA_(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  struct LIB_DATA_ *arg1 = (struct LIB_DATA_ *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:delete_LIB_DATA_",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_LIB_DATA_, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_LIB_DATA_" "', argument " "1"" of type '" "struct LIB_DATA_ *""'"); 
-  }
-  arg1 = (struct LIB_DATA_ *)(argp1);
-  free((char *) arg1);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *LIB_DATA__swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_LIB_DATA_, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
 SWIGINTERN PyObject *_wrap_RegisterCommand(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int arg1 ;
@@ -12735,8 +12156,6 @@ SWIGINTERN PyObject *_wrap_SetTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
   void *arg3 = (void *) 0 ;
   void *argp1 ;
   int res1 = 0 ;
-  int res2 ;
-  int res3 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -12754,13 +12173,13 @@ SWIGINTERN PyObject *_wrap_SetTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
       arg1 = *((ticks_ms_t *)(argp1));
     }
   }
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SetTimer" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
-  res3 = SWIG_ConvertPtr(obj2,SWIG_as_voidptrptr(&arg3), 0, 0);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SetTimer" "', argument " "3"" of type '" "void *""'"); 
+  {
+    /* arg3 = PyCObject_AsVoidPtr(obj2); */
+    arg3 = (void*)obj2;
   }
   result = (long)SetTimer(arg1,arg2,arg3);
   resultobj = SWIG_From_long((long)(result));
@@ -13757,7 +13176,6 @@ SWIGINTERN PyObject *_wrap_Query(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   char *arg4 = (char *) 0 ;
   int val1 ;
   int ecode1 = 0 ;
-  int res2 ;
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
@@ -13776,9 +13194,9 @@ SWIGINTERN PyObject *_wrap_Query(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Query" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = (int)(val1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Query" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
   if (!SWIG_IsOK(res3)) {
@@ -13811,7 +13229,6 @@ SWIGINTERN PyObject *_wrap_QueryFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), P
   void *arg5 = 0 ;
   int val1 ;
   int ecode1 = 0 ;
-  int res2 ;
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
@@ -13830,9 +13247,9 @@ SWIGINTERN PyObject *_wrap_QueryFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), P
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "QueryFmt" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = (int)(val1);
-  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "QueryFmt" "', argument " "2"" of type '" "void *""'"); 
+  {
+    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    arg2 = (void*)obj1;
   }
   res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
   if (!SWIG_IsOK(res3)) {
@@ -14383,30 +13800,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_strlwr(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:strlwr",&obj0)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "strlwr" "', argument " "1"" of type '" "char *""'");
-  }
-  arg1 = (char *)(buf1);
-  strlwr(arg1);
-  resultobj = SWIG_Py_Void();
-  if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
-  return resultobj;
-fail:
-  if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
-  return NULL;
-}
-
-
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"point_x_set", _wrap_point_x_set, METH_VARARGS, NULL},
@@ -14737,27 +14130,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_core_data", _wrap_new_core_data, METH_VARARGS, NULL},
 	 { (char *)"delete_core_data", _wrap_delete_core_data, METH_VARARGS, NULL},
 	 { (char *)"core_data_swigregister", core_data_swigregister, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__name_set", _wrap_LIB_DATA__name_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__name_get", _wrap_LIB_DATA__name_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__author_set", _wrap_LIB_DATA__author_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__author_get", _wrap_LIB_DATA__author_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__version_set", _wrap_LIB_DATA__version_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__version_get", _wrap_LIB_DATA__version_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__date_set", _wrap_LIB_DATA__date_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__date_get", _wrap_LIB_DATA__date_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__time_set", _wrap_LIB_DATA__time_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__time_get", _wrap_LIB_DATA__time_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__description_set", _wrap_LIB_DATA__description_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__description_get", _wrap_LIB_DATA__description_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__oc_version_set", _wrap_LIB_DATA__oc_version_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__oc_version_get", _wrap_LIB_DATA__oc_version_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__pinfo_size_set", _wrap_LIB_DATA__pinfo_size_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__pinfo_size_get", _wrap_LIB_DATA__pinfo_size_get, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__cb_set", _wrap_LIB_DATA__cb_set, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__cb_get", _wrap_LIB_DATA__cb_get, METH_VARARGS, NULL},
-	 { (char *)"new_LIB_DATA_", _wrap_new_LIB_DATA_, METH_VARARGS, NULL},
-	 { (char *)"delete_LIB_DATA_", _wrap_delete_LIB_DATA_, METH_VARARGS, NULL},
-	 { (char *)"LIB_DATA__swigregister", LIB_DATA__swigregister, METH_VARARGS, NULL},
 	 { (char *)"RegisterCommand", _wrap_RegisterCommand, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"RegisterPlugin", _wrap_RegisterPlugin, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"SetTimer", _wrap_SetTimer, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
@@ -14804,14 +14176,12 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"GetConfigString", _wrap_GetConfigString, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"ConfigKeyExists", _wrap_ConfigKeyExists, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"GetPlayerInfo", _wrap_GetPlayerInfo, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
-	 { (char *)"strlwr", _wrap_strlwr, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { NULL, NULL, 0, NULL }
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_LIB_DATA_ = {"_p_LIB_DATA_", "struct LIB_DATA_ *|LIB_DATA_ *|LIB_DATA *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_PLAYER_ = {"_p_PLAYER_", "PLAYER *|struct PLAYER_ *|PLAYER_ *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_arena_list = {"_p_arena_list", "struct arena_list *|arena_list *|ARENA_LIST *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
@@ -14819,7 +14189,6 @@ static swig_type_info _swigt__p_core_data = {"_p_core_data", "struct core_data *
 static swig_type_info _swigt__p_einfo_ = {"_p_einfo_", "einfo_t *|struct einfo_ *|einfo_ *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_einfo__res = {"_p_einfo__res", "einfo__res *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void = {"_p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void", "void (*)(int,char *,char *,int,CMD_TYPE,char *,char *,char *)|void (*)(int,char *,char *,int,uint8_t,char *,char *,char *)", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_f_p_struct_core_data__void = {"_p_f_p_struct_core_data__void", "void (*)(struct core_data *)|GameEvent_cb", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info_ = {"_p_info_", "info_t *|struct info_ *|info_ *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info__ping = {"_p_info__ping", "info__ping *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info__ploss = {"_p_info__ploss", "info__ploss *", 0, 0, (void*)0, 0};
@@ -14839,7 +14208,6 @@ static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "ticks_hs_t *|uint32_
 static swig_type_info _swigt__p_uint8_t = {"_p_uint8_t", "MSG_TYPE *|CMD_TYPE *|SHIP *|MATCH_TYPE *|OP_LEVEL *|uint8_t *|SOUND *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_LIB_DATA_,
   &_swigt__p_PLAYER_,
   &_swigt__p_arena_list,
   &_swigt__p_char,
@@ -14847,7 +14215,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_einfo_,
   &_swigt__p_einfo__res,
   &_swigt__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void,
-  &_swigt__p_f_p_struct_core_data__void,
   &_swigt__p_info_,
   &_swigt__p_info__ping,
   &_swigt__p_info__ploss,
@@ -14867,7 +14234,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_uint8_t,
 };
 
-static swig_cast_info _swigc__p_LIB_DATA_[] = {  {&_swigt__p_LIB_DATA_, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PLAYER_[] = {  {&_swigt__p_PLAYER_, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_arena_list[] = {  {&_swigt__p_arena_list, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -14875,7 +14241,6 @@ static swig_cast_info _swigc__p_core_data[] = {  {&_swigt__p_core_data, 0, 0, 0}
 static swig_cast_info _swigc__p_einfo_[] = {  {&_swigt__p_einfo_, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_einfo__res[] = {  {&_swigt__p_einfo__res, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void[] = {  {&_swigt__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_f_p_struct_core_data__void[] = {  {&_swigt__p_f_p_struct_core_data__void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info_[] = {  {&_swigt__p_info_, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info__ping[] = {  {&_swigt__p_info__ping, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info__ploss[] = {  {&_swigt__p_info__ploss, 0, 0, 0},{0, 0, 0, 0}};
@@ -14895,7 +14260,6 @@ static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{
 static swig_cast_info _swigc__p_uint8_t[] = {  {&_swigt__p_uint8_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_LIB_DATA_,
   _swigc__p_PLAYER_,
   _swigc__p_arena_list,
   _swigc__p_char,
@@ -14903,7 +14267,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_einfo_,
   _swigc__p_einfo__res,
   _swigc__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void,
-  _swigc__p_f_p_struct_core_data__void,
   _swigc__p_info_,
   _swigc__p_info__ping,
   _swigc__p_info__ploss,

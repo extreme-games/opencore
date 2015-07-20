@@ -1,4 +1,16 @@
 
+/* for user_data conversions */
+/* python -> c */
+%typemap (in) void* {
+       /* $1 = PyCObject_AsVoidPtr($input); */
+        $1 = (void*)$input;
+}
+
+/* c -> python */
+%typemap(out) void* {
+        $result = (PyObject*)$1;
+}
+
 %module opencore
 %{
 #include "opencore.hpp"
@@ -13,18 +25,7 @@
 %ignore xmalloc;
 %ignore xzmalloc;
 %ignore xcalloc;
-
-/* for user_data conversions */
-/* python -> c */
-%typemap (in) PyObject* {
-       /* $1 = PyCObject_AsVoidPtr($input); */
-        $1 = (void*)$input;
-}
-
-/* c -> python */
-%typemap(out) void* {
-        $result = (PyObject*)$1;
-}
+%ignore strlwr;
 
 %callback("GameEvent");
 %include "opencore.hpp"

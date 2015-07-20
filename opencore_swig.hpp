@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 void init_opencore();
+/* Take the core data object and turn it into a python object */
 PyObject *wrap_old_core_data(CORE_DATA *cd);
 
 #ifdef __cplusplus
