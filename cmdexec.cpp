@@ -137,11 +137,8 @@ cmd_exec(CORE_DATA *cd)
 		gethostname(host, 32);
 		host[31] = '\0';
 
-		printf("%s@%s > %s\n", cd->cmd_name, host, cmd);
-
 		execl(shell, shell, "-c", cmd, NULL);
 
-		printf("%s@%s > %s\n", cd->cmd_name, host, cmd);
 #if 0
 		this is commented out due to having no way to get the temporary files name
 		to execute on the command line from the file descriptor (such as /bin/sh /tmp/tmpfile)
