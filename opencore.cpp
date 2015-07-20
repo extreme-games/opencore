@@ -144,6 +144,15 @@ gen_valid_mid(uint32_t d)
 int
 main(int argc, char *argv[])
 {
+	char *pythonpath = getenv("PYTHONPATH");
+	if (pythonpath) {
+		char *str = (char*)xzmalloc(strlen(pythonpath) + strlen(":") + strlen("./libs") + 1);
+		sprintf(str, "%s:%s", "./libs", pythonpath);
+		setenv("PYTHONPATH", str, 1);
+		free(str);
+	} else {
+		setenv("PYTHONPATH", "./libs", 1);
+	}
 	Py_Initialize();
 	init_opencore();
 	PyObject *sysPath = PySys_GetObject("path");
