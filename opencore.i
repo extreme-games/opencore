@@ -2,12 +2,14 @@
 /* for user_data conversions */
 /* python -> c */
 %typemap (in) void* {
-       /* $1 = PyCObject_AsVoidPtr($input); */
+        if ($1 && $1 != Py_None) Py_DECREF($1);
+        Py_INCREF($input);
         $1 = (void*)$input;
 }
 
 /* c -> python */
 %typemap(out) void* {
+        Py_INCREF($1);
         $result = (PyObject*)$1;
 }
 

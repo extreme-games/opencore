@@ -8893,7 +8893,8 @@ SWIGINTERN PyObject *_wrap_core_data_p1_pinfo_set(PyObject *SWIGUNUSEDPARM(self)
   }
   arg1 = (struct core_data *)(argp1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->p1_pinfo = arg2;
@@ -8920,6 +8921,7 @@ SWIGINTERN PyObject *_wrap_core_data_p1_pinfo_get(PyObject *SWIGUNUSEDPARM(self)
   arg1 = (struct core_data *)(argp1);
   result = (void *) ((arg1)->p1_pinfo);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;
@@ -8996,7 +8998,8 @@ SWIGINTERN PyObject *_wrap_core_data_p2_pinfo_set(PyObject *SWIGUNUSEDPARM(self)
   }
   arg1 = (struct core_data *)(argp1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->p2_pinfo = arg2;
@@ -9023,6 +9026,7 @@ SWIGINTERN PyObject *_wrap_core_data_p2_pinfo_get(PyObject *SWIGUNUSEDPARM(self)
   arg1 = (struct core_data *)(argp1);
   result = (void *) ((arg1)->p2_pinfo);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;
@@ -9752,7 +9756,8 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_set(PyObject *SWIGUNUSEDPARM(se
   }
   arg1 = (struct core_data *)(argp1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->timer_data1 = arg2;
@@ -9779,6 +9784,7 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_get(PyObject *SWIGUNUSEDPARM(se
   arg1 = (struct core_data *)(argp1);
   result = (void *) ((arg1)->timer_data1);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;
@@ -9803,7 +9809,8 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_set(PyObject *SWIGUNUSEDPARM(se
   }
   arg1 = (struct core_data *)(argp1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->timer_data2 = arg2;
@@ -9830,6 +9837,7 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_get(PyObject *SWIGUNUSEDPARM(se
   arg1 = (struct core_data *)(argp1);
   result = (void *) ((arg1)->timer_data2);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;
@@ -10514,7 +10522,8 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_set(PyObject *SWIGUNUSEDPAR
   }
   arg1 = (struct core_data *)(argp1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->query_user_data = arg2;
@@ -10541,6 +10550,7 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_get(PyObject *SWIGUNUSEDPAR
   arg1 = (struct core_data *)(argp1);
   result = (void *) ((arg1)->query_user_data);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;
@@ -11707,7 +11717,8 @@ SWIGINTERN PyObject *_wrap_core_data_user_data_set(PyObject *SWIGUNUSEDPARM(self
   }
   arg1 = (struct core_data *)(argp1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   if (arg1) (arg1)->user_data = arg2;
@@ -11734,6 +11745,7 @@ SWIGINTERN PyObject *_wrap_core_data_user_data_get(PyObject *SWIGUNUSEDPARM(self
   arg1 = (struct core_data *)(argp1);
   result = (void *) ((arg1)->user_data);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;
@@ -12174,11 +12186,13 @@ SWIGINTERN PyObject *_wrap_SetTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
     }
   }
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   {
-    /* arg3 = PyCObject_AsVoidPtr(obj2); */
+    if (arg3 && arg3 != Py_None) Py_DECREF(arg3);
+    Py_INCREF(obj2);
     arg3 = (void*)obj2;
   }
   result = (long)SetTimer(arg1,arg2,arg3);
@@ -13195,7 +13209,8 @@ SWIGINTERN PyObject *_wrap_Query(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   } 
   arg1 = (int)(val1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
@@ -13248,7 +13263,8 @@ SWIGINTERN PyObject *_wrap_QueryFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), P
   } 
   arg1 = (int)(val1);
   {
-    /* arg2 = PyCObject_AsVoidPtr(obj1); */
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
     arg2 = (void*)obj1;
   }
   res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
@@ -13792,6 +13808,7 @@ SWIGINTERN PyObject *_wrap_GetPlayerInfo(PyObject *SWIGUNUSEDPARM(self), PyObjec
   arg2 = (PLAYER *)(argp2);
   result = (void *)GetPlayerInfo(arg1,arg2);
   {
+    Py_INCREF(result);
     resultobj = (PyObject*)result;
   }
   return resultobj;

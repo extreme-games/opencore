@@ -414,6 +414,11 @@ libman_load_library(THREAD_DATA *td, char *libname)
 		unload = true;
 	}
 
+	/* special case for python, always keep pinfo the size of a pointer */
+	if (le->type == TYPE_PYTHON) {
+		le->pinfo_size = sizeof(void*);
+	}
+
 	/* setup pinfo */
 	int nslots = mod_tld->pinfo_nslots;
 	le->pinfo_base = (void**)calloc(nslots, sizeof(void*));

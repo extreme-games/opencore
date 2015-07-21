@@ -4,12 +4,12 @@ from opencore import *
 def GameEvent(cd):
 	try:
 		if cd.event == EVENT_START:
-			RegisterPlugin(CORE_VERSION, 'testpy', 'cycad', '1.0', '', '', 'A test Python plugin', 0)
-			cd.user_data = ('asdf',)
-		elif cd.event == EVENT_LOGIN:
-			PubMessage("EVENT_LOGIN: %s" % cd.user_data[0])
+			RegisterPlugin(CORE_VERSION, 'test', 'cycad', '1.0', '', '', 'A test Python plugin', 0)
+			cd.user_data = None
 		elif cd.event == EVENT_ENTER:
-			pass
+			PubMessage("Hello %s" % cd.p1.name)
+		elif cd.event == EVENT_STOP:
+			cd.user_data = None
 	except Exception as e:
 		print 'Python Exception: %s' % str(e)
 
