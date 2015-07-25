@@ -21,7 +21,7 @@ DFLAGS = -g
 NFLAGS = -O3
 
 HEADERFILES = *.hpp
-SOURCEFILES = opencore_swig.cpp opencore.cpp botman.cpp cmd.cpp cmdexec.cpp config.cpp db.cpp encrypt.cpp lib.cpp log.cpp msg.cpp ops.cpp parsers.cpp phand.cpp player.cpp pkt.cpp psend.cpp util.cpp ./lua-5.3.1/src/liblua.a
+SOURCEFILES = opencore_swig.cpp opencore.cpp botman.cpp cmd.cpp cmdexec.cpp config.cpp db.cpp encrypt.cpp lib.cpp log.cpp msg.cpp ops.cpp parsers.cpp phand.cpp player.cpp pkt.cpp psend.cpp util.cpp
 
 opencore: $(SOURCEFILES) opencore_wrap.c opencore.i
 #	swig -python opencore.i
