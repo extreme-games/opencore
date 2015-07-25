@@ -619,25 +619,6 @@ typedef void (*GameEvent_cb)(CORE_DATA *cd);
 
 
 /*
- * This is the callback prototype used for commands. Commands must all be
- *  registered with the RegisterCommand() function.
- *
- * 'name' is always set to the name of the player who issued the command.
- * 'level' is always set to the player's bot access level.
- * 'cmd_type' is one of CMD_xxx, indicating the type of message used to
- * 		issue the command. NOT interchangeable with MSG_xxx.
- * 'argc' is the number of arguments sent to the command, including the
- * 		command name itself. argc-1 is the largest valid index
- *		into the argv and argr arrays.
- * 'argv' is an array of pointers to strings that contain each sequential
- * 		command argument. argv[0] is the command itself.
- * 'argr' is an array of pointers to strings that contain each argument and
- * 		everything that follows it. argr[1] is the first
- *		argument and everything after it.
- */
-typedef void (*Command_cb)(CORE_DATA *cd);
-
-/*
  * Registers a command and its callback handler with the core. 
  *
  * 'id' the commands id.
