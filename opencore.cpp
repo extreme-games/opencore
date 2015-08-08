@@ -193,6 +193,7 @@ main(int argc, char *argv[])
 	g_pkt_game_handlers[0x06] = pkt_handle_game_0x06;
 	g_pkt_game_handlers[0x0A] = pkt_handle_game_0x0A;
 	g_pkt_game_handlers[0x0D] = pkt_handle_game_0x0D;
+	g_pkt_game_handlers[0x14] = pkt_handle_game_0x14;
 	g_pkt_game_handlers[0x19] = pkt_handle_game_0x19;
 	g_pkt_game_handlers[0x1C] = pkt_handle_game_0x1C;
 	g_pkt_game_handlers[0x1D] = pkt_handle_game_0x1D;

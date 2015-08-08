@@ -723,8 +723,30 @@ pkt_handle_game_0x0D(THREAD_DATA *td, uint8_t *buf, int len)
 	}
 }
 
-void
 
+void
+pkt_handle_game_0x14(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	if (len >= 7) {
+		uint16_t freq;
+		uint32_t jackpot;
+
+		extract_packet(buf, "ABC",
+		    NULL,
+		    &freq,
+		    &jackpot
+		    );
+
+		CORE_DATA *cd = libman_get_core_data(td);
+
+		cd->victory_freq = freq;
+		cd->victory_jackpot = jackpot;
+		libman_export_event(td, EVENT_FLAG_VICTORY, cd);
+	}
+}
+
+
+void
 pkt_handle_game_0x19(THREAD_DATA *td, uint8_t *buf, int len)
 {
 	if (len >= 273) {

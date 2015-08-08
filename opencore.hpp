@@ -332,6 +332,8 @@ typedef uint32_t ticks_hs_t;
 
 #define EVENT_CONFIG_CHANGE 22
 
+#define EVENT_FLAG_VICTORY 23 /* victory_freq, victory_jackpot */
+
 
 typedef uint16_t FREQ;
 #define FREQ_NONE		(FREQ)0xFFFF
@@ -582,6 +584,9 @@ struct core_data
 	unsigned int   query_nrows;
 	unsigned int   query_ncols;
 	int			   query_type;
+
+	uint16_t	victory_freq;
+	uint32_t	victory_jackpot;
 
 	char	 ac_old_arena[16];	/* arena change old arena */
 
