@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2015 cycad <cycad@zetasquad.com>
+ * Copyright (c) 2006-2015 cycad <cycad@greencams.net>
  *
  * This software is provided 'as-is', without any express or implied 
  * warranty. In no event will the author be held liable for any damages 
