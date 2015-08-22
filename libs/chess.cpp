@@ -1378,8 +1378,7 @@ GameEvent(CORE_DATA *cd)
 
 	switch (cd->event) {
 	case EVENT_START:
-		// allocate user data
-		cd->user_data = xzmalloc(sizeof(USER_DATA));
+		RegisterPlugin(OPENCORE_VERSION, "chess", "cycad", "1.0", __DATE__, __TIME__, "A player-vs-player chess bot", sizeof(USER_DATA), 0); 
 		ud = UD(cd);
 
 		// allocate chess board
