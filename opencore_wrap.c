@@ -15115,7 +15115,7 @@ SWIG_init(void) {
   
   SWIG_InstallConstants(d,swig_const_table);
   
-  SWIG_Python_SetConstant(d, "CORE_VERSION",SWIG_FromCharPtr("1.0"));
+  SWIG_Python_SetConstant(d, "OPENCORE_VERSION",SWIG_FromCharPtr("1.0"));
   SWIG_Python_SetConstant(d, "EVENT_START",SWIG_From_int((int)(0)));
   SWIG_Python_SetConstant(d, "EVENT_STOP",SWIG_From_int((int)(1)));
   SWIG_Python_SetConstant(d, "EVENT_LOGIN",SWIG_From_int((int)(2)));

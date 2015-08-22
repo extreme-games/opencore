@@ -174,7 +174,7 @@ extern "C" {
 #endif
 
 /* This must match the core's version string */	
-#define CORE_VERSION "1.0"
+#define OPENCORE_VERSION "1.0"
 
 typedef uint32_t ticks_ms_t;
 typedef uint32_t ticks_hs_t;

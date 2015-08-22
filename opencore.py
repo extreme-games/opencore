@@ -69,7 +69,7 @@ except AttributeError:
     _newclass = 0
 
 
-CORE_VERSION = _opencore.CORE_VERSION
+OPENCORE_VERSION = _opencore.OPENCORE_VERSION
 EVENT_START = _opencore.EVENT_START
 EVENT_STOP = _opencore.EVENT_STOP
 EVENT_LOGIN = _opencore.EVENT_LOGIN

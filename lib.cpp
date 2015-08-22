@@ -188,8 +188,8 @@ RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version,
 	LIB_ENTRY *le = td->lib_entry;
 
 	if (le->registered) StopBot("Bot attempted to register twice");
-	if (strcmp(CORE_VERSION, oc_version) != 0) {
-		LogFmt(OP_SMOD, "%s: Core version mismatch, core is %s, library is %s", le->libname, CORE_VERSION, version);
+	if (strcmp(OPENCORE_VERSION, oc_version) != 0) {
+		LogFmt(OP_SMOD, "%s: Core version mismatch, core is %s, library is %s", le->libname, OPENCORE_VERSION, version);
 		return;
 	}
 
@@ -615,7 +615,7 @@ cmd_about(CORE_DATA *cd)
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
 	RmtMessageFmt(cd->cmd_name, "opencore %s (%s %s) Copyright 2006-2015 cycad <cycad@greencams.net>",
-	    CORE_VERSION, __DATE__, __TIME__);
+	    OPENCORE_VERSION, __DATE__, __TIME__);
 
 	RmtMessage(cd->cmd_name, "");
 

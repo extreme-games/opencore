@@ -707,7 +707,7 @@ GameEvent(CORE_DATA *cd)
 {
 	switch (cd->event) {
 	case EVENT_START:
-		RegisterPlugin(CORE_VERSION, CORE_NAME, "cycad", CORE_VERSION, __DATE__, __TIME__, "core handler", 0, 0);
+		RegisterPlugin(OPENCORE_VERSION, CORE_NAME, "cycad", OPENCORE_VERSION, __DATE__, __TIME__, "core handler", 0, 0);
 		register_commands();
 		break;
 	case EVENT_COMMAND:
