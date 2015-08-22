@@ -254,6 +254,8 @@ strlcpy(char *dst, const char *src, int dst_sz)
 void*
 xcalloc(size_t nmemb, size_t sz)
 {
+	if (sz == 0 || nmemb == 0) return NULL;
+
 	void *res = calloc(nmemb, sz);
 	if (res == NULL) {
 		perror("No memory");
@@ -266,6 +268,8 @@ xcalloc(size_t nmemb, size_t sz)
 void*
 xmalloc(size_t sz)
 {
+	if (sz == 0) return NULL;
+
 	void *res = malloc(sz);
 	if (res == NULL) {
 		perror("No memory");

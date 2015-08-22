@@ -644,7 +644,7 @@ void	RegisterCommand(int id, char *cmd_text, char *cmd_class, int req_level,
 	    CMD_TYPE cmd_type, char *cmd_args, char *cmd_desc,
 	    char *cmd_ldesc);
 
-void	RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t pinfo_size);
+void	RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t userdata_size, size_t pinfo_size);
 
 /*
  * Set a timer.  It will expire in 'duration' milliseconds, causing

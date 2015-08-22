@@ -93,6 +93,7 @@ EVENT_ARENA_CHANGE = _opencore.EVENT_ARENA_CHANGE
 EVENT_ARENA_LIST = _opencore.EVENT_ARENA_LIST
 EVENT_QUERY_RESULT = _opencore.EVENT_QUERY_RESULT
 EVENT_CONFIG_CHANGE = _opencore.EVENT_CONFIG_CHANGE
+EVENT_FLAG_VICTORY = _opencore.EVENT_FLAG_VICTORY
 class point(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, point, name, value)
@@ -686,6 +687,12 @@ class core_data(_object):
     __swig_setmethods__["query_type"] = _opencore.core_data_query_type_set
     __swig_getmethods__["query_type"] = _opencore.core_data_query_type_get
     if _newclass:query_type = _swig_property(_opencore.core_data_query_type_get, _opencore.core_data_query_type_set)
+    __swig_setmethods__["victory_freq"] = _opencore.core_data_victory_freq_set
+    __swig_getmethods__["victory_freq"] = _opencore.core_data_victory_freq_get
+    if _newclass:victory_freq = _swig_property(_opencore.core_data_victory_freq_get, _opencore.core_data_victory_freq_set)
+    __swig_setmethods__["victory_jackpot"] = _opencore.core_data_victory_jackpot_set
+    __swig_getmethods__["victory_jackpot"] = _opencore.core_data_victory_jackpot_get
+    if _newclass:victory_jackpot = _swig_property(_opencore.core_data_victory_jackpot_get, _opencore.core_data_victory_jackpot_set)
     __swig_setmethods__["ac_old_arena"] = _opencore.core_data_ac_old_arena_set
     __swig_getmethods__["ac_old_arena"] = _opencore.core_data_ac_old_arena_get
     if _newclass:ac_old_arena = _swig_property(_opencore.core_data_ac_old_arena_get, _opencore.core_data_ac_old_arena_set)

@@ -10774,6 +10774,122 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_core_data_victory_freq_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  uint16_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:core_data_victory_freq_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_freq_set" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  {
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_victory_freq_set" "', argument " "2"" of type '" "uint16_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_victory_freq_set" "', argument " "2"" of type '" "uint16_t""'");
+    } else {
+      arg2 = *((uint16_t *)(argp2));
+    }
+  }
+  if (arg1) (arg1)->victory_freq = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_victory_freq_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint16_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:core_data_victory_freq_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_freq_get" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  result =  ((arg1)->victory_freq);
+  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_victory_jackpot_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  uint32_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:core_data_victory_jackpot_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_jackpot_set" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  {
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_victory_jackpot_set" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_victory_jackpot_set" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
+  if (arg1) (arg1)->victory_jackpot = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_victory_jackpot_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint32_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:core_data_victory_jackpot_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_jackpot_get" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  result =  ((arg1)->victory_jackpot);
+  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_core_data_ac_old_arena_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   struct core_data *arg1 = (struct core_data *) 0 ;
@@ -12066,6 +12182,7 @@ SWIGINTERN PyObject *_wrap_RegisterPlugin(PyObject *SWIGUNUSEDPARM(self), PyObje
   char *arg6 = (char *) 0 ;
   char *arg7 = (char *) 0 ;
   size_t arg8 ;
+  size_t arg9 ;
   int res1 ;
   char *buf1 = 0 ;
   int alloc1 = 0 ;
@@ -12089,6 +12206,8 @@ SWIGINTERN PyObject *_wrap_RegisterPlugin(PyObject *SWIGUNUSEDPARM(self), PyObje
   int alloc7 = 0 ;
   size_t val8 ;
   int ecode8 = 0 ;
+  size_t val9 ;
+  int ecode9 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -12097,8 +12216,9 @@ SWIGINTERN PyObject *_wrap_RegisterPlugin(PyObject *SWIGUNUSEDPARM(self), PyObje
   PyObject * obj5 = 0 ;
   PyObject * obj6 = 0 ;
   PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOO:RegisterPlugin",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOO:RegisterPlugin",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RegisterPlugin" "', argument " "1"" of type '" "char *""'");
@@ -12139,7 +12259,12 @@ SWIGINTERN PyObject *_wrap_RegisterPlugin(PyObject *SWIGUNUSEDPARM(self), PyObje
     SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "RegisterPlugin" "', argument " "8"" of type '" "size_t""'");
   } 
   arg8 = (size_t)(val8);
-  RegisterPlugin(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  ecode9 = SWIG_AsVal_size_t(obj8, &val9);
+  if (!SWIG_IsOK(ecode9)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "RegisterPlugin" "', argument " "9"" of type '" "size_t""'");
+  } 
+  arg9 = (size_t)(val9);
+  RegisterPlugin(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   resultobj = SWIG_Py_Void();
   if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -14102,6 +14227,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"core_data_query_ncols_get", _wrap_core_data_query_ncols_get, METH_VARARGS, NULL},
 	 { (char *)"core_data_query_type_set", _wrap_core_data_query_type_set, METH_VARARGS, NULL},
 	 { (char *)"core_data_query_type_get", _wrap_core_data_query_type_get, METH_VARARGS, NULL},
+	 { (char *)"core_data_victory_freq_set", _wrap_core_data_victory_freq_set, METH_VARARGS, NULL},
+	 { (char *)"core_data_victory_freq_get", _wrap_core_data_victory_freq_get, METH_VARARGS, NULL},
+	 { (char *)"core_data_victory_jackpot_set", _wrap_core_data_victory_jackpot_set, METH_VARARGS, NULL},
+	 { (char *)"core_data_victory_jackpot_get", _wrap_core_data_victory_jackpot_get, METH_VARARGS, NULL},
 	 { (char *)"core_data_ac_old_arena_set", _wrap_core_data_ac_old_arena_set, METH_VARARGS, NULL},
 	 { (char *)"core_data_ac_old_arena_get", _wrap_core_data_ac_old_arena_get, METH_VARARGS, NULL},
 	 { (char *)"core_data_arena_list_set", _wrap_core_data_arena_list_set, METH_VARARGS, NULL},
@@ -15010,6 +15139,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "EVENT_ARENA_LIST",SWIG_From_int((int)(20)));
   SWIG_Python_SetConstant(d, "EVENT_QUERY_RESULT",SWIG_From_int((int)(21)));
   SWIG_Python_SetConstant(d, "EVENT_CONFIG_CHANGE",SWIG_From_int((int)(22)));
+  SWIG_Python_SetConstant(d, "EVENT_FLAG_VICTORY",SWIG_From_int((int)(23)));
   
 #if PY_VERSION_HEX >= 0x03000000
   return m;

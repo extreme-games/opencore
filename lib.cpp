@@ -79,9 +79,10 @@ struct lib_entry
 	char	  time[24];		/* build time */
 	char	  description[64];	/* library description */
 
-	int	  pinfo_size;		/* size of each individuals player info */
+	size_t	  pinfo_size;		/* size of each individuals player info */
 	void	**pinfo_base;		/* array of player-specific entries */
 
+	size_t    userdata_size;	/* size of user_data pointer */
 	void	 *user_data;		/* pointer to module-specific data */
 
 	timer_head	timer_list_head;	/* list of library-owned timers */
@@ -166,13 +167,14 @@ td2cd(CORE_DATA *cd, THREAD_DATA *td)
 	cd->spec_count = td->arena->spec_count;
 }
 
+
 static
 inline
 void
 try_set_pinfo(CORE_DATA *cd, LIB_ENTRY *le) {
 	cd->p1_pinfo = NULL;
 	cd->p2_pinfo = NULL;
-	if (cd && cd->pinfo_base && cd->parray) {
+	if (cd && cd->pinfo_base && cd->parray && le->pinfo_size > 0) {
 		if (cd->p1) cd->p1_pinfo = GetPlayerInfo(cd, cd->p1);
 		if (cd->p2) cd->p2_pinfo = GetPlayerInfo(cd, cd->p2);
 	}
@@ -180,7 +182,7 @@ try_set_pinfo(CORE_DATA *cd, LIB_ENTRY *le) {
 
 
 void
-RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t pinfo_size)
+RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t userdata_size, size_t pinfo_size)
 {
 	THREAD_DATA *td = get_thread_data();
 	LIB_ENTRY *le = td->lib_entry;
@@ -198,6 +200,7 @@ RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version,
 	strlcpy(le->time, time, 24);
 	strlcpy(le->description, description, 24);
 	le->pinfo_size = pinfo_size;
+	le->userdata_size = userdata_size;
 	le->registered = 1;
 }
 
@@ -282,8 +285,10 @@ libman_zero_pinfo(THREAD_DATA *td, PLAYER *p)
         LIB_ENTRY *le;
 	void *pinfo;
         LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
-		pinfo = le->pinfo_base[p - parray];
-		memset(pinfo, 0, le->pinfo_size);
+		if (le->pinfo_size > 0) {
+			pinfo = le->pinfo_base[p - parray];
+			memset(pinfo, 0, le->pinfo_size);
+		}
 	}   
 }
 
@@ -296,10 +301,12 @@ libman_realloc_pinfo_array(THREAD_DATA *td, int new_count)
 
         LIB_ENTRY *le;
         LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
-		le->pinfo_base = (void**)realloc(le->pinfo_base, new_count * sizeof(void*));
+		if (le->pinfo_size > 0) {
+			le->pinfo_base = (void**)realloc(le->pinfo_base, new_count * sizeof(void*));
 
-		for (int i = mod_tld->pinfo_nslots; i < new_count; ++i)
-			le->pinfo_base[i] = malloc(le->pinfo_size);
+			for (int i = mod_tld->pinfo_nslots; i < new_count; ++i)
+				le->pinfo_base[i] = malloc(le->pinfo_size);
+		}
 	}   
 
 	mod_tld->pinfo_nslots = new_count;
@@ -315,9 +322,11 @@ libman_move_pinfo_entry(THREAD_DATA *td, int dest_index, int source_index)
 
         LIB_ENTRY *le;
         LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
-                memcpy(le->pinfo_base + (dest_index * sizeof(void*)),
-                    le->pinfo_base + (source_index * sizeof(void*)),
-                    le->pinfo_size);
+		if (le->pinfo_size > 0) {
+			memcpy(le->pinfo_base + (dest_index * sizeof(void*)),
+			    le->pinfo_base + (source_index * sizeof(void*)),
+			    le->pinfo_size);
+		}
         }
 }
 
@@ -414,16 +423,20 @@ libman_load_library(THREAD_DATA *td, char *libname)
 		unload = true;
 	}
 
-	/* special case for python, always keep pinfo the size of a pointer */
+	/* special case for python, always keep pinfo/user_data the size of a pointer */
 	if (le->type == TYPE_PYTHON) {
 		le->pinfo_size = sizeof(void*);
+		le->userdata_size = sizeof(void*);
 	}
+
+	/* setup user_data */
+	le->user_data = xcalloc(1, le->userdata_size);	
 
 	/* setup pinfo */
 	int nslots = mod_tld->pinfo_nslots;
-	le->pinfo_base = (void**)calloc(nslots, sizeof(void*));
+	le->pinfo_base = (void**)xcalloc(nslots, sizeof(void*));
 	for (int i = 0; i < nslots; ++i) {
-		le->pinfo_base[i] = malloc(le->pinfo_size);
+		le->pinfo_base[i] = xmalloc(le->pinfo_size);
 	}
 
 	/* setup parray */
@@ -651,9 +664,15 @@ unload_library(THREAD_DATA *td, char *libname)
 	libman_export_event_lib(td, EVENT_STOP, NULL, le);
 
 	/* free pinfo */
-	for (int i = 0; i < mod_tld->pinfo_nslots; ++i)
-		free(le->pinfo_base[i]);
+	if (le->pinfo_size > 0) {
+		for (int i = 0; i < mod_tld->pinfo_nslots; ++i) {
+			free(le->pinfo_base[i]);
+		}
+	}
 	free(le->pinfo_base);
+
+	/* free user_data */
+	free(le->user_data);
 		
 	if (le->type == TYPE_NATIVE) {
 		if (le->native_data->handle) dlclose(le->native_data->handle);
