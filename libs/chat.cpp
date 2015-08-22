@@ -221,19 +221,6 @@ struct user_data
 	
 };
 
-void GameEvent(CORE_DATA *cd);//forward declaration
-
-LIB_DATA REGISTRATION_INFO = {
-	"Chat",
-	"The Junky",
-	"1.32",
-	__DATE__,
-	__TIME__,
-	"ChatBot ncurses chat client",
-	CORE_VERSION,
-	0,
-	GameEvent
-};
 
 
 void update_all(USER_DATA *ud)
@@ -308,7 +295,7 @@ void RefreshUserList(CORE_DATA *cd,USER_DATA *ud)
     for(int i=0; i < cd->phere; i++)
     {
 	p = &(cd->parray[i]);
-	if(p->in_arena)
+	if(p->here)
 	{
 		wprintw(ud->user_w,"%s\n",p->name);
 		n++;
@@ -618,6 +605,7 @@ void Handle_Input(CORE_DATA *cd)
 	//}	
 }
 
+
 void GameEvent(CORE_DATA *cd)
 {
 	USER_DATA *ud = (USER_DATA *) cd->user_data;
@@ -626,8 +614,7 @@ void GameEvent(CORE_DATA *cd)
 
 	switch (cd->event) {
 	case EVENT_START:
-		/* set the bot's thread-specific user_data */
-		cd->user_data = ud = new USER_DATA;
+		RegisterPlugin(OPENCORE_VERSION, "Chat", "The Junky", "1.33", __DATE__, __TIME__, "ChatBot ncurses chat client", sizeof(USER_DATA), 0);
 		
 		gui_init(cd,ud);
 	    	signal(SIGWINCH, resizeHandler);

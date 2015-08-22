@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007 cycad <cycad@zetasquad.com>
+ * Copyright (c) 2007-2015 cycad <cycad@greencams.net>
  *
  * This software is provided 'as-is', without any express or implied 
  * warranty. In no event will the author be held liable for any damages 
@@ -54,69 +54,13 @@ ud(CORE_DATA *cd)
 	return (USER_DATA*)cd->user_data;
 }
 
-char	LIB_NAME[]		= "Test";
-char	LIB_AUTHOR[]		= "cycad";
-char	LIB_VERSION[]		= "1.0";
-char	LIB_DATE[]		= __DATE__;
-char	LIB_TIME[]		= __TIME__;
-char	LIB_DESCRIPTION[]	= "Runs the rabbit game";
-char	LIB_TARGET[]		= CORE_VERSION;
-int	LIB_PINFO_SIZE		= 0;
 
 static void start_rabbit_game(CORE_DATA *cd, PLAYER *p, int bty, int special);
-extern "C" void CmdRabbit(CORE_DATA *cd);
 
 extern "C"
 void
 CmdRabbit(CORE_DATA *cd)
 {
-	int show_usage = 0;
-
-	PLAYER_ID rpid = ud(cd)->rabbit_pid;
-
-	if (rpid == PID_NONE) {	/* rabbit game is not runnig */
-		if (cd->cmd_argc <= 1) {
-			show_usage = 1;
-		} else {
-			char *cmd = cd->cmd_argr[1];
-			int nargs = ArgCount(cmd, ':');
-
-			if (nargs != 2 && nargs != 3) {
-				show_usage = 1;
-			} else {	/* args to command are valid */
-				/* copy name out of command */
-				char rname[20];
-				DelimArgs(rname, sizeof(rname), cmd, 0, ':', 0);
-
-				/* copy bounty out of command */
-				int bty = AtoiArg(cmd, 1, ':');
-
-				/* copy special out of command if it was specified */
-				int special = 0;
-				if (nargs == 3)
-					special = AtoiArg(cmd, 2, ':');
-
-				/* find the player specified on the command line */
-				PLAYER *rabbit = FindPlayerName(rname, MATCH_HERE | MATCH_PREFIX);
-				if (rabbit) {
-					/* player found, start the game */
-					start_rabbit_game(cd, rabbit, bty, special);
-				} else {
-					RmtMessageFmt(cd->cmd_name, "Player not found: %s", rname);
-				}
-			}
-		}
-	} else {
-		/* rabbit game is already running */
-		PLAYER *p = FindPlayerPid(rpid, MATCH_HERE);
-
-		RmtMessageFmt(cd->cmd_name, "Rabbit is already running (%s is the rabbit)",
-		    p ? p->name : "**UNKNOWN**");
-	}
-
-	/* display usage if necessary */
-	if (show_usage)
-		RmtMessageFmt(cd->cmd_name, "Usage: %s <name>:<bounty>[:<special>]", cd->cmd_argv[0]);
 }
 
 
@@ -155,31 +99,77 @@ start_rabbit_game(CORE_DATA *cd, PLAYER *p, int bty, int special)
 }
 
 
+#define COMMAND_RABBIT 1
+
 extern "C"
 void
 GameEvent(CORE_DATA *cd)
 {
 	switch (cd->event) {
 	case EVENT_START:
-		/* allocate, store, and zero user_data */
-		cd->user_data = malloc(sizeof(USER_DATA));
-		bzero(cd->user_data, sizeof(USER_DATA));
+		RegisterPlugin(OPENCORE_VERSION, "rabbit", "cycad", "1.0", __DATE__, __TIME__, "A rabbit bot", sizeof(USER_DATA), 0);
 
 		/* set rabbit pid to nobody */
 		ud(cd)->rabbit_pid = PID_NONE;
 
 		/* register rabbit command */
-		RegisterCommand("!rabbit", "Test", 2,
-		    CMD_PRIVATE,
-		    "<name>:<bounty>[:<special>]",
-		    "Start the rabbit game",
-		    NULL,
-		    CmdRabbit
-		    );
-		break;
+		RegisterCommand(COMMAND_RABBIT, "!rabbit", "Rabbit", 2, CMD_PRIVATE, "<name>:<bounty>[:<special>]", "Start the rabbit game", NULL); break;
 	case EVENT_LOGIN:
 		/* set the bot's location to center */
 		SetPosition(16 * 512, 16 * 512, 0, 0);
+		break;
+	case EVENT_COMMAND:
+		switch (cd->cmd_id) {
+		case COMMAND_RABBIT: {
+			int show_usage = 0;
+
+			PLAYER_ID rpid = ud(cd)->rabbit_pid;
+
+			if (rpid == PID_NONE) {	/* rabbit game is not runnig */
+				if (cd->cmd_argc <= 1) {
+					show_usage = 1;
+				} else {
+					char *cmd = cd->cmd_argr[1];
+					int nargs = ArgCount(cmd, ':');
+
+					if (nargs != 2 && nargs != 3) {
+						show_usage = 1;
+					} else {	/* args to command are valid */
+						/* copy name out of command */
+						char rname[20];
+						DelimArgs(rname, sizeof(rname), cmd, 0, ':', 0);
+
+						/* copy bounty out of command */
+						int bty = AtoiArg(cmd, 1, ':');
+
+						/* copy special out of command if it was specified */
+						int special = 0;
+						if (nargs == 3)
+							special = AtoiArg(cmd, 2, ':');
+
+						/* find the player specified on the command line */
+						PLAYER *rabbit = FindPlayerName(rname, MATCH_HERE | MATCH_PREFIX);
+						if (rabbit) {
+							/* player found, start the game */
+							start_rabbit_game(cd, rabbit, bty, special);
+						} else {
+							RmtMessageFmt(cd->cmd_name, "Player not found: %s", rname);
+						}
+					}
+				}
+			} else {
+				/* rabbit game is already running */
+				PLAYER *p = FindPlayerPid(rpid, MATCH_HERE);
+
+				RmtMessageFmt(cd->cmd_name, "Rabbit is already running (%s is the rabbit)",
+				    p ? p->name : "**UNKNOWN**");
+			}
+
+			/* display usage if necessary */
+			if (show_usage) RmtMessageFmt(cd->cmd_name, "Usage: %s <name>:<bounty>[:<special>]", cd->cmd_argv[0]);
+		}
+		default: break;
+		}
 		break;
 	case EVENT_UPDATE:
 		if (ud(cd)->rabbit_pid == cd->p1->pid) {	/* if the update is for the rabbit */

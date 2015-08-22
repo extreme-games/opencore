@@ -130,7 +130,7 @@ static inline
 void
 cd2le(LIB_ENTRY *le, CORE_DATA *cd)
 {
-	le->user_data = cd->user_data;
+	// nothing for now, since all input to the core is coming through functions rather than direct sets	
 }
 
 static inline
@@ -199,8 +199,16 @@ RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version,
 	strlcpy(le->date, date, 24);
 	strlcpy(le->time, time, 24);
 	strlcpy(le->description, description, 24);
-	le->pinfo_size = pinfo_size;
-	le->userdata_size = userdata_size;
+
+	/* set user_data and pinfo sizes as specified unless the bot's type is python */
+	le->pinfo_size = le->type == TYPE_PYTHON ? sizeof(void*) : pinfo_size;
+	le->userdata_size = le->type == TYPE_PYTHON ? sizeof(void*) : userdata_size;
+
+	/* setup user_data here so its valid after the RegisterPlugin() call */
+	le->user_data = xcalloc(1, le->userdata_size);
+	CORE_DATA *cd = libman_get_core_data(td);
+	cd->user_data = le->user_data;
+
 	le->registered = 1;
 }
 
@@ -422,15 +430,6 @@ libman_load_library(THREAD_DATA *td, char *libname)
 		LogFmt(OP_MOD, "%s: Failed to register", le->libname);
 		unload = true;
 	}
-
-	/* special case for python, always keep pinfo/user_data the size of a pointer */
-	if (le->type == TYPE_PYTHON) {
-		le->pinfo_size = sizeof(void*);
-		le->userdata_size = sizeof(void*);
-	}
-
-	/* setup user_data */
-	le->user_data = xcalloc(1, le->userdata_size);	
 
 	/* setup pinfo */
 	int nslots = mod_tld->pinfo_nslots;

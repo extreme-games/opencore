@@ -72,20 +72,6 @@ extern "C" void CmdMove(CORE_DATA *cd);
 extern "C" void CmdQuit(CORE_DATA *cd);
 extern "C" void CmdWhite(CORE_DATA *cd);
 extern "C" void GameEvent(CORE_DATA *cd);
-extern "C" LIB_DATA REGISTRATION_INFO;
-
-// exported registration info for the core
-LIB_DATA REGISTRATION_INFO = {
-	"Chess",
-	"cycad",
-	"1.1",
-	__DATE__,
-	__TIME__,
-	"A Player-vs-Player chess bot",
-	CORE_VERSION,
-	0,
-	GameEvent
-};
 
 #define UD(ptr)		((USER_DATA*)ptr->user_data)
 #define MIN(a,b)	((a) < (b) ? (a) : (b))
@@ -1378,6 +1364,13 @@ CmdMove(CORE_DATA *cd)
 }
 
 
+#define COMMAND_CHESSHELP 1
+#define COMMAND_GAMEINFO 2
+#define COMMAND_WHITE 3
+#define COMMAND_BLACK 4
+#define COMMAND_MOVE 5
+#define COMMAND_QUIT 6
+
 void
 GameEvent(CORE_DATA *cd)
 {
@@ -1399,55 +1392,23 @@ GameEvent(CORE_DATA *cd)
 
 		// draw the board
 		LvzDrawAll(ud, NULL, true);
-
-		RegisterCommand("!chesshelp", "Chess", 0,
-		    CMD_PUBLIC | CMD_PRIVATE,
-		    NULL,
-		    "Get basic chessbot information",
-		    NULL,
-		    CmdChessHelp
-		    );
-
-		RegisterCommand("!gameinfo", "Chess", 0,
-		    CMD_PUBLIC | CMD_PRIVATE,
-		    NULL,
-		    "Get information about the current game",
-		    NULL,
-		    CmdGameInfo
-		    );
-
-		RegisterCommand("!white", "Chess", 0,
-		    CMD_PUBLIC | CMD_PRIVATE,
-		    NULL,
-		    "Play as White",
-		    NULL,
-		    CmdWhite
-		    );
-
-		RegisterCommand("!black", "Chess", 0,
-		    CMD_PUBLIC | CMD_PRIVATE,
-		    NULL,
-		    "Play as Black",
-		    NULL,
-		    CmdBlack
-		    );
-
-		RegisterCommand("!move", "Chess", 0,
-		    CMD_PUBLIC | CMD_PRIVATE,
-		    "<coord1>,<coord2>",
-		    "Move a chess piece",
-		    NULL,
-		    CmdMove
-		    );
-
-		RegisterCommand("!quit", "Chess", 0,
-		    CMD_PUBLIC | CMD_PRIVATE,
-		    NULL,
-		    "Stop playing chess",
-		    NULL,
-		    CmdQuit
-		    );
-
+		RegisterCommand(COMMAND_CHESSHELP, "!chesshelp", "Chess", 0, CMD_PUBLIC | CMD_PRIVATE, NULL, "Get basic chessbot information", NULL);
+		RegisterCommand(COMMAND_GAMEINFO, "!gameinfo", "Chess", 0, CMD_PUBLIC | CMD_PRIVATE, NULL, "Get information about the current game", NULL);
+		RegisterCommand(COMMAND_WHITE, "!white", "Chess", 0, CMD_PUBLIC | CMD_PRIVATE, NULL, "Play as White", NULL);
+		RegisterCommand(COMMAND_BLACK, "!black", "Chess", 0, CMD_PUBLIC | CMD_PRIVATE, NULL, "Play as Black", NULL);
+		RegisterCommand(COMMAND_MOVE, "!move", "Chess", 0, CMD_PUBLIC | CMD_PRIVATE, "<coord1>,<coord2>", "Move a chess piece", NULL);
+		RegisterCommand(COMMAND_QUIT, "!quit", "Chess", 0, CMD_PUBLIC | CMD_PRIVATE, NULL, "Stop playing chess", NULL);
+		break;
+	case EVENT_COMMAND:
+		switch (cd->cmd_id) {
+			case COMMAND_CHESSHELP: CmdChessHelp(cd); break;
+			case COMMAND_GAMEINFO: CmdGameInfo(cd); break;
+			case COMMAND_WHITE: CmdWhite(cd); break;
+			case COMMAND_BLACK: CmdBlack(cd); break;
+			case COMMAND_MOVE: CmdMove(cd); break;
+			case COMMAND_QUIT: CmdQuit(cd); break;
+			default: assert(0); break;
+		}
 		break;
 	case EVENT_MESSAGE:
 #if 0
@@ -1495,8 +1456,8 @@ GameEvent(CORE_DATA *cd)
 			StopGame(ud, "Player did not return to game");
 			ud->timer = 0;
 		} else if (cd->timer_data1) {
-			uint32_t objid = (uint32_t)cd->timer_data1;
-			uint32_t on = (uint32_t)cd->timer_data2;
+			uint32_t objid = (uint32_t)(intptr_t)cd->timer_data1;
+			uint32_t on = (uint32_t)(intptr_t)cd->timer_data2;
 			if (on) {
 				PubMessageFmt("*objon %u", objid);
 			} else {

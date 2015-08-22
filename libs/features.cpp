@@ -3,6 +3,7 @@
  */
 #include <pthread.h>
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -43,18 +44,6 @@ struct user_data
 	void	*example;
 };
 
-/*
- * Each of these must be set by the library. The names are self-
- * explanatory.
- */
-char	LIB_NAME[]		= "Test";
-char	LIB_AUTHOR[]		= "cycad";
-char	LIB_VERSION[]		= "1.0";
-char	LIB_DATE[]		= __DATE__;
-char	LIB_TIME[]		= __TIME__;
-char	LIB_DESCRIPTION[]	= "A test library.";
-char	LIB_TARGET[]		= CORE_VERSION;
-int	LIB_PINFO_SIZE		= sizeof(PLAYER_INFO);
 
 /*
  * The callback for !hello which simply replies with "Hello."
@@ -100,46 +89,34 @@ CmdKills(CORE_DATA *cd)
 	}
 }
 
+#define COMMAND_HELLO 1
+#define COMMAND_KILLS 2
+#define COMMAND_HERELIST 3
+
 void
 GameEvent(CORE_DATA *cd)
 {
 	switch (cd->event) {
 	case EVENT_START:
-		/* set the bot's thread-specific user_data */
-		cd->user_data = malloc(sizeof(USER_DATA));
+		RegisterPlugin(OPENCORE_VERSION, "features", "cycad", "1.0", __DATE__, __TIME__, "A bot with basic features", sizeof(USER_DATA), sizeof(PLAYER_INFO));
 
 		/* register !hello */
-		RegisterCommand("!hello", "Test", 0,
-		    CMD_PUBLIC | CMD_PRIVATE | CMD_REMOTE,
-		    NULL,
-		    "A command from a library.",
-		    NULL,
-		    CmdHello
-		    );
-
-		RegisterCommand("!kills", "Test", 0,
-		    CMD_PUBLIC | CMD_PRIVATE | CMD_REMOTE,
-		    "<player>",
-		    "See how many kills a player has",
-		    NULL,
-		    CmdKills
-		    );
-
-		RegisterCommand("!herelist", "Test", 0,
-		    CMD_PUBLIC | CMD_PRIVATE | CMD_REMOTE,
-		    NULL,
-		    "Display players in the arena",
-		    NULL,
-		    CmdHereList
-		    );
-
-		printf("event_start\n");
+		RegisterCommand(COMMAND_HELLO,    "!hello",    "Test", 0, CMD_PUBLIC | CMD_PRIVATE | CMD_REMOTE, NULL,       "A command from a library.", NULL);
+		RegisterCommand(COMMAND_KILLS,    "!kills",    "Test", 0, CMD_PUBLIC | CMD_PRIVATE | CMD_REMOTE, "<player>", "See how many kills a player has", NULL);
+		RegisterCommand(COMMAND_HERELIST, "!herelist", "Test", 0, CMD_PUBLIC | CMD_PRIVATE | CMD_REMOTE, NULL,       "Display players in the arena", NULL);
 
 		/* Set some example timers */
 		SetTimer(5000,  (void*)1 , (void*)2);
 		SetTimer(10000,  (void*)3 , (void*)4);
 		SetTimer(15000,  (void*)5 , (void*)6);
 		break;
+	case EVENT_COMMAND:
+		switch (cd->cmd_id) {
+		case COMMAND_HELLO: CmdHello(cd); break;
+		case COMMAND_KILLS: CmdKills(cd); break;
+		case COMMAND_HERELIST: CmdHereList(cd); break;
+		default: assert(0); break;
+		}
 	case EVENT_CHANGE:
 		{
 			/* player p1 changed ship */

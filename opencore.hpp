@@ -640,10 +640,11 @@ typedef void (*GameEvent_cb)(CORE_DATA *cd);
  * 'cmd_desc' a short description of the plugin. May be NULL.
  * 'cmd_ldesc' a long description of the command. May be NULL.
  */
-void	RegisterCommand(int id, char *cmd_text, char *cmd_class, int req_level,
-	    CMD_TYPE cmd_type, char *cmd_args, char *cmd_desc,
-	    char *cmd_ldesc);
+void	RegisterCommand(int id, char *cmd_text, char *cmd_class, int req_level, CMD_TYPE cmd_type, char *cmd_args, char *cmd_desc, char *cmd_ldesc); 
 
+/*
+ * Register a plugin with the core.  CORE_DATA.user_data is valid immediately after this call.
+ */
 void	RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version, char *date, char *time, char *description, size_t userdata_size, size_t pinfo_size);
 
 /*
@@ -839,6 +840,11 @@ void	*xmalloc(size_t sz);
 void	*xzmalloc(size_t sz);
 
 void	strlwr(char *str);
+
+#ifndef BSD
+void	strlcat(char *dst, const char *src, int dst_sz);
+void	strlcpy(char *dst, const char *src, int dst_sz);
+#endif
 
 /*
  * This export must be defined in the library.

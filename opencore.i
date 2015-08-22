@@ -28,6 +28,8 @@
 %ignore xzmalloc;
 %ignore xcalloc;
 %ignore strlwr;
+%ignore strlcat;
+%ignore strlcpy;
 
 %callback("GameEvent");
 %include "opencore.hpp"

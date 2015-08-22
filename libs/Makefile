@@ -1,48 +1,34 @@
 #
-# chucklehead Makefile
+# opencore example libraries Makefile
 #
 
 CXX = g++
-
-CXXFLAGS =  -g -Wno-write-strings -Wall -pthread -shared -fPIC
-
+CXXFLAGS = -g -Wno-write-strings -Wall -pthread -shared -fPIC
 INCLUDEDIRS = -I. -Iinclude -I..
-
 LIBDIRS = -L..
-
 LIBS = -lpthread 
-
 DFLAGS = -g
+DEFS = 
 
-SOURCEFILES = features.cpp rabbit.cpp chat.cpp bank.cpp query.cpp greet.cpp idle.cpp github.cpp
 
 default:
-	make features.so rabbit.so chat.so bank.so query.so greet.so idle.so github.so
+	make features.so rabbit.so chat.so query.so chess.so
 
-features.so: $(SOURCEFILES)
-	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) features.cpp $(LIBS)
-
-query.so: $(SOURCEFILES)
+query.so: query.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) query.cpp $(LIBS)
 
-github.so: $(SOURCEFILES)
-	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) github.cpp $(LIBS)
+chess.so: chess.cpp
+	$(CXX) -o $@ $(CXXFLAGS) -Wno-int-to-pointer-cast $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) chess.cpp $(LIBS)
 
-bank.so: $(SOURCEFILES)
-	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) bank.cpp $(LIBS)
+features.so: features.cpp
+	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) features.cpp $(LIBS)
 
-greet.so: $(SOURCEFILES)
-	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) greet.cpp $(LIBS)
-
-idle.so: $(SOURCEFILES)
-	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) idle.cpp $(LIBS)
-
-rabbit.so: $(SOURCEFILES)
+rabbit.so: rabbit.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) rabbit.cpp $(LIBS)
 
-chat.so: $(SOURCEFILES)
+chat.so: chat.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) chat.cpp -lncurses $(LIBS)
 
 clean:
-	rm -fr *.o *.do features.so rabbit.so chat.so bank.so query.so greet.so idle.so github.so
+	rm -fr *.o *.do *.so
 

@@ -38,11 +38,6 @@ int Atoi(const char *text);
 ticks_ms_t get_ticks_ms();
 ticks_hs_t get_ticks_hs(); 
 
-#ifndef BSD
-void strlcat(char *dst, const char *src, int dst_sz);
-void strlcpy(char *dst, const char *src, int dst_sz);
-#endif
-
 #endif
 
 /* EOF */

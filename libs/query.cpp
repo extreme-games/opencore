@@ -36,9 +36,7 @@ GameEvent(CORE_DATA *cd)
 {
 	switch (cd->event) {
 	case EVENT_START:
-		RegisterPlugin(CORE_VERSION, "query", "cycad", "1.0", __DATE__, __TIME__, "Submit a query to database", sizeof(PLAYER_INFO));
-		/* set the bot's thread-specific user_data */
-		cd->user_data = malloc(sizeof(USER_DATA));
+		RegisterPlugin(OPENCORE_VERSION, "query", "cycad", "1.0", __DATE__, __TIME__, "Submit a query to database", sizeof(USER_DATA), sizeof(PLAYER_INFO));
 
 		RegisterCommand(CMD_QUERY, "!query", "query", 9, CMD_PRIVATE | CMD_REMOTE, NULL, "Submit a query to the database", NULL);
 		break;
