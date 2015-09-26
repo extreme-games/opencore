@@ -1,4 +1,6 @@
 
+%include "stdint.i"
+
 /* for user_data conversions */
 /* python -> c */
 %typemap (in) void* {

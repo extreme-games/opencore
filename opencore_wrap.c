@@ -2916,7 +2916,7 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_core_data swig_types[3]
 #define SWIGTYPE_p_einfo_ swig_types[4]
 #define SWIGTYPE_p_einfo__res swig_types[5]
-#define SWIGTYPE_p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void swig_types[6]
+#define SWIGTYPE_p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void swig_types[6]
 #define SWIGTYPE_p_info_ swig_types[7]
 #define SWIGTYPE_p_info__ping swig_types[8]
 #define SWIGTYPE_p_info__ploss swig_types[9]
@@ -2927,15 +2927,20 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_info__usage_created swig_types[14]
 #define SWIGTYPE_p_info__usage_session swig_types[15]
 #define SWIGTYPE_p_info__usage_total swig_types[16]
-#define SWIGTYPE_p_p_char swig_types[17]
-#define SWIGTYPE_p_p_p_char swig_types[18]
-#define SWIGTYPE_p_p_void swig_types[19]
-#define SWIGTYPE_p_point swig_types[20]
-#define SWIGTYPE_p_uint16_t swig_types[21]
-#define SWIGTYPE_p_uint32_t swig_types[22]
-#define SWIGTYPE_p_uint8_t swig_types[23]
-static swig_type_info *swig_types[25];
-static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
+#define SWIGTYPE_p_int swig_types[17]
+#define SWIGTYPE_p_long_long swig_types[18]
+#define SWIGTYPE_p_p_char swig_types[19]
+#define SWIGTYPE_p_p_p_char swig_types[20]
+#define SWIGTYPE_p_p_void swig_types[21]
+#define SWIGTYPE_p_point swig_types[22]
+#define SWIGTYPE_p_short swig_types[23]
+#define SWIGTYPE_p_signed_char swig_types[24]
+#define SWIGTYPE_p_unsigned_char swig_types[25]
+#define SWIGTYPE_p_unsigned_int swig_types[26]
+#define SWIGTYPE_p_unsigned_long_long swig_types[27]
+#define SWIGTYPE_p_unsigned_short swig_types[28]
+static swig_type_info *swig_types[30];
+static swig_module_info swig_module = {swig_types, 29, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2965,6 +2970,9 @@ static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
 
 #define SWIG_as_voidptr(a) (void *)((const void *)(a)) 
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
+
+
+#include <stdint.h>		// Use the C99 official header
 
 
 #include "opencore.hpp"
@@ -3015,6 +3023,189 @@ SWIGINTERNINLINE PyObject*
   SWIG_From_int  (int value)
 {
   return PyInt_FromLong((long) value);
+}
+
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
+#   define LLONG_MAX __LONG_LONG_MAX__
+#   define LLONG_MIN (-LLONG_MAX - 1LL)
+#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+# endif
+#endif
+
+
+SWIGINTERN int
+SWIG_AsVal_double (PyObject *obj, double *val)
+{
+  int res = SWIG_TypeError;
+  if (PyFloat_Check(obj)) {
+    if (val) *val = PyFloat_AsDouble(obj);
+    return SWIG_OK;
+  } else if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return SWIG_OK;
+  } else if (PyLong_Check(obj)) {
+    double v = PyLong_AsDouble(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    double d = PyFloat_AsDouble(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = d;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      long v = PyLong_AsLong(obj);
+      if (!PyErr_Occurred()) {
+	if (val) *val = v;
+	return SWIG_AddCast(SWIG_AddCast(SWIG_OK));
+      } else {
+	PyErr_Clear();
+      }
+    }
+  }
+#endif
+  return res;
+}
+
+
+#include <float.h>
+
+
+#include <math.h>
+
+
+SWIGINTERNINLINE int
+SWIG_CanCastAsInteger(double *d, double min, double max) {
+  double x = *d;
+  if ((min <= x && x <= max)) {
+   double fx = floor(x);
+   double cx = ceil(x);
+   double rd =  ((x - fx) < 0.5) ? fx : cx; /* simple rint */
+   if ((errno == EDOM) || (errno == ERANGE)) {
+     errno = 0;
+   } else {
+     double summ, reps, diff;
+     if (rd < x) {
+       diff = x - rd;
+     } else if (rd > x) {
+       diff = rd - x;
+     } else {
+       return 1;
+     }
+     summ = rd + x;
+     reps = diff/summ;
+     if (reps < 8*DBL_EPSILON) {
+       *d = rd;
+       return 1;
+     }
+   }
+  }
+  return 0;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
+{
+#if PY_VERSION_HEX < 0x03000000
+  if (PyInt_Check(obj)) {
+    long v = PyInt_AsLong(obj);
+    if (v >= 0) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      return SWIG_OverflowError;
+    }
+  } else
+#endif
+  if (PyLong_Check(obj)) {
+    unsigned long v = PyLong_AsUnsignedLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+#if PY_VERSION_HEX >= 0x03000000
+      {
+        long v = PyLong_AsLong(obj);
+        if (!PyErr_Occurred()) {
+          if (v < 0) {
+            return SWIG_OverflowError;
+          }
+        } else {
+          PyErr_Clear();
+        }
+      }
+#endif
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    unsigned long v = PyLong_AsUnsignedLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      double d;
+      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, ULONG_MAX)) {
+	if (val) *val = (unsigned long)(d);
+	return res;
+      }
+    }
+  }
+#endif
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_short (PyObject * obj, unsigned short *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > USHRT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (unsigned short)(v);
+    }
+  }  
+  return res;
+}
+
+
+  #define SWIG_From_long   PyLong_FromLong 
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyLong_FromLong((long)(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_short  (unsigned short value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
 }
 
 
@@ -3118,96 +3309,6 @@ SWIG_AsCharArray(PyObject * obj, char *val, size_t size)
 }
 
 
-#include <limits.h>
-#if !defined(SWIG_NO_LLONG_MAX)
-# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
-#   define LLONG_MAX __LONG_LONG_MAX__
-#   define LLONG_MIN (-LLONG_MAX - 1LL)
-#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
-# endif
-#endif
-
-
-SWIGINTERN int
-SWIG_AsVal_double (PyObject *obj, double *val)
-{
-  int res = SWIG_TypeError;
-  if (PyFloat_Check(obj)) {
-    if (val) *val = PyFloat_AsDouble(obj);
-    return SWIG_OK;
-  } else if (PyInt_Check(obj)) {
-    if (val) *val = PyInt_AsLong(obj);
-    return SWIG_OK;
-  } else if (PyLong_Check(obj)) {
-    double v = PyLong_AsDouble(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = v;
-      return SWIG_OK;
-    } else {
-      PyErr_Clear();
-    }
-  }
-#ifdef SWIG_PYTHON_CAST_MODE
-  {
-    int dispatch = 0;
-    double d = PyFloat_AsDouble(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = d;
-      return SWIG_AddCast(SWIG_OK);
-    } else {
-      PyErr_Clear();
-    }
-    if (!dispatch) {
-      long v = PyLong_AsLong(obj);
-      if (!PyErr_Occurred()) {
-	if (val) *val = v;
-	return SWIG_AddCast(SWIG_AddCast(SWIG_OK));
-      } else {
-	PyErr_Clear();
-      }
-    }
-  }
-#endif
-  return res;
-}
-
-
-#include <float.h>
-
-
-#include <math.h>
-
-
-SWIGINTERNINLINE int
-SWIG_CanCastAsInteger(double *d, double min, double max) {
-  double x = *d;
-  if ((min <= x && x <= max)) {
-   double fx = floor(x);
-   double cx = ceil(x);
-   double rd =  ((x - fx) < 0.5) ? fx : cx; /* simple rint */
-   if ((errno == EDOM) || (errno == ERANGE)) {
-     errno = 0;
-   } else {
-     double summ, reps, diff;
-     if (rd < x) {
-       diff = x - rd;
-     } else if (rd > x) {
-       diff = rd - x;
-     } else {
-       return 1;
-     }
-     summ = rd + x;
-     reps = diff/summ;
-     if (reps < 8*DBL_EPSILON) {
-       *d = rd;
-       return 1;
-     }
-   }
-  }
-  return 0;
-}
-
-
 SWIGINTERN int
 SWIG_AsVal_long (PyObject *obj, long* val)
 {
@@ -3260,6 +3361,29 @@ SWIG_AsVal_int (PyObject * obj, int *val)
     }
   }  
   return res;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > UINT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (unsigned int)(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_unsigned_SS_int  (unsigned int value)
+{
+  return PyInt_FromSize_t((size_t) value);
 }
 
 typedef struct {
@@ -3344,88 +3468,6 @@ typedef struct {
 } info__usage_created;
 
 
-
-SWIGINTERN int
-SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
-{
-#if PY_VERSION_HEX < 0x03000000
-  if (PyInt_Check(obj)) {
-    long v = PyInt_AsLong(obj);
-    if (v >= 0) {
-      if (val) *val = v;
-      return SWIG_OK;
-    } else {
-      return SWIG_OverflowError;
-    }
-  } else
-#endif
-  if (PyLong_Check(obj)) {
-    unsigned long v = PyLong_AsUnsignedLong(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = v;
-      return SWIG_OK;
-    } else {
-      PyErr_Clear();
-#if PY_VERSION_HEX >= 0x03000000
-      {
-        long v = PyLong_AsLong(obj);
-        if (!PyErr_Occurred()) {
-          if (v < 0) {
-            return SWIG_OverflowError;
-          }
-        } else {
-          PyErr_Clear();
-        }
-      }
-#endif
-    }
-  }
-#ifdef SWIG_PYTHON_CAST_MODE
-  {
-    int dispatch = 0;
-    unsigned long v = PyLong_AsUnsignedLong(obj);
-    if (!PyErr_Occurred()) {
-      if (val) *val = v;
-      return SWIG_AddCast(SWIG_OK);
-    } else {
-      PyErr_Clear();
-    }
-    if (!dispatch) {
-      double d;
-      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
-      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, ULONG_MAX)) {
-	if (val) *val = (unsigned long)(d);
-	return res;
-      }
-    }
-  }
-#endif
-  return SWIG_TypeError;
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
-{
-  unsigned long v;
-  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v > UINT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = (unsigned int)(v);
-    }
-  }  
-  return res;
-}
-
-
-SWIGINTERNINLINE PyObject*
-  SWIG_From_unsigned_SS_int  (unsigned int value)
-{
-  return PyInt_FromSize_t((size_t) value);
-}
-
 typedef struct {
   uint32_t	slow;
   uint32_t	fast;
@@ -3494,10 +3536,30 @@ SWIG_From_float  (float value)
 }
 
 
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_char (PyObject * obj, unsigned char *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > UCHAR_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (unsigned char)(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_char  (unsigned char value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
 
 
 
-  #define SWIG_From_long   PyLong_FromLong 
 
 
 SWIGINTERN int
@@ -3555,8 +3617,8 @@ SWIGINTERN PyObject *_wrap_point_x_set(PyObject *SWIGUNUSEDPARM(self), PyObject 
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -3566,17 +3628,11 @@ SWIGINTERN PyObject *_wrap_point_x_set(PyObject *SWIGUNUSEDPARM(self), PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "point_x_set" "', argument " "1"" of type '" "struct point *""'"); 
   }
   arg1 = (struct point *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "point_x_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "point_x_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "point_x_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->x = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -3599,8 +3655,8 @@ SWIGINTERN PyObject *_wrap_point_x_get(PyObject *SWIGUNUSEDPARM(self), PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "point_x_get" "', argument " "1"" of type '" "struct point *""'"); 
   }
   arg1 = (struct point *)(argp1);
-  result =  ((arg1)->x);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->x);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -3613,8 +3669,8 @@ SWIGINTERN PyObject *_wrap_point_y_set(PyObject *SWIGUNUSEDPARM(self), PyObject 
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -3624,17 +3680,11 @@ SWIGINTERN PyObject *_wrap_point_y_set(PyObject *SWIGUNUSEDPARM(self), PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "point_y_set" "', argument " "1"" of type '" "struct point *""'"); 
   }
   arg1 = (struct point *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "point_y_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "point_y_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "point_y_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->y = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -3657,8 +3707,8 @@ SWIGINTERN PyObject *_wrap_point_y_get(PyObject *SWIGUNUSEDPARM(self), PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "point_y_get" "', argument " "1"" of type '" "struct point *""'"); 
   }
   arg1 = (struct point *)(argp1);
-  result =  ((arg1)->y);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->y);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -3771,8 +3821,8 @@ SWIGINTERN PyObject *_wrap_arena_list_count_set(PyObject *SWIGUNUSEDPARM(self), 
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -3782,17 +3832,11 @@ SWIGINTERN PyObject *_wrap_arena_list_count_set(PyObject *SWIGUNUSEDPARM(self), 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "arena_list_count_set" "', argument " "1"" of type '" "struct arena_list *""'"); 
   }
   arg1 = (struct arena_list *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "arena_list_count_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "arena_list_count_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "arena_list_count_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->count = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -3815,8 +3859,8 @@ SWIGINTERN PyObject *_wrap_arena_list_count_get(PyObject *SWIGUNUSEDPARM(self), 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "arena_list_count_get" "', argument " "1"" of type '" "struct arena_list *""'"); 
   }
   arg1 = (struct arena_list *)(argp1);
-  result =  ((arg1)->count);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->count);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -3981,8 +4025,8 @@ SWIGINTERN PyObject *_wrap_einfo__userid_set(PyObject *SWIGUNUSEDPARM(self), PyO
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -3992,17 +4036,11 @@ SWIGINTERN PyObject *_wrap_einfo__userid_set(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__userid_set" "', argument " "1"" of type '" "struct einfo_ *""'"); 
   }
   arg1 = (struct einfo_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "einfo__userid_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "einfo__userid_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "einfo__userid_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->userid = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4025,8 +4063,8 @@ SWIGINTERN PyObject *_wrap_einfo__userid_get(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__userid_get" "', argument " "1"" of type '" "struct einfo_ *""'"); 
   }
   arg1 = (struct einfo_ *)(argp1);
-  result =  ((arg1)->userid);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->userid);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4039,8 +4077,8 @@ SWIGINTERN PyObject *_wrap_einfo__idle_seconds_set(PyObject *SWIGUNUSEDPARM(self
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4050,17 +4088,11 @@ SWIGINTERN PyObject *_wrap_einfo__idle_seconds_set(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__idle_seconds_set" "', argument " "1"" of type '" "struct einfo_ *""'"); 
   }
   arg1 = (struct einfo_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "einfo__idle_seconds_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "einfo__idle_seconds_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "einfo__idle_seconds_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->idle_seconds = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4083,8 +4115,8 @@ SWIGINTERN PyObject *_wrap_einfo__idle_seconds_get(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__idle_seconds_get" "', argument " "1"" of type '" "struct einfo_ *""'"); 
   }
   arg1 = (struct einfo_ *)(argp1);
-  result =  ((arg1)->idle_seconds);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->idle_seconds);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4097,8 +4129,8 @@ SWIGINTERN PyObject *_wrap_einfo__timer_drift_set(PyObject *SWIGUNUSEDPARM(self)
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4108,17 +4140,11 @@ SWIGINTERN PyObject *_wrap_einfo__timer_drift_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__timer_drift_set" "', argument " "1"" of type '" "struct einfo_ *""'"); 
   }
   arg1 = (struct einfo_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "einfo__timer_drift_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "einfo__timer_drift_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "einfo__timer_drift_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->timer_drift = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4141,8 +4167,8 @@ SWIGINTERN PyObject *_wrap_einfo__timer_drift_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__timer_drift_get" "', argument " "1"" of type '" "struct einfo_ *""'"); 
   }
   arg1 = (struct einfo_ *)(argp1);
-  result =  ((arg1)->timer_drift);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->timer_drift);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4218,8 +4244,8 @@ SWIGINTERN PyObject *_wrap_einfo__res_x_set(PyObject *SWIGUNUSEDPARM(self), PyOb
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4229,17 +4255,11 @@ SWIGINTERN PyObject *_wrap_einfo__res_x_set(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__res_x_set" "', argument " "1"" of type '" "einfo__res *""'"); 
   }
   arg1 = (einfo__res *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "einfo__res_x_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "einfo__res_x_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "einfo__res_x_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->x = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4262,8 +4282,8 @@ SWIGINTERN PyObject *_wrap_einfo__res_x_get(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__res_x_get" "', argument " "1"" of type '" "einfo__res *""'"); 
   }
   arg1 = (einfo__res *)(argp1);
-  result =  ((arg1)->x);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->x);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4276,8 +4296,8 @@ SWIGINTERN PyObject *_wrap_einfo__res_y_set(PyObject *SWIGUNUSEDPARM(self), PyOb
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4287,17 +4307,11 @@ SWIGINTERN PyObject *_wrap_einfo__res_y_set(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__res_y_set" "', argument " "1"" of type '" "einfo__res *""'"); 
   }
   arg1 = (einfo__res *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "einfo__res_y_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "einfo__res_y_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "einfo__res_y_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->y = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4320,8 +4334,8 @@ SWIGINTERN PyObject *_wrap_einfo__res_y_get(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "einfo__res_y_get" "', argument " "1"" of type '" "einfo__res *""'"); 
   }
   arg1 = (einfo__res *)(argp1);
-  result =  ((arg1)->y);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->y);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4434,8 +4448,8 @@ SWIGINTERN PyObject *_wrap_info__ip_set(PyObject *SWIGUNUSEDPARM(self), PyObject
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4445,17 +4459,11 @@ SWIGINTERN PyObject *_wrap_info__ip_set(PyObject *SWIGUNUSEDPARM(self), PyObject
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ip_set" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__ip_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__ip_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__ip_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->ip = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4478,8 +4486,8 @@ SWIGINTERN PyObject *_wrap_info__ip_get(PyObject *SWIGUNUSEDPARM(self), PyObject
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ip_get" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  result =  ((arg1)->ip);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->ip);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4544,8 +4552,8 @@ SWIGINTERN PyObject *_wrap_info__freq_set(PyObject *SWIGUNUSEDPARM(self), PyObje
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4555,17 +4563,11 @@ SWIGINTERN PyObject *_wrap_info__freq_set(PyObject *SWIGUNUSEDPARM(self), PyObje
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__freq_set" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__freq_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__freq_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__freq_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->freq = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4588,8 +4590,8 @@ SWIGINTERN PyObject *_wrap_info__freq_get(PyObject *SWIGUNUSEDPARM(self), PyObje
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__freq_get" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  result =  ((arg1)->freq);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->freq);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4654,8 +4656,8 @@ SWIGINTERN PyObject *_wrap_info__mid_set(PyObject *SWIGUNUSEDPARM(self), PyObjec
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4665,17 +4667,11 @@ SWIGINTERN PyObject *_wrap_info__mid_set(PyObject *SWIGUNUSEDPARM(self), PyObjec
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__mid_set" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__mid_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__mid_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__mid_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->mid = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4698,8 +4694,8 @@ SWIGINTERN PyObject *_wrap_info__mid_get(PyObject *SWIGUNUSEDPARM(self), PyObjec
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__mid_get" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  result =  ((arg1)->mid);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->mid);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4712,8 +4708,8 @@ SWIGINTERN PyObject *_wrap_info__bytes_per_second_set(PyObject *SWIGUNUSEDPARM(s
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4723,17 +4719,11 @@ SWIGINTERN PyObject *_wrap_info__bytes_per_second_set(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__bytes_per_second_set" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__bytes_per_second_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__bytes_per_second_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__bytes_per_second_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->bytes_per_second = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4756,8 +4746,8 @@ SWIGINTERN PyObject *_wrap_info__bytes_per_second_get(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__bytes_per_second_get" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  result =  ((arg1)->bytes_per_second);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->bytes_per_second);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4770,8 +4760,8 @@ SWIGINTERN PyObject *_wrap_info__low_bandwidth_set(PyObject *SWIGUNUSEDPARM(self
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4781,17 +4771,11 @@ SWIGINTERN PyObject *_wrap_info__low_bandwidth_set(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__low_bandwidth_set" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__low_bandwidth_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__low_bandwidth_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__low_bandwidth_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->low_bandwidth = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4814,8 +4798,8 @@ SWIGINTERN PyObject *_wrap_info__low_bandwidth_get(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__low_bandwidth_get" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  result =  ((arg1)->low_bandwidth);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->low_bandwidth);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -4828,8 +4812,8 @@ SWIGINTERN PyObject *_wrap_info__message_logging_set(PyObject *SWIGUNUSEDPARM(se
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4839,17 +4823,11 @@ SWIGINTERN PyObject *_wrap_info__message_logging_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__message_logging_set" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__message_logging_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__message_logging_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__message_logging_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->message_logging = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -4872,8 +4850,8 @@ SWIGINTERN PyObject *_wrap_info__message_logging_get(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__message_logging_get" "', argument " "1"" of type '" "struct info_ *""'"); 
   }
   arg1 = (struct info_ *)(argp1);
-  result =  ((arg1)->message_logging);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->message_logging);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5534,8 +5512,8 @@ SWIGINTERN PyObject *_wrap_info__usage_total_days_set(PyObject *SWIGUNUSEDPARM(s
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5545,17 +5523,11 @@ SWIGINTERN PyObject *_wrap_info__usage_total_days_set(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_total_days_set" "', argument " "1"" of type '" "info__usage_total *""'"); 
   }
   arg1 = (info__usage_total *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__usage_total_days_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__usage_total_days_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__usage_total_days_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->days = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5578,8 +5550,8 @@ SWIGINTERN PyObject *_wrap_info__usage_total_days_get(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_total_days_get" "', argument " "1"" of type '" "info__usage_total *""'"); 
   }
   arg1 = (info__usage_total *)(argp1);
-  result =  ((arg1)->days);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->days);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5592,8 +5564,8 @@ SWIGINTERN PyObject *_wrap_info__usage_total_hours_set(PyObject *SWIGUNUSEDPARM(
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5603,17 +5575,11 @@ SWIGINTERN PyObject *_wrap_info__usage_total_hours_set(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_total_hours_set" "', argument " "1"" of type '" "info__usage_total *""'"); 
   }
   arg1 = (info__usage_total *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__usage_total_hours_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__usage_total_hours_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__usage_total_hours_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->hours = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5636,8 +5602,8 @@ SWIGINTERN PyObject *_wrap_info__usage_total_hours_get(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_total_hours_get" "', argument " "1"" of type '" "info__usage_total *""'"); 
   }
   arg1 = (info__usage_total *)(argp1);
-  result =  ((arg1)->hours);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->hours);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5650,8 +5616,8 @@ SWIGINTERN PyObject *_wrap_info__usage_total_minutes_set(PyObject *SWIGUNUSEDPAR
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5661,17 +5627,11 @@ SWIGINTERN PyObject *_wrap_info__usage_total_minutes_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_total_minutes_set" "', argument " "1"" of type '" "info__usage_total *""'"); 
   }
   arg1 = (info__usage_total *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__usage_total_minutes_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__usage_total_minutes_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__usage_total_minutes_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->minutes = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5694,8 +5654,8 @@ SWIGINTERN PyObject *_wrap_info__usage_total_minutes_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_total_minutes_get" "', argument " "1"" of type '" "info__usage_total *""'"); 
   }
   arg1 = (info__usage_total *)(argp1);
-  result =  ((arg1)->minutes);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->minutes);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5749,8 +5709,8 @@ SWIGINTERN PyObject *_wrap_info__usage_session_days_set(PyObject *SWIGUNUSEDPARM
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5760,17 +5720,11 @@ SWIGINTERN PyObject *_wrap_info__usage_session_days_set(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_session_days_set" "', argument " "1"" of type '" "info__usage_session *""'"); 
   }
   arg1 = (info__usage_session *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__usage_session_days_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__usage_session_days_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__usage_session_days_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->days = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5793,8 +5747,8 @@ SWIGINTERN PyObject *_wrap_info__usage_session_days_get(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_session_days_get" "', argument " "1"" of type '" "info__usage_session *""'"); 
   }
   arg1 = (info__usage_session *)(argp1);
-  result =  ((arg1)->days);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->days);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5807,8 +5761,8 @@ SWIGINTERN PyObject *_wrap_info__usage_session_hours_set(PyObject *SWIGUNUSEDPAR
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5818,17 +5772,11 @@ SWIGINTERN PyObject *_wrap_info__usage_session_hours_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_session_hours_set" "', argument " "1"" of type '" "info__usage_session *""'"); 
   }
   arg1 = (info__usage_session *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__usage_session_hours_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__usage_session_hours_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__usage_session_hours_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->hours = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5851,8 +5799,8 @@ SWIGINTERN PyObject *_wrap_info__usage_session_hours_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_session_hours_get" "', argument " "1"" of type '" "info__usage_session *""'"); 
   }
   arg1 = (info__usage_session *)(argp1);
-  result =  ((arg1)->hours);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->hours);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5865,8 +5813,8 @@ SWIGINTERN PyObject *_wrap_info__usage_session_minutes_set(PyObject *SWIGUNUSEDP
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5876,17 +5824,11 @@ SWIGINTERN PyObject *_wrap_info__usage_session_minutes_set(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_session_minutes_set" "', argument " "1"" of type '" "info__usage_session *""'"); 
   }
   arg1 = (info__usage_session *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__usage_session_minutes_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__usage_session_minutes_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__usage_session_minutes_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->minutes = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -5909,8 +5851,8 @@ SWIGINTERN PyObject *_wrap_info__usage_session_minutes_get(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__usage_session_minutes_get" "', argument " "1"" of type '" "info__usage_session *""'"); 
   }
   arg1 = (info__usage_session *)(argp1);
-  result =  ((arg1)->minutes);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->minutes);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5964,8 +5906,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f1_set(PyObject *SWIGUNUSEDPARM(self), Py
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -5975,17 +5917,11 @@ SWIGINTERN PyObject *_wrap_info__stats_f1_set(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f1_set" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_f1_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_f1_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_f1_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->f1 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6008,8 +5944,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f1_get(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f1_get" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  result =  ((arg1)->f1);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->f1);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6022,8 +5958,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f2_set(PyObject *SWIGUNUSEDPARM(self), Py
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6033,17 +5969,11 @@ SWIGINTERN PyObject *_wrap_info__stats_f2_set(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f2_set" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_f2_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_f2_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_f2_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->f2 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6066,8 +5996,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f2_get(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f2_get" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  result =  ((arg1)->f2);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->f2);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6080,8 +6010,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f3_set(PyObject *SWIGUNUSEDPARM(self), Py
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6091,17 +6021,11 @@ SWIGINTERN PyObject *_wrap_info__stats_f3_set(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f3_set" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_f3_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_f3_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_f3_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->f3 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6124,8 +6048,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f3_get(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f3_get" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  result =  ((arg1)->f3);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->f3);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6138,8 +6062,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f4_set(PyObject *SWIGUNUSEDPARM(self), Py
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6149,17 +6073,11 @@ SWIGINTERN PyObject *_wrap_info__stats_f4_set(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f4_set" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_f4_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_f4_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_f4_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->f4 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6182,8 +6100,8 @@ SWIGINTERN PyObject *_wrap_info__stats_f4_get(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_f4_get" "', argument " "1"" of type '" "info__stats *""'"); 
   }
   arg1 = (info__stats *)(argp1);
-  result =  ((arg1)->f4);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->f4);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6281,8 +6199,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_slow_set(PyObject *SWIGUNUSEDPARM(sel
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6292,17 +6210,11 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_slow_set(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_slow_set" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_s2c_slow_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_s2c_slow_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_s2c_slow_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->slow = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6325,8 +6237,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_slow_get(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_slow_get" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  result =  ((arg1)->slow);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->slow);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6339,8 +6251,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_fast_set(PyObject *SWIGUNUSEDPARM(sel
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6350,17 +6262,11 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_fast_set(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_fast_set" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_s2c_fast_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_s2c_fast_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_s2c_fast_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->fast = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6383,8 +6289,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_fast_get(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_fast_get" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  result =  ((arg1)->fast);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->fast);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6449,8 +6355,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_total_slow_set(PyObject *SWIGUNUSEDPA
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6460,17 +6366,11 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_total_slow_set(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_total_slow_set" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_s2c_total_slow_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_s2c_total_slow_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_s2c_total_slow_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->total_slow = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6493,8 +6393,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_total_slow_get(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_total_slow_get" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  result =  ((arg1)->total_slow);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->total_slow);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6507,8 +6407,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_total_fast_set(PyObject *SWIGUNUSEDPA
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6518,17 +6418,11 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_total_fast_set(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_total_fast_set" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_s2c_total_fast_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_s2c_total_fast_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_s2c_total_fast_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->total_fast = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6551,8 +6445,8 @@ SWIGINTERN PyObject *_wrap_info__stats_s2c_total_fast_get(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_s2c_total_fast_get" "', argument " "1"" of type '" "info__stats_s2c *""'"); 
   }
   arg1 = (info__stats_s2c *)(argp1);
-  result =  ((arg1)->total_fast);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->total_fast);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6658,8 +6552,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_slow_set(PyObject *SWIGUNUSEDPARM(sel
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6669,17 +6563,11 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_slow_set(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_slow_set" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_c2s_slow_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_c2s_slow_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_c2s_slow_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->slow = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6702,8 +6590,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_slow_get(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_slow_get" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  result =  ((arg1)->slow);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->slow);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6716,8 +6604,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_fast_set(PyObject *SWIGUNUSEDPARM(sel
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6727,17 +6615,11 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_fast_set(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_fast_set" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_c2s_fast_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_c2s_fast_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_c2s_fast_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->fast = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6760,8 +6642,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_fast_get(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_fast_get" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  result =  ((arg1)->fast);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->fast);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6826,8 +6708,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_total_slow_set(PyObject *SWIGUNUSEDPA
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6837,17 +6719,11 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_total_slow_set(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_total_slow_set" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_c2s_total_slow_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_c2s_total_slow_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_c2s_total_slow_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->total_slow = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6870,8 +6746,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_total_slow_get(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_total_slow_get" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  result =  ((arg1)->total_slow);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->total_slow);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -6884,8 +6760,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_total_fast_set(PyObject *SWIGUNUSEDPA
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -6895,17 +6771,11 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_total_fast_set(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_total_fast_set" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__stats_c2s_total_fast_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__stats_c2s_total_fast_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__stats_c2s_total_fast_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->total_fast = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -6928,8 +6798,8 @@ SWIGINTERN PyObject *_wrap_info__stats_c2s_total_fast_get(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__stats_c2s_total_fast_get" "', argument " "1"" of type '" "info__stats_c2s *""'"); 
   }
   arg1 = (info__stats_c2s *)(argp1);
-  result =  ((arg1)->total_fast);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->total_fast);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7232,8 +7102,8 @@ SWIGINTERN PyObject *_wrap_info__ping_current_set(PyObject *SWIGUNUSEDPARM(self)
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -7243,17 +7113,11 @@ SWIGINTERN PyObject *_wrap_info__ping_current_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_current_set" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__ping_current_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__ping_current_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__ping_current_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->current = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -7276,8 +7140,8 @@ SWIGINTERN PyObject *_wrap_info__ping_current_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_current_get" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  result =  ((arg1)->current);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->current);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7290,8 +7154,8 @@ SWIGINTERN PyObject *_wrap_info__ping_low_set(PyObject *SWIGUNUSEDPARM(self), Py
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -7301,17 +7165,11 @@ SWIGINTERN PyObject *_wrap_info__ping_low_set(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_low_set" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__ping_low_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__ping_low_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__ping_low_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->low = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -7334,8 +7192,8 @@ SWIGINTERN PyObject *_wrap_info__ping_low_get(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_low_get" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  result =  ((arg1)->low);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->low);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7348,8 +7206,8 @@ SWIGINTERN PyObject *_wrap_info__ping_high_set(PyObject *SWIGUNUSEDPARM(self), P
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -7359,17 +7217,11 @@ SWIGINTERN PyObject *_wrap_info__ping_high_set(PyObject *SWIGUNUSEDPARM(self), P
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_high_set" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__ping_high_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__ping_high_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__ping_high_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->high = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -7392,8 +7244,8 @@ SWIGINTERN PyObject *_wrap_info__ping_high_get(PyObject *SWIGUNUSEDPARM(self), P
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_high_get" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  result =  ((arg1)->high);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->high);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7406,8 +7258,8 @@ SWIGINTERN PyObject *_wrap_info__ping_average_set(PyObject *SWIGUNUSEDPARM(self)
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -7417,17 +7269,11 @@ SWIGINTERN PyObject *_wrap_info__ping_average_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_average_set" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "info__ping_average_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "info__ping_average_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "info__ping_average_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->average = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -7450,8 +7296,8 @@ SWIGINTERN PyObject *_wrap_info__ping_average_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "info__ping_average_get" "', argument " "1"" of type '" "info__ping *""'"); 
   }
   arg1 = (info__ping *)(argp1);
-  result =  ((arg1)->average);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->average);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7935,8 +7781,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__pid_set(PyObject *SWIGUNUSEDPARM(self), PyObj
   PLAYER_ID arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -7946,17 +7792,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__pid_set(PyObject *SWIGUNUSEDPARM(self), PyObj
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__pid_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__pid_set" "', argument " "2"" of type '" "PLAYER_ID""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__pid_set" "', argument " "2"" of type '" "PLAYER_ID""'");
-    } else {
-      arg2 = *((PLAYER_ID *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__pid_set" "', argument " "2"" of type '" "PLAYER_ID""'");
+  } 
+  arg2 = (PLAYER_ID)(val2);
   if (arg1) (arg1)->pid = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -7979,8 +7819,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__pid_get(PyObject *SWIGUNUSEDPARM(self), PyObj
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__pid_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->pid);
-  resultobj = SWIG_NewPointerObj((PLAYER_ID *)memcpy((PLAYER_ID *)malloc(sizeof(PLAYER_ID)),&result,sizeof(PLAYER_ID)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (PLAYER_ID) ((arg1)->pid);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7993,8 +7833,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__enter_tick_set(PyObject *SWIGUNUSEDPARM(self)
   ticks_ms_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8004,17 +7844,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__enter_tick_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__enter_tick_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__enter_tick_set" "', argument " "2"" of type '" "ticks_ms_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__enter_tick_set" "', argument " "2"" of type '" "ticks_ms_t""'");
-    } else {
-      arg2 = *((ticks_ms_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__enter_tick_set" "', argument " "2"" of type '" "ticks_ms_t""'");
+  } 
+  arg2 = (ticks_ms_t)(val2);
   if (arg1) (arg1)->enter_tick = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8037,8 +7871,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__enter_tick_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__enter_tick_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->enter_tick);
-  resultobj = SWIG_NewPointerObj((ticks_ms_t *)memcpy((ticks_ms_t *)malloc(sizeof(ticks_ms_t)),&result,sizeof(ticks_ms_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (ticks_ms_t) ((arg1)->enter_tick);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8051,8 +7885,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__leave_tick_set(PyObject *SWIGUNUSEDPARM(self)
   ticks_ms_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8062,17 +7896,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__leave_tick_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__leave_tick_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__leave_tick_set" "', argument " "2"" of type '" "ticks_ms_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__leave_tick_set" "', argument " "2"" of type '" "ticks_ms_t""'");
-    } else {
-      arg2 = *((ticks_ms_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__leave_tick_set" "', argument " "2"" of type '" "ticks_ms_t""'");
+  } 
+  arg2 = (ticks_ms_t)(val2);
   if (arg1) (arg1)->leave_tick = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8095,8 +7923,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__leave_tick_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__leave_tick_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->leave_tick);
-  resultobj = SWIG_NewPointerObj((ticks_ms_t *)memcpy((ticks_ms_t *)malloc(sizeof(ticks_ms_t)),&result,sizeof(ticks_ms_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (ticks_ms_t) ((arg1)->leave_tick);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8109,8 +7937,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__ship_set(PyObject *SWIGUNUSEDPARM(self), PyOb
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8120,17 +7948,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__ship_set(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__ship_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__ship_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__ship_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      arg2 = *((uint8_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__ship_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = (uint8_t)(val2);
   if (arg1) (arg1)->ship = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8153,8 +7975,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__ship_get(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__ship_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->ship);
-  resultobj = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->ship);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8167,8 +7989,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__freq_set(PyObject *SWIGUNUSEDPARM(self), PyOb
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8178,17 +8000,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__freq_set(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__freq_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__freq_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__freq_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__freq_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->freq = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8211,8 +8027,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__freq_get(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__freq_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->freq);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->freq);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8284,8 +8100,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__x_vel_set(PyObject *SWIGUNUSEDPARM(self), PyO
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8295,17 +8111,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__x_vel_set(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__x_vel_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__x_vel_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__x_vel_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__x_vel_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->x_vel = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8328,8 +8138,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__x_vel_get(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__x_vel_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->x_vel);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->x_vel);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8342,8 +8152,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__y_vel_set(PyObject *SWIGUNUSEDPARM(self), PyO
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8353,17 +8163,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__y_vel_set(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__y_vel_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__y_vel_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__y_vel_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__y_vel_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->y_vel = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8386,8 +8190,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__y_vel_get(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__y_vel_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->y_vel);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->y_vel);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8400,8 +8204,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__status_set(PyObject *SWIGUNUSEDPARM(self), Py
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8411,17 +8215,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__status_set(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__status_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__status_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__status_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      arg2 = *((uint8_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__status_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = (uint8_t)(val2);
   if (arg1) (arg1)->status = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8444,8 +8242,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__status_get(PyObject *SWIGUNUSEDPARM(self), Py
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__status_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->status);
-  resultobj = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->status);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -8458,8 +8256,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__here_set(PyObject *SWIGUNUSEDPARM(self), PyOb
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -8469,17 +8267,11 @@ SWIGINTERN PyObject *_wrap_PLAYER__here_set(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__here_set" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PLAYER__here_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "PLAYER__here_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      arg2 = *((uint8_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PLAYER__here_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = (uint8_t)(val2);
   if (arg1) (arg1)->here = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -8502,8 +8294,8 @@ SWIGINTERN PyObject *_wrap_PLAYER__here_get(PyObject *SWIGUNUSEDPARM(self), PyOb
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PLAYER__here_get" "', argument " "1"" of type '" "struct PLAYER_ *""'"); 
   }
   arg1 = (struct PLAYER_ *)(argp1);
-  result =  ((arg1)->here);
-  resultobj = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->here);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -9163,8 +8955,8 @@ SWIGINTERN PyObject *_wrap_core_data_msg_type_set(PyObject *SWIGUNUSEDPARM(self)
   MSG_TYPE arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9174,17 +8966,11 @@ SWIGINTERN PyObject *_wrap_core_data_msg_type_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_msg_type_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_msg_type_set" "', argument " "2"" of type '" "MSG_TYPE""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_msg_type_set" "', argument " "2"" of type '" "MSG_TYPE""'");
-    } else {
-      arg2 = *((MSG_TYPE *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_msg_type_set" "', argument " "2"" of type '" "MSG_TYPE""'");
+  } 
+  arg2 = (MSG_TYPE)(val2);
   if (arg1) (arg1)->msg_type = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -9207,8 +8993,8 @@ SWIGINTERN PyObject *_wrap_core_data_msg_type_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_msg_type_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->msg_type);
-  resultobj = SWIG_NewPointerObj((MSG_TYPE *)memcpy((MSG_TYPE *)malloc(sizeof(MSG_TYPE)),&result,sizeof(MSG_TYPE)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (MSG_TYPE) ((arg1)->msg_type);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -9578,8 +9364,8 @@ SWIGINTERN PyObject *_wrap_core_data_old_ship_set(PyObject *SWIGUNUSEDPARM(self)
   SHIP arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9589,17 +9375,11 @@ SWIGINTERN PyObject *_wrap_core_data_old_ship_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_old_ship_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_old_ship_set" "', argument " "2"" of type '" "SHIP""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_old_ship_set" "', argument " "2"" of type '" "SHIP""'");
-    } else {
-      arg2 = *((SHIP *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_old_ship_set" "', argument " "2"" of type '" "SHIP""'");
+  } 
+  arg2 = (SHIP)(val2);
   if (arg1) (arg1)->old_ship = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -9622,8 +9402,8 @@ SWIGINTERN PyObject *_wrap_core_data_old_ship_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_old_ship_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->old_ship);
-  resultobj = SWIG_NewPointerObj((SHIP *)memcpy((SHIP *)malloc(sizeof(SHIP)),&result,sizeof(SHIP)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (SHIP) ((arg1)->old_ship);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -9636,8 +9416,8 @@ SWIGINTERN PyObject *_wrap_core_data_old_freq_set(PyObject *SWIGUNUSEDPARM(self)
   FREQ arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9647,17 +9427,11 @@ SWIGINTERN PyObject *_wrap_core_data_old_freq_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_old_freq_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_old_freq_set" "', argument " "2"" of type '" "FREQ""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_old_freq_set" "', argument " "2"" of type '" "FREQ""'");
-    } else {
-      arg2 = *((FREQ *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_old_freq_set" "', argument " "2"" of type '" "FREQ""'");
+  } 
+  arg2 = (FREQ)(val2);
   if (arg1) (arg1)->old_freq = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -9680,8 +9454,8 @@ SWIGINTERN PyObject *_wrap_core_data_old_freq_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_old_freq_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->old_freq);
-  resultobj = SWIG_NewPointerObj((FREQ *)memcpy((FREQ *)malloc(sizeof(FREQ)),&result,sizeof(FREQ)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (FREQ) ((arg1)->old_freq);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -9965,8 +9739,8 @@ SWIGINTERN PyObject *_wrap_core_data_cmd_type_set(PyObject *SWIGUNUSEDPARM(self)
   CMD_TYPE arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9976,17 +9750,11 @@ SWIGINTERN PyObject *_wrap_core_data_cmd_type_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_cmd_type_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_cmd_type_set" "', argument " "2"" of type '" "CMD_TYPE""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_cmd_type_set" "', argument " "2"" of type '" "CMD_TYPE""'");
-    } else {
-      arg2 = *((CMD_TYPE *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_cmd_type_set" "', argument " "2"" of type '" "CMD_TYPE""'");
+  } 
+  arg2 = (CMD_TYPE)(val2);
   if (arg1) (arg1)->cmd_type = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -10009,8 +9777,8 @@ SWIGINTERN PyObject *_wrap_core_data_cmd_type_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_cmd_type_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->cmd_type);
-  resultobj = SWIG_NewPointerObj((CMD_TYPE *)memcpy((CMD_TYPE *)malloc(sizeof(CMD_TYPE)),&result,sizeof(CMD_TYPE)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (CMD_TYPE) ((arg1)->cmd_type);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -10231,8 +9999,8 @@ SWIGINTERN PyObject *_wrap_core_data_transfer_success_set(PyObject *SWIGUNUSEDPA
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -10242,17 +10010,11 @@ SWIGINTERN PyObject *_wrap_core_data_transfer_success_set(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_transfer_success_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_transfer_success_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_transfer_success_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      arg2 = *((uint8_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_transfer_success_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = (uint8_t)(val2);
   if (arg1) (arg1)->transfer_success = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -10275,8 +10037,8 @@ SWIGINTERN PyObject *_wrap_core_data_transfer_success_get(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_transfer_success_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->transfer_success);
-  resultobj = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->transfer_success);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -10289,8 +10051,8 @@ SWIGINTERN PyObject *_wrap_core_data_transfer_direction_set(PyObject *SWIGUNUSED
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -10300,17 +10062,11 @@ SWIGINTERN PyObject *_wrap_core_data_transfer_direction_set(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_transfer_direction_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_transfer_direction_set" "', argument " "2"" of type '" "uint8_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_transfer_direction_set" "', argument " "2"" of type '" "uint8_t""'");
-    } else {
-      arg2 = *((uint8_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_transfer_direction_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = (uint8_t)(val2);
   if (arg1) (arg1)->transfer_direction = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -10333,8 +10089,8 @@ SWIGINTERN PyObject *_wrap_core_data_transfer_direction_get(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_transfer_direction_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->transfer_direction);
-  resultobj = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (uint8_t) ((arg1)->transfer_direction);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -10780,8 +10536,8 @@ SWIGINTERN PyObject *_wrap_core_data_victory_freq_set(PyObject *SWIGUNUSEDPARM(s
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -10791,17 +10547,11 @@ SWIGINTERN PyObject *_wrap_core_data_victory_freq_set(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_freq_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_victory_freq_set" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_victory_freq_set" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_victory_freq_set" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
   if (arg1) (arg1)->victory_freq = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -10824,8 +10574,8 @@ SWIGINTERN PyObject *_wrap_core_data_victory_freq_get(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_freq_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->victory_freq);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t) ((arg1)->victory_freq);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -10838,8 +10588,8 @@ SWIGINTERN PyObject *_wrap_core_data_victory_jackpot_set(PyObject *SWIGUNUSEDPAR
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -10849,17 +10599,11 @@ SWIGINTERN PyObject *_wrap_core_data_victory_jackpot_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_jackpot_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_victory_jackpot_set" "', argument " "2"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_victory_jackpot_set" "', argument " "2"" of type '" "uint32_t""'");
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_victory_jackpot_set" "', argument " "2"" of type '" "uint32_t""'");
+  } 
+  arg2 = (uint32_t)(val2);
   if (arg1) (arg1)->victory_jackpot = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -10882,8 +10626,8 @@ SWIGINTERN PyObject *_wrap_core_data_victory_jackpot_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_victory_jackpot_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->victory_jackpot);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t) ((arg1)->victory_jackpot);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -11059,8 +10803,8 @@ SWIGINTERN PyObject *_wrap_core_data_bot_pid_set(PyObject *SWIGUNUSEDPARM(self),
   PLAYER_ID arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -11070,17 +10814,11 @@ SWIGINTERN PyObject *_wrap_core_data_bot_pid_set(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_bot_pid_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_bot_pid_set" "', argument " "2"" of type '" "PLAYER_ID""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_bot_pid_set" "', argument " "2"" of type '" "PLAYER_ID""'");
-    } else {
-      arg2 = *((PLAYER_ID *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_bot_pid_set" "', argument " "2"" of type '" "PLAYER_ID""'");
+  } 
+  arg2 = (PLAYER_ID)(val2);
   if (arg1) (arg1)->bot_pid = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -11103,8 +10841,8 @@ SWIGINTERN PyObject *_wrap_core_data_bot_pid_get(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_bot_pid_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->bot_pid);
-  resultobj = SWIG_NewPointerObj((PLAYER_ID *)memcpy((PLAYER_ID *)malloc(sizeof(PLAYER_ID)),&result,sizeof(PLAYER_ID)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (PLAYER_ID) ((arg1)->bot_pid);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -11178,8 +10916,8 @@ SWIGINTERN PyObject *_wrap_core_data_bot_freq_set(PyObject *SWIGUNUSEDPARM(self)
   FREQ arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -11189,17 +10927,11 @@ SWIGINTERN PyObject *_wrap_core_data_bot_freq_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_bot_freq_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_bot_freq_set" "', argument " "2"" of type '" "FREQ""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_bot_freq_set" "', argument " "2"" of type '" "FREQ""'");
-    } else {
-      arg2 = *((FREQ *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_bot_freq_set" "', argument " "2"" of type '" "FREQ""'");
+  } 
+  arg2 = (FREQ)(val2);
   if (arg1) (arg1)->bot_freq = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -11222,8 +10954,8 @@ SWIGINTERN PyObject *_wrap_core_data_bot_freq_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_bot_freq_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->bot_freq);
-  resultobj = SWIG_NewPointerObj((FREQ *)memcpy((FREQ *)malloc(sizeof(FREQ)),&result,sizeof(FREQ)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (FREQ) ((arg1)->bot_freq);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -11236,8 +10968,8 @@ SWIGINTERN PyObject *_wrap_core_data_bot_ship_set(PyObject *SWIGUNUSEDPARM(self)
   SHIP arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -11247,17 +10979,11 @@ SWIGINTERN PyObject *_wrap_core_data_bot_ship_set(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_bot_ship_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_bot_ship_set" "', argument " "2"" of type '" "SHIP""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "core_data_bot_ship_set" "', argument " "2"" of type '" "SHIP""'");
-    } else {
-      arg2 = *((SHIP *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_bot_ship_set" "', argument " "2"" of type '" "SHIP""'");
+  } 
+  arg2 = (SHIP)(val2);
   if (arg1) (arg1)->bot_ship = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -11280,8 +11006,8 @@ SWIGINTERN PyObject *_wrap_core_data_bot_ship_get(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_bot_ship_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result =  ((arg1)->bot_ship);
-  resultobj = SWIG_NewPointerObj((SHIP *)memcpy((SHIP *)malloc(sizeof(SHIP)),&result,sizeof(SHIP)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
+  result = (SHIP) ((arg1)->bot_ship);
+  resultobj = SWIG_From_unsigned_SS_char((unsigned char)(result));
   return resultobj;
 fail:
   return NULL;
@@ -12087,8 +11813,8 @@ SWIGINTERN PyObject *_wrap_RegisterCommand(PyObject *SWIGUNUSEDPARM(self), PyObj
   int alloc3 = 0 ;
   int val4 ;
   int ecode4 = 0 ;
-  void *argp5 ;
-  int res5 = 0 ;
+  unsigned char val5 ;
+  int ecode5 = 0 ;
   int res6 ;
   char *buf6 = 0 ;
   int alloc6 = 0 ;
@@ -12128,17 +11854,11 @@ SWIGINTERN PyObject *_wrap_RegisterCommand(PyObject *SWIGUNUSEDPARM(self), PyObj
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "RegisterCommand" "', argument " "4"" of type '" "int""'");
   } 
   arg4 = (int)(val4);
-  {
-    res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "RegisterCommand" "', argument " "5"" of type '" "CMD_TYPE""'"); 
-    }  
-    if (!argp5) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "RegisterCommand" "', argument " "5"" of type '" "CMD_TYPE""'");
-    } else {
-      arg5 = *((CMD_TYPE *)(argp5));
-    }
-  }
+  ecode5 = SWIG_AsVal_unsigned_SS_char(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "RegisterCommand" "', argument " "5"" of type '" "CMD_TYPE""'");
+  } 
+  arg5 = (CMD_TYPE)(val5);
   res6 = SWIG_AsCharPtrAndSize(obj5, &buf6, NULL, &alloc6);
   if (!SWIG_IsOK(res6)) {
     SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "RegisterCommand" "', argument " "6"" of type '" "char *""'");
@@ -12291,25 +12011,19 @@ SWIGINTERN PyObject *_wrap_SetTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
   ticks_ms_t arg1 ;
   void *arg2 = (void *) 0 ;
   void *arg3 = (void *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
+  unsigned int val1 ;
+  int ecode1 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   long result;
   
   if (!PyArg_ParseTuple(args,(char *)"OOO:SetTimer",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SetTimer" "', argument " "1"" of type '" "ticks_ms_t""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SetTimer" "', argument " "1"" of type '" "ticks_ms_t""'");
-    } else {
-      arg1 = *((ticks_ms_t *)(argp1));
-    }
-  }
+  ecode1 = SWIG_AsVal_unsigned_SS_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "SetTimer" "', argument " "1"" of type '" "ticks_ms_t""'");
+  } 
+  arg1 = (ticks_ms_t)(val1);
   {
     if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
     Py_INCREF(obj1);
@@ -12353,8 +12067,8 @@ SWIGINTERN PyObject *_wrap_Log(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   OP_LEVEL arg1 ;
   char *arg2 = (char *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
+  unsigned char val1 ;
+  int ecode1 = 0 ;
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
@@ -12362,17 +12076,11 @@ SWIGINTERN PyObject *_wrap_Log(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject * obj1 = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Log",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Log" "', argument " "1"" of type '" "OP_LEVEL""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Log" "', argument " "1"" of type '" "OP_LEVEL""'");
-    } else {
-      arg1 = *((OP_LEVEL *)(argp1));
-    }
-  }
+  ecode1 = SWIG_AsVal_unsigned_SS_char(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Log" "', argument " "1"" of type '" "OP_LEVEL""'");
+  } 
+  arg1 = (OP_LEVEL)(val1);
   res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Log" "', argument " "2"" of type '" "char *""'");
@@ -12393,8 +12101,8 @@ SWIGINTERN PyObject *_wrap_LogFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), PyO
   OP_LEVEL arg1 ;
   char *arg2 = (char *) 0 ;
   void *arg3 = 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
+  unsigned char val1 ;
+  int ecode1 = 0 ;
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
@@ -12402,17 +12110,11 @@ SWIGINTERN PyObject *_wrap_LogFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), PyO
   PyObject * obj1 = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:LogFmt",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "LogFmt" "', argument " "1"" of type '" "OP_LEVEL""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "LogFmt" "', argument " "1"" of type '" "OP_LEVEL""'");
-    } else {
-      arg1 = *((OP_LEVEL *)(argp1));
-    }
-  }
+  ecode1 = SWIG_AsVal_unsigned_SS_char(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "LogFmt" "', argument " "1"" of type '" "OP_LEVEL""'");
+  } 
+  arg1 = (OP_LEVEL)(val1);
   res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "LogFmt" "', argument " "2"" of type '" "char *""'");
@@ -12584,64 +12286,40 @@ SWIGINTERN PyObject *_wrap_SetPosition(PyObject *SWIGUNUSEDPARM(self), PyObject 
   uint16_t arg2 ;
   uint16_t arg3 ;
   uint16_t arg4 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
-  void *argp3 ;
-  int res3 = 0 ;
-  void *argp4 ;
-  int res4 = 0 ;
+  unsigned short val1 ;
+  int ecode1 = 0 ;
+  unsigned short val2 ;
+  int ecode2 = 0 ;
+  unsigned short val3 ;
+  int ecode3 = 0 ;
+  unsigned short val4 ;
+  int ecode4 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   PyObject * obj3 = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"OOOO:SetPosition",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SetPosition" "', argument " "1"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SetPosition" "', argument " "1"" of type '" "uint16_t""'");
-    } else {
-      arg1 = *((uint16_t *)(argp1));
-    }
-  }
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SetPosition" "', argument " "2"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SetPosition" "', argument " "2"" of type '" "uint16_t""'");
-    } else {
-      arg2 = *((uint16_t *)(argp2));
-    }
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SetPosition" "', argument " "3"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SetPosition" "', argument " "3"" of type '" "uint16_t""'");
-    } else {
-      arg3 = *((uint16_t *)(argp3));
-    }
-  }
-  {
-    res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "SetPosition" "', argument " "4"" of type '" "uint16_t""'"); 
-    }  
-    if (!argp4) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SetPosition" "', argument " "4"" of type '" "uint16_t""'");
-    } else {
-      arg4 = *((uint16_t *)(argp4));
-    }
-  }
+  ecode1 = SWIG_AsVal_unsigned_SS_short(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "SetPosition" "', argument " "1"" of type '" "uint16_t""'");
+  } 
+  arg1 = (uint16_t)(val1);
+  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SetPosition" "', argument " "2"" of type '" "uint16_t""'");
+  } 
+  arg2 = (uint16_t)(val2);
+  ecode3 = SWIG_AsVal_unsigned_SS_short(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "SetPosition" "', argument " "3"" of type '" "uint16_t""'");
+  } 
+  arg3 = (uint16_t)(val3);
+  ecode4 = SWIG_AsVal_unsigned_SS_short(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "SetPosition" "', argument " "4"" of type '" "uint16_t""'");
+  } 
+  arg4 = (uint16_t)(val4);
   SetPosition(arg1,arg2,arg3,arg4);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -12756,8 +12434,8 @@ SWIGINTERN PyObject *_wrap_FindPlayerName(PyObject *SWIGUNUSEDPARM(self), PyObje
   int res1 ;
   char *buf1 = 0 ;
   int alloc1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PLAYER *result = 0 ;
@@ -12768,17 +12446,11 @@ SWIGINTERN PyObject *_wrap_FindPlayerName(PyObject *SWIGUNUSEDPARM(self), PyObje
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FindPlayerName" "', argument " "1"" of type '" "char *""'");
   }
   arg1 = (char *)(buf1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FindPlayerName" "', argument " "2"" of type '" "MATCH_TYPE""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FindPlayerName" "', argument " "2"" of type '" "MATCH_TYPE""'");
-    } else {
-      arg2 = *((MATCH_TYPE *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FindPlayerName" "', argument " "2"" of type '" "MATCH_TYPE""'");
+  } 
+  arg2 = (MATCH_TYPE)(val2);
   result = (PLAYER *)FindPlayerName(arg1,arg2);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PLAYER_, 0 |  0 );
   if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
@@ -12793,37 +12465,25 @@ SWIGINTERN PyObject *_wrap_FindPlayerPid(PyObject *SWIGUNUSEDPARM(self), PyObjec
   PyObject *resultobj = 0;
   PLAYER_ID arg1 ;
   MATCH_TYPE arg2 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned short val1 ;
+  int ecode1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PLAYER *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:FindPlayerPid",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_uint16_t,  0 );
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FindPlayerPid" "', argument " "1"" of type '" "PLAYER_ID""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FindPlayerPid" "', argument " "1"" of type '" "PLAYER_ID""'");
-    } else {
-      arg1 = *((PLAYER_ID *)(argp1));
-    }
-  }
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_uint8_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FindPlayerPid" "', argument " "2"" of type '" "MATCH_TYPE""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "FindPlayerPid" "', argument " "2"" of type '" "MATCH_TYPE""'");
-    } else {
-      arg2 = *((MATCH_TYPE *)(argp2));
-    }
-  }
+  ecode1 = SWIG_AsVal_unsigned_SS_short(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "FindPlayerPid" "', argument " "1"" of type '" "PLAYER_ID""'");
+  } 
+  arg1 = (PLAYER_ID)(val1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FindPlayerPid" "', argument " "2"" of type '" "MATCH_TYPE""'");
+  } 
+  arg2 = (MATCH_TYPE)(val2);
   result = (PLAYER *)FindPlayerPid(arg1,arg2);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PLAYER_, 0 |  0 );
   return resultobj;
@@ -13666,8 +13326,8 @@ SWIGINTERN PyObject *_wrap_TicksToText(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int alloc1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
-  void *argp3 ;
-  int res3 = 0 ;
+  unsigned int val3 ;
+  int ecode3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -13683,17 +13343,11 @@ SWIGINTERN PyObject *_wrap_TicksToText(PyObject *SWIGUNUSEDPARM(self), PyObject 
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "TicksToText" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = (int)(val2);
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "TicksToText" "', argument " "3"" of type '" "ticks_ms_t""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "TicksToText" "', argument " "3"" of type '" "ticks_ms_t""'");
-    } else {
-      arg3 = *((ticks_ms_t *)(argp3));
-    }
-  }
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "TicksToText" "', argument " "3"" of type '" "ticks_ms_t""'");
+  } 
+  arg3 = (ticks_ms_t)(val3);
   TicksToText(arg1,arg2,arg3);
   resultobj = SWIG_Py_Void();
   if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
@@ -13784,8 +13438,8 @@ SWIGINTERN PyObject *_wrap_GetTicksMs(PyObject *SWIGUNUSEDPARM(self), PyObject *
   ticks_ms_t result;
   
   if (!PyArg_ParseTuple(args,(char *)":GetTicksMs")) SWIG_fail;
-  result = GetTicksMs();
-  resultobj = SWIG_NewPointerObj((ticks_ms_t *)memcpy((ticks_ms_t *)malloc(sizeof(ticks_ms_t)),&result,sizeof(ticks_ms_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (ticks_ms_t)GetTicksMs();
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -14334,7 +13988,7 @@ static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_core_data = {"_p_core_data", "struct core_data *|core_data *|CORE_DATA *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_einfo_ = {"_p_einfo_", "einfo_t *|struct einfo_ *|einfo_ *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_einfo__res = {"_p_einfo__res", "einfo__res *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void = {"_p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void", "void (*)(int,char *,char *,int,CMD_TYPE,char *,char *,char *)|void (*)(int,char *,char *,int,uint8_t,char *,char *,char *)", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void = {"_p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void", "void (*)(int,char *,char *,int,CMD_TYPE,char *,char *,char *)|void (*)(int,char *,char *,int,unsigned char,char *,char *,char *)", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info_ = {"_p_info_", "info_t *|struct info_ *|info_ *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info__ping = {"_p_info__ping", "info__ping *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info__ploss = {"_p_info__ploss", "info__ploss *", 0, 0, (void*)0, 0};
@@ -14345,13 +13999,18 @@ static swig_type_info _swigt__p_info__usage = {"_p_info__usage", "info__usage *"
 static swig_type_info _swigt__p_info__usage_created = {"_p_info__usage_created", "info__usage_created *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info__usage_session = {"_p_info__usage_session", "info__usage_session *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_info__usage_total = {"_p_info__usage_total", "info__usage_total *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_p_char = {"_p_p_p_char", "char ***", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_void = {"_p_p_void", "void **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_point = {"_p_point", "POINT *|struct point *|point *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint16_t = {"_p_uint16_t", "PLAYER_ID *|uint16_t *|FREQ *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "ticks_hs_t *|uint32_t *|ticks_ms_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint8_t = {"_p_uint8_t", "MSG_TYPE *|CMD_TYPE *|SHIP *|MATCH_TYPE *|OP_LEVEL *|uint8_t *|SOUND *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_short = {"_p_short", "short *|int_least16_t *|int16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|int_least8_t *|int_fast8_t *|int8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|MSG_TYPE *|CMD_TYPE *|SHIP *|MATCH_TYPE *|OP_LEVEL *|uint_least8_t *|uint_fast8_t *|SOUND *|uint8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "ticks_hs_t *|uintptr_t *|uint_least32_t *|uint_fast32_t *|uint32_t *|unsigned int *|ticks_ms_t *|uint_fast16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "uint_least64_t *|uint_fast64_t *|uint64_t *|unsigned long long *|uintmax_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|PLAYER_ID *|uint_least16_t *|FREQ *|uint16_t *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_PLAYER_,
@@ -14360,7 +14019,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_core_data,
   &_swigt__p_einfo_,
   &_swigt__p_einfo__res,
-  &_swigt__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void,
+  &_swigt__p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void,
   &_swigt__p_info_,
   &_swigt__p_info__ping,
   &_swigt__p_info__ploss,
@@ -14371,13 +14030,18 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_info__usage_created,
   &_swigt__p_info__usage_session,
   &_swigt__p_info__usage_total,
+  &_swigt__p_int,
+  &_swigt__p_long_long,
   &_swigt__p_p_char,
   &_swigt__p_p_p_char,
   &_swigt__p_p_void,
   &_swigt__p_point,
-  &_swigt__p_uint16_t,
-  &_swigt__p_uint32_t,
-  &_swigt__p_uint8_t,
+  &_swigt__p_short,
+  &_swigt__p_signed_char,
+  &_swigt__p_unsigned_char,
+  &_swigt__p_unsigned_int,
+  &_swigt__p_unsigned_long_long,
+  &_swigt__p_unsigned_short,
 };
 
 static swig_cast_info _swigc__p_PLAYER_[] = {  {&_swigt__p_PLAYER_, 0, 0, 0},{0, 0, 0, 0}};
@@ -14386,7 +14050,7 @@ static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0,
 static swig_cast_info _swigc__p_core_data[] = {  {&_swigt__p_core_data, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_einfo_[] = {  {&_swigt__p_einfo_, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_einfo__res[] = {  {&_swigt__p_einfo__res, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void[] = {  {&_swigt__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void[] = {  {&_swigt__p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info_[] = {  {&_swigt__p_info_, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info__ping[] = {  {&_swigt__p_info__ping, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info__ploss[] = {  {&_swigt__p_info__ploss, 0, 0, 0},{0, 0, 0, 0}};
@@ -14397,13 +14061,18 @@ static swig_cast_info _swigc__p_info__usage[] = {  {&_swigt__p_info__usage, 0, 0
 static swig_cast_info _swigc__p_info__usage_created[] = {  {&_swigt__p_info__usage_created, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info__usage_session[] = {  {&_swigt__p_info__usage_session, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_info__usage_total[] = {  {&_swigt__p_info__usage_total, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_p_char[] = {  {&_swigt__p_p_p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_void[] = {  {&_swigt__p_p_void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_point[] = {  {&_swigt__p_point, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint16_t[] = {  {&_swigt__p_uint16_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint8_t[] = {  {&_swigt__p_uint8_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_PLAYER_,
@@ -14412,7 +14081,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_core_data,
   _swigc__p_einfo_,
   _swigc__p_einfo__res,
-  _swigc__p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void,
+  _swigc__p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void,
   _swigc__p_info_,
   _swigc__p_info__ping,
   _swigc__p_info__ploss,
@@ -14423,20 +14092,25 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_info__usage_created,
   _swigc__p_info__usage_session,
   _swigc__p_info__usage_total,
+  _swigc__p_int,
+  _swigc__p_long_long,
   _swigc__p_p_char,
   _swigc__p_p_p_char,
   _swigc__p_p_void,
   _swigc__p_point,
-  _swigc__p_uint16_t,
-  _swigc__p_uint32_t,
-  _swigc__p_uint8_t,
+  _swigc__p_short,
+  _swigc__p_signed_char,
+  _swigc__p_unsigned_char,
+  _swigc__p_unsigned_int,
+  _swigc__p_unsigned_long_long,
+  _swigc__p_unsigned_short,
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
-{ SWIG_PY_POINTER, (char*)"GameEvent", 0, 0, (void *)((void (*)(int id,char *cmd_text,char *cmd_class,int req_level,CMD_TYPE cmd_type,char *cmd_args,char *cmd_desc,char *cmd_ldesc))(RegisterCommand)), &SWIGTYPE_p_f_int_p_char_p_char_int_uint8_t_p_char_p_char_p_char__void },
+{ SWIG_PY_POINTER, (char*)"GameEvent", 0, 0, (void *)((void (*)(int id,char *cmd_text,char *cmd_class,int req_level,CMD_TYPE cmd_type,char *cmd_args,char *cmd_desc,char *cmd_ldesc))(RegisterCommand)), &SWIGTYPE_p_f_int_p_char_p_char_int_unsigned_char_p_char_p_char_p_char__void },
 {0, 0, 0, 0.0, 0, 0}};
 
 #ifdef __cplusplus
