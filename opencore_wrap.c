@@ -9517,9 +9517,11 @@ fail:
 SWIGINTERN PyObject *_wrap_core_data_timer_data1_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   struct core_data *arg1 = (struct core_data *) 0 ;
-  void *arg2 = (void *) 0 ;
+  uintptr_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9529,11 +9531,11 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_timer_data1_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
-    Py_INCREF(obj1);
-    arg2 = (void*)obj1;
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_timer_data1_set" "', argument " "2"" of type '" "uintptr_t""'");
+  } 
+  arg2 = (uintptr_t)(val2);
   if (arg1) (arg1)->timer_data1 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -9548,7 +9550,7 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_get(PyObject *SWIGUNUSEDPARM(se
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  void *result = 0 ;
+  uintptr_t result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:core_data_timer_data1_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
@@ -9556,11 +9558,8 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data1_get(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_timer_data1_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result = (void *) ((arg1)->timer_data1);
-  {
-    Py_INCREF(result);
-    resultobj = (PyObject*)result;
-  }
+  result = (uintptr_t) ((arg1)->timer_data1);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -9570,9 +9569,11 @@ fail:
 SWIGINTERN PyObject *_wrap_core_data_timer_data2_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   struct core_data *arg1 = (struct core_data *) 0 ;
-  void *arg2 = (void *) 0 ;
+  uintptr_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -9582,11 +9583,11 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_set(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_timer_data2_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
-    Py_INCREF(obj1);
-    arg2 = (void*)obj1;
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_timer_data2_set" "', argument " "2"" of type '" "uintptr_t""'");
+  } 
+  arg2 = (uintptr_t)(val2);
   if (arg1) (arg1)->timer_data2 = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -9601,7 +9602,7 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_get(PyObject *SWIGUNUSEDPARM(se
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  void *result = 0 ;
+  uintptr_t result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:core_data_timer_data2_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
@@ -9609,11 +9610,8 @@ SWIGINTERN PyObject *_wrap_core_data_timer_data2_get(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_timer_data2_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result = (void *) ((arg1)->timer_data2);
-  {
-    Py_INCREF(result);
-    resultobj = (PyObject*)result;
-  }
+  result = (uintptr_t) ((arg1)->timer_data2);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -12009,10 +12007,14 @@ fail:
 SWIGINTERN PyObject *_wrap_SetTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   ticks_ms_t arg1 ;
-  void *arg2 = (void *) 0 ;
-  void *arg3 = (void *) 0 ;
+  uintptr_t arg2 ;
+  uintptr_t arg3 ;
   unsigned int val1 ;
   int ecode1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  unsigned int val3 ;
+  int ecode3 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -12024,16 +12026,16 @@ SWIGINTERN PyObject *_wrap_SetTimer(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "SetTimer" "', argument " "1"" of type '" "ticks_ms_t""'");
   } 
   arg1 = (ticks_ms_t)(val1);
-  {
-    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
-    Py_INCREF(obj1);
-    arg2 = (void*)obj1;
-  }
-  {
-    if (arg3 && arg3 != Py_None) Py_DECREF(arg3);
-    Py_INCREF(obj2);
-    arg3 = (void*)obj2;
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SetTimer" "', argument " "2"" of type '" "uintptr_t""'");
+  } 
+  arg2 = (uintptr_t)(val2);
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "SetTimer" "', argument " "3"" of type '" "uintptr_t""'");
+  } 
+  arg3 = (uintptr_t)(val3);
   result = (long)SetTimer(arg1,arg2,arg3);
   resultobj = SWIG_From_long((long)(result));
   return resultobj;

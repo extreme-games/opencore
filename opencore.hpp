@@ -562,8 +562,8 @@ struct core_data
 	FREQ	  old_freq;	/* the players old freq */
 
 	long	  timer_id;	/* unique timer id of the timer expiring */
-	void	 *timer_data1;	/* data1 as passed to SetTimer() */
-	void	 *timer_data2;	/* data2 as passed to SetTimer() */
+	uintptr_t timer_data1;	/* data1 as passed to SetTimer() */
+	uintptr_t timer_data2;	/* data2 as passed to SetTimer() */
 
 	int	  cmd_id;	/* id passed through RegisterCommand() */
 	char	 *cmd_name;	/* name of player issuing command */
@@ -659,7 +659,7 @@ void	RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *ver
  * To handle multiple timers, store SetTimer's return value and
  * check it against CORE_DATA.timer_id during EVENT_TIMER.
  */ 
-long	SetTimer(ticks_ms_t duration, void *data1, void *data2);
+long	SetTimer(ticks_ms_t duration, uintptr_t data1, uintptr_t data2);
 
 /*
  * Kill a timer with id of 'timer_id'

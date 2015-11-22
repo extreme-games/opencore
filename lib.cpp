@@ -48,13 +48,13 @@ struct timer_entry
 {
 	LIST_ENTRY(timer_entry) entry;
 
-	void		*data1;		/* user data 1 */
-	void		*data2;		/* user data 2 */
+	uintptr_t	data1;		/* user data 1 */
+	uintptr_t	data2;		/* user data 2 */
 
-	ticks_ms_t	 base;		/* when the timer was set */
-	ticks_ms_t	 duration;	/* the duration */
+	ticks_ms_t	base;		/* when the timer was set */
+	ticks_ms_t	duration;	/* the duration */
 
-	long		 id;		/* the id of the timer */
+	long		id;		/* the id of the timer */
 };
 
 LIST_HEAD(timer_head, timer_entry);
@@ -476,7 +476,7 @@ KillTimer(long timer_id)
 }
 
 long
-SetTimer(ticks_ms_t duration, void *data1, void *data2)
+SetTimer(ticks_ms_t duration, uintptr_t data1, uintptr_t data2)
 {
 	THREAD_DATA *td = get_thread_data();
 	LIB_ENTRY *le = td->lib_entry;
