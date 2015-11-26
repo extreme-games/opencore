@@ -15,6 +15,20 @@
         $result = (PyObject*)$1;
 }
 
+/* c -> python */
+%typemap(out) char** {
+        int len,i;
+        len = 0;
+        while ($1[len]) len++;
+        $result = PyList_New(len);
+        for (i = 0; i < len; i++) {
+                PyObject *pystr = PyString_FromString($1[i]);
+                if (!pystr) return NULL;
+                int err = PyList_SetItem($result, i, pystr);
+                if (err == -1) return NULL;
+        }
+}
+
 %module opencore
 %{
 #include "opencore.hpp"
