@@ -219,8 +219,10 @@ main(int argc, char *argv[])
 	botman_init();
 
 	/* run the master bot */
-	Log(OP_MOD, "Starting master into #master");
-	char *err = StartBot("master", "#master", NULL);
+	char arenaname[32] = { '\0' };
+	config_get_string("login.masterarena", arenaname, sizeof(arenaname), "#master", "types/master.conf");
+	LogFmt(OP_MOD, "Starting master into %s", arenaname);
+	char *err = StartBot("master", arenaname, NULL);
 	if (err) {
 		LogFmt(OP_MOD, "Error starting master bot: %s", err);
 		return -1;
