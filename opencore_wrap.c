@@ -14819,6 +14819,8 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "EVENT_QUERY_RESULT",SWIG_From_int((int)(21)));
   SWIG_Python_SetConstant(d, "EVENT_CONFIG_CHANGE",SWIG_From_int((int)(22)));
   SWIG_Python_SetConstant(d, "EVENT_FLAG_VICTORY",SWIG_From_int((int)(23)));
+  SWIG_Python_SetConstant(d, "EVENT_ATTACH",SWIG_From_int((int)(24)));
+  SWIG_Python_SetConstant(d, "EVENT_DETACH",SWIG_From_int((int)(25)));
   
 #if PY_VERSION_HEX >= 0x03000000
   return m;

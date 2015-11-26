@@ -742,7 +742,7 @@ pkt_handle_game_0x0E(THREAD_DATA *td, uint8_t *buf, int len)
 
 		CORE_DATA *cd = libman_get_core_data(td);
 		if (p1) {
-			if (p2 == PID_NONE) {
+			if (target == PID_NONE) {
 				cd->p1 = p1;
 				cd->p2 = NULL;		
 				libman_export_event(td, EVENT_DETACH, cd);

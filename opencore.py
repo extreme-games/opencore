@@ -94,6 +94,8 @@ EVENT_ARENA_LIST = _opencore.EVENT_ARENA_LIST
 EVENT_QUERY_RESULT = _opencore.EVENT_QUERY_RESULT
 EVENT_CONFIG_CHANGE = _opencore.EVENT_CONFIG_CHANGE
 EVENT_FLAG_VICTORY = _opencore.EVENT_FLAG_VICTORY
+EVENT_ATTACH = _opencore.EVENT_ATTACH
+EVENT_DETACH = _opencore.EVENT_DETACH
 class point(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, point, name, value)
