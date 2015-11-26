@@ -38,6 +38,8 @@ void pkt_send_position_update(uint16_t x, uint16_t y, uint16_t xy,
 void pkt_send_server_key(uint32_t server_key);
 void pkt_send_sync_request();
 void pkt_send_sync_response();
+void pkt_send_freq_change(uint16_t freq);
+void pkt_send_ship_change(uint8_t ship);
 
 #endif
 

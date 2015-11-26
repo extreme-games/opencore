@@ -695,6 +695,16 @@ void	Go(char *arena);
 void	SetPosition(uint16_t x, uint16_t y, uint16_t xv, uint16_t yv);
 
 /*
+ * Set the bot's frequency (0-9999)
+ */
+void	SetFreq(uint16_t freq);
+
+/*
+ * Set the bot's ship type (0-8)
+ */
+void	SetShip(uint8_t ship);
+
+/*
  * Queue a file for transfer. The file will be transferred as soon
  * as possible and an EVENT_TRANSFER event will be generated when
  * the transfer completes.
