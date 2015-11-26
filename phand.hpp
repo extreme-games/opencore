@@ -60,6 +60,7 @@ void pkt_handle_game_0x06(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_game_0x07(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_game_0x0A(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_game_0x0D(THREAD_DATA *td, uint8_t *buf, int len);
+void pkt_handle_game_0x0E(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_game_0x14(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_game_0x19(THREAD_DATA *td, uint8_t *buf, int len);
 void pkt_handle_game_0x1C(THREAD_DATA *td, uint8_t *buf, int len);

@@ -724,6 +724,45 @@ pkt_handle_game_0x0D(THREAD_DATA *td, uint8_t *buf, int len)
 }
 
 
+/* event_attach/event_detach */
+void
+pkt_handle_game_0x0E(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	if (len >= 5) {
+		uint16_t attacher;
+		uint16_t target;
+
+		extract_packet(buf, "ABB",
+		    NULL,
+		    &attacher,
+		    &target
+		    );
+
+		PLAYER *p1 = player_find_by_pid(td, attacher, MATCH_HERE);
+
+		CORE_DATA *cd = libman_get_core_data(td);
+		if (p1) {
+			if (p2 == PID_NONE) {
+				cd->p1 = p1;
+				cd->p2 = NULL;		
+				libman_export_event(td, EVENT_DETACH, cd);
+			} else {
+				PLAYER *p2 = player_find_by_pid(td, target, MATCH_HERE);
+				if (p2) {
+					cd->p1 = p1;
+					cd->p2 = p2;
+					libman_export_event(td, EVENT_ATTACH, cd);
+				} else {
+					Log(OP_HSMOD, "Turret packet for nonexistent target pid!");
+				}
+			}
+		} else {
+			Log(OP_HSMOD, "Turret packet for nonexistent attacher pid!");
+		}
+	}
+}
+
+
 void
 pkt_handle_game_0x14(THREAD_DATA *td, uint8_t *buf, int len)
 {

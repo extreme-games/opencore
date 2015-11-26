@@ -334,6 +334,10 @@ typedef uint32_t ticks_hs_t;
 
 #define EVENT_FLAG_VICTORY 23 /* victory_freq, victory_jackpot */
 
+#define EVENT_ATTACH 24 /* p1, p2 (p1 attached to p2) */
+
+#define EVENT_DETACH 25 /* p1 (p1 detached) */
+
 
 typedef uint16_t FREQ;
 #define FREQ_NONE		(FREQ)0xFFFF
