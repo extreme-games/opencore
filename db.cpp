@@ -38,7 +38,7 @@ struct db_result {
 	unsigned int ncols;
 	char ***rs;
 	bool success;
-	void* user_data;
+	uintptr_t user_data;
 	char name[24];
 	int type;
 	char *query;
@@ -59,7 +59,7 @@ struct db_query {
 	TAILQ_ENTRY(db_query) entry;
 
 	char *query;
-	void *user_data;
+	uintptr_t user_data;
 	DB_CONTEXT *dbc;
 	char name[24];
 	int type;
@@ -456,7 +456,7 @@ db_shutdown()
 
 
 int
-QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...)
+QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -511,7 +511,7 @@ QueryEscape(char *result, size_t result_sz, const char *str)
 
 
 int
-Query(int query_type, void *user_data, const char *name, const char *query)
+Query(int query_type, uintptr_t user_data, const char *name, const char *query)
 {
 	int rv = -1;
 

@@ -10263,9 +10263,11 @@ fail:
 SWIGINTERN PyObject *_wrap_core_data_query_user_data_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   struct core_data *arg1 = (struct core_data *) 0 ;
-  void *arg2 = (void *) 0 ;
+  uintptr_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -10275,11 +10277,11 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_set(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_query_user_data_set" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  {
-    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
-    Py_INCREF(obj1);
-    arg2 = (void*)obj1;
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "core_data_query_user_data_set" "', argument " "2"" of type '" "uintptr_t""'");
+  } 
+  arg2 = (uintptr_t)(val2);
   if (arg1) (arg1)->query_user_data = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -10294,7 +10296,7 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_get(PyObject *SWIGUNUSEDPAR
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  void *result = 0 ;
+  uintptr_t result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:core_data_query_user_data_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
@@ -10302,11 +10304,8 @@ SWIGINTERN PyObject *_wrap_core_data_query_user_data_get(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_query_user_data_get" "', argument " "1"" of type '" "struct core_data *""'"); 
   }
   arg1 = (struct core_data *)(argp1);
-  result = (void *) ((arg1)->query_user_data);
-  {
-    Py_INCREF(result);
-    resultobj = (PyObject*)result;
-  }
+  result = (uintptr_t) ((arg1)->query_user_data);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -12972,11 +12971,13 @@ fail:
 SWIGINTERN PyObject *_wrap_Query(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int arg1 ;
-  void *arg2 = (void *) 0 ;
+  uintptr_t arg2 ;
   char *arg3 = (char *) 0 ;
   char *arg4 = (char *) 0 ;
   int val1 ;
   int ecode1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
@@ -12995,11 +12996,11 @@ SWIGINTERN PyObject *_wrap_Query(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "Query" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = (int)(val1);
-  {
-    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
-    Py_INCREF(obj1);
-    arg2 = (void*)obj1;
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Query" "', argument " "2"" of type '" "uintptr_t""'");
+  } 
+  arg2 = (uintptr_t)(val2);
   res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
   if (!SWIG_IsOK(res3)) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Query" "', argument " "3"" of type '" "char const *""'");
@@ -13025,12 +13026,14 @@ fail:
 SWIGINTERN PyObject *_wrap_QueryFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), PyObject *args, PyObject *varargs) {
   PyObject *resultobj = 0;
   int arg1 ;
-  void *arg2 = (void *) 0 ;
+  uintptr_t arg2 ;
   char *arg3 = (char *) 0 ;
   char *arg4 = (char *) 0 ;
   void *arg5 = 0 ;
   int val1 ;
   int ecode1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
@@ -13049,11 +13052,11 @@ SWIGINTERN PyObject *_wrap_QueryFmt__varargs__(PyObject *SWIGUNUSEDPARM(self), P
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "QueryFmt" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = (int)(val1);
-  {
-    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
-    Py_INCREF(obj1);
-    arg2 = (void*)obj1;
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "QueryFmt" "', argument " "2"" of type '" "uintptr_t""'");
+  } 
+  arg2 = (uintptr_t)(val2);
   res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
   if (!SWIG_IsOK(res3)) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "QueryFmt" "', argument " "3"" of type '" "char const *""'");

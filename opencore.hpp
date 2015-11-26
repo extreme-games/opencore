@@ -579,7 +579,7 @@ struct core_data
 
 	bool		   query_success;
 	char		***query_resultset;
-	void		  *query_user_data;
+	uintptr_t	   query_user_data;
 	char		   query_name[24];
 	unsigned int   query_nrows;
 	unsigned int   query_ncols;
@@ -759,8 +759,8 @@ void	SendPlayer(PLAYER *p, const char *arena);
 /*
  * Database functions.
  */
-int Query(int query_type, void *user_data, const char *name, const char *query);
-int QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...);
+int Query(int query_type, uintptr_t user_data, const char *name, const char *query);
+int QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt, ...);
 void QueryEscape(char *result, size_t result_sz, const char *str);
 
 /*
