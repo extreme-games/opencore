@@ -13467,7 +13467,7 @@ SWIGINTERN PyObject *_wrap_GetConfigInt(PyObject *SWIGUNUSEDPARM(self), PyObject
   if (!PyArg_ParseTuple(args,(char *)"OO:GetConfigInt",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetConfigInt" "', argument " "1"" of type '" "char *""'");
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetConfigInt" "', argument " "1"" of type '" "char const *""'");
   }
   arg1 = (char *)(buf1);
   ecode2 = SWIG_AsVal_int(obj1, &val2);
@@ -13475,7 +13475,7 @@ SWIGINTERN PyObject *_wrap_GetConfigInt(PyObject *SWIGUNUSEDPARM(self), PyObject
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "GetConfigInt" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = (int)(val2);
-  result = (int)GetConfigInt(arg1,arg2);
+  result = (int)GetConfigInt((char const *)arg1,arg2);
   resultobj = SWIG_From_int((int)(result));
   if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
   return resultobj;
@@ -13510,7 +13510,7 @@ SWIGINTERN PyObject *_wrap_GetConfigString(PyObject *SWIGUNUSEDPARM(self), PyObj
   if (!PyArg_ParseTuple(args,(char *)"OOOO:GetConfigString",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetConfigString" "', argument " "1"" of type '" "char *""'");
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetConfigString" "', argument " "1"" of type '" "char const *""'");
   }
   arg1 = (char *)(buf1);
   res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
@@ -13525,10 +13525,10 @@ SWIGINTERN PyObject *_wrap_GetConfigString(PyObject *SWIGUNUSEDPARM(self), PyObj
   arg3 = (int)(val3);
   res4 = SWIG_AsCharPtrAndSize(obj3, &buf4, NULL, &alloc4);
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "GetConfigString" "', argument " "4"" of type '" "char *""'");
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "GetConfigString" "', argument " "4"" of type '" "char const *""'");
   }
   arg4 = (char *)(buf4);
-  GetConfigString(arg1,arg2,arg3,arg4);
+  GetConfigString((char const *)arg1,arg2,arg3,(char const *)arg4);
   resultobj = SWIG_Py_Void();
   if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -13554,10 +13554,10 @@ SWIGINTERN PyObject *_wrap_ConfigKeyExists(PyObject *SWIGUNUSEDPARM(self), PyObj
   if (!PyArg_ParseTuple(args,(char *)"O:ConfigKeyExists",&obj0)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConfigKeyExists" "', argument " "1"" of type '" "char *""'");
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConfigKeyExists" "', argument " "1"" of type '" "char const *""'");
   }
   arg1 = (char *)(buf1);
-  result = (bool)ConfigKeyExists(arg1);
+  result = (bool)ConfigKeyExists((char const *)arg1);
   resultobj = SWIG_From_bool((bool)(result));
   if (alloc1 == SWIG_NEWOBJ) free((char*)buf1);
   return resultobj;

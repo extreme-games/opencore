@@ -821,9 +821,9 @@ ticks_ms_t	GetTicksMs();
 /*
  * Get a configuration integer value from the bots config.
  */
-int	GetConfigInt(char *key, int default_value);
-void GetConfigString(char *key, char *dest, int dst_sz, char *default_value);
-bool ConfigKeyExists(char *key);
+int	GetConfigInt(const char *key, int default_value);
+void GetConfigString(const char *key, char *dest, int dst_sz, const char *default_value);
+bool ConfigKeyExists(const char *key);
 
 /*
  * Retrieve a player-specific pinfo struct.  This is only valid if

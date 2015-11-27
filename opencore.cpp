@@ -214,13 +214,15 @@ main(int argc, char *argv[])
 
 	load_op_file();
 
+	static const char* const masterconfig = "types/master.conf";
+
 	log_init();
-	db_init();
+	db_init(masterconfig);
 	botman_init();
 
 	/* run the master bot */
 	char arenaname[32] = { '\0' };
-	config_get_string("login.masterarena", arenaname, sizeof(arenaname), "#master", "types/master.conf");
+	config_get_string("login.masterarena", arenaname, sizeof(arenaname), "#master", masterconfig);
 	LogFmt(OP_MOD, "Starting master into %s", arenaname);
 	char *err = StartBot("master", arenaname, NULL);
 	if (err) {

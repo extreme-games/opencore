@@ -16,7 +16,6 @@
 #include "lib.hpp"
 #include "util.hpp"
 
-#define DB_CONFIG_FILE "db.conf"
 
 static pthread_mutex_t g_mtx = PTHREAD_MUTEX_INITIALIZER;
 static pthread_key_t g_db_tls_key;
@@ -179,13 +178,13 @@ db_entrypoint(void *unused)
 
 			if (m) {
 				mysql = m;
-				Log(OP_SMOD, "Connected to DB");
+				Log(OP_SMOD, "Connected to database");
 			} else if (last_error == CR_ALREADY_CONNECTED) {
 				// db was already connected
 				mysql = &lmysql;
 			} else {
 				mysql = NULL;
-				Log(OP_SMOD, "DB reconnection failure");
+				Log(OP_SMOD, "Database reconnection failure");
 			}
 			
 			last_connect_ticks = get_ticks_ms();
@@ -403,7 +402,7 @@ db_init_once()
  * Init the core-wide database engine.
  */
 void
-db_init()
+db_init(const char *configfile)
 {
 	static pthread_once_t init_once = PTHREAD_ONCE_INIT;
 	pthread_once(&init_once, db_init_once);
@@ -411,17 +410,22 @@ db_init()
 	pthread_mutex_lock(&g_mtx);
 
 	// read the config
-	g_running = config_get_int("database.enabled", 0, DB_CONFIG_FILE) != 0;
-	config_get_string("database.username", username, sizeof(username), "user", DB_CONFIG_FILE);
-	config_get_string("database.password", password, sizeof(password), "password", DB_CONFIG_FILE);
-	config_get_string("database.server", server, sizeof(server), "localhost", DB_CONFIG_FILE);
-	config_get_string("database.dbname", dbname, sizeof(dbname), "db", DB_CONFIG_FILE);
-	port = config_get_int("database.port", 3306, DB_CONFIG_FILE);
+	g_running = config_get_int("database.enabled", 0, configfile) != 0;
+	config_get_string("database.username", username, sizeof(username), "user", configfile);
+	config_get_string("database.password", password, sizeof(password), "password", configfile);
+	config_get_string("database.server", server, sizeof(server), "localhost", configfile);
+	config_get_string("database.dbname", dbname, sizeof(dbname), "db", configfile);
+	port = config_get_int("database.port", 3306, configfile);
 
 	// spawn the db thread
-	if (g_running && pthread_create(&g_dbthread, NULL, db_entrypoint, NULL) != 0) {
-		Log(OP_SMOD, "Unable to create DB thread");
-		exit(-1);
+	if (g_running) {
+		if (pthread_create(&g_dbthread, NULL, db_entrypoint, NULL) != 0) {
+			Log(OP_SMOD, "Unable to create DB thread");
+			exit(-1);
+		}
+		Log(OP_MOD, "Database thread created");
+	} else {
+		Log(OP_SMOD, "Database configured to be disabled");
 	}
 
 	pthread_mutex_unlock(&g_mtx);
