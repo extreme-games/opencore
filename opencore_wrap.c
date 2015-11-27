@@ -9932,7 +9932,18 @@ SWIGINTERN PyObject *_wrap_core_data_cmd_argv_get(PyObject *SWIGUNUSEDPARM(self)
   }
   arg1 = (struct core_data *)(argp1);
   result = (char **) ((arg1)->cmd_argv);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
+  {
+    int len,i;
+    len = 0;
+    while (result[len]) len++;
+    resultobj = PyList_New(len);
+    for (i = 0; i < len; i++) {
+      PyObject *pystr = PyString_FromString(result[i]);
+      if (!pystr) return NULL;
+      int err = PyList_SetItem(resultobj, i, pystr);
+      if (err == -1) return NULL;
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -9984,7 +9995,18 @@ SWIGINTERN PyObject *_wrap_core_data_cmd_argr_get(PyObject *SWIGUNUSEDPARM(self)
   }
   arg1 = (struct core_data *)(argp1);
   result = (char **) ((arg1)->cmd_argr);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
+  {
+    int len,i;
+    len = 0;
+    while (result[len]) len++;
+    resultobj = PyList_New(len);
+    for (i = 0; i < len; i++) {
+      PyObject *pystr = PyString_FromString(result[i]);
+      if (!pystr) return NULL;
+      int err = PyList_SetItem(resultobj, i, pystr);
+      if (err == -1) return NULL;
+    }
+  }
   return resultobj;
 fail:
   return NULL;
@@ -12329,6 +12351,48 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_SetFreq(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  uint16_t arg1 ;
+  unsigned short val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:SetFreq",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_unsigned_SS_short(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "SetFreq" "', argument " "1"" of type '" "uint16_t""'");
+  } 
+  arg1 = (uint16_t)(val1);
+  SetFreq(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_SetShip(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  uint8_t arg1 ;
+  unsigned char val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:SetShip",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_unsigned_SS_char(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "SetShip" "', argument " "1"" of type '" "uint8_t""'");
+  } 
+  arg1 = (uint8_t)(val1);
+  SetShip(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_QueueGetFile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
@@ -13946,6 +14010,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"StopBotFmt", _wrap_StopBotFmt, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"Go", _wrap_Go, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"SetPosition", _wrap_SetPosition, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
+	 { (char *)"SetFreq", _wrap_SetFreq, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
+	 { (char *)"SetShip", _wrap_SetShip, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"QueueGetFile", _wrap_QueueGetFile, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"QueueSendFile", _wrap_QueueSendFile, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"GetOpLevel", _wrap_GetOpLevel, METH_VARARGS, (char *)"swig_ptr: GameEvent"},

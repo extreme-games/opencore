@@ -813,6 +813,14 @@ def SetPosition(*args):
   return _opencore.SetPosition(*args)
 SetPosition = _opencore.SetPosition
 
+def SetFreq(*args):
+  return _opencore.SetFreq(*args)
+SetFreq = _opencore.SetFreq
+
+def SetShip(*args):
+  return _opencore.SetShip(*args)
+SetShip = _opencore.SetShip
+
 def QueueGetFile(*args):
   return _opencore.QueueGetFile(*args)
 QueueGetFile = _opencore.QueueGetFile
