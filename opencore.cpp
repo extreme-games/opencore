@@ -1333,6 +1333,22 @@ SetPosition(uint16_t x, uint16_t y, uint16_t xv, uint16_t yv)
 
 
 void
+SetFreq(uint16_t freq)
+{
+	assert(freq >= 0 && freq <= 9999);
+	pkt_send_freq_change(freq);
+}
+
+
+void
+SetShip(uint8_t ship)
+{
+	assert(ship >= 0 && ship <= 8);
+	pkt_send_ship_change(ship);
+}
+
+
+void
 StopBot(char *reason) 
 {
 	THREAD_DATA *td = get_thread_data();
