@@ -573,8 +573,7 @@ player_find_by_name(THREAD_DATA *td, const char *name, MATCH_TYPE match_type)
 		/* apply flags */
 		if ((match_type & MATCH_HERE) == 0 && res->here) {
 			res = NULL;
-		}
-		if ((match_type & MATCH_GONE) == 0 && res->here == 0) {
+		} else if ((match_type & MATCH_GONE) == 0 && res->here == 0) {
 			res = NULL;
 		}
 	}
