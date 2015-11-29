@@ -66,11 +66,11 @@ GameEvent(CORE_DATA *cd)
 		switch (cd->cmd_id) {
 		case CMD_BALANCE:
 			if (cd->cmd_argc <= 1) {
-				QueryFmt(CMD_BALANCE, 0, cd->cmd_name, "CALL Egc_Balance('%s');", sfcmd_name);
+				QueryFmt(QUERY_BALANCE, 0, cd->cmd_name, "CALL Egc_Balance('%s');", sfcmd_name);
 			} else if (strlen(cd->cmd_argr[1]) < 24) {
 				char sfname[48];
 				QueryEscape(sfname, sizeof(sfname), cd->cmd_argr[1]);
-				QueryFmt(CMD_BALANCE, 0, cd->cmd_name, "CALL Egc_Balance('%s');", sfname);
+				QueryFmt(QUERY_BALANCE, 0, cd->cmd_name, "CALL Egc_Balance('%s');", sfname);
 			} else {
 				Reply("Usage: !balance [player]");
 			}
