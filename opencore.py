@@ -838,6 +838,10 @@ def SetShip(*args):
   return _opencore.SetShip(*args)
 SetShip = _opencore.SetShip
 
+def PickupFlag(*args):
+  return _opencore.PickupFlag(*args)
+PickupFlag = _opencore.PickupFlag
+
 def QueueGetFile(*args):
   return _opencore.QueueGetFile(*args)
 QueueGetFile = _opencore.QueueGetFile
