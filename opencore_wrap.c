@@ -12698,6 +12698,27 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PickupFlag(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  uint16_t arg1 ;
+  unsigned short val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:PickupFlag",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_unsigned_SS_short(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "PickupFlag" "', argument " "1"" of type '" "uint16_t""'");
+  } 
+  arg1 = (uint16_t)(val1);
+  PickupFlag(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_QueueGetFile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
@@ -14413,6 +14434,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"SetPosition", _wrap_SetPosition, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"SetFreq", _wrap_SetFreq, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"SetShip", _wrap_SetShip, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
+	 { (char *)"PickupFlag", _wrap_PickupFlag, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"QueueGetFile", _wrap_QueueGetFile, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"QueueSendFile", _wrap_QueueSendFile, METH_VARARGS, (char *)"swig_ptr: GameEvent"},
 	 { (char *)"GetOpLevel", _wrap_GetOpLevel, METH_VARARGS, (char *)"swig_ptr: GameEvent"},

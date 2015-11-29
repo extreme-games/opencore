@@ -338,3 +338,17 @@ pkt_send_ship_change(uint8_t ship)
 	queue_packet_reliable(p, SP_NORMAL);
 }
 
+/*
+ * Send a flag pickup request packet to the server.
+ */
+void
+pkt_send_flag_pickup_request(uint16_t flag_id)
+{
+	PACKET *p = allocate_packet(3);
+	build_packet(p->data, "AB",
+	    0x18,
+	    flag_id
+	    );
+
+	queue_packet_reliable(p, SP_NORMAL);
+}

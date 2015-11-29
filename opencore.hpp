@@ -716,6 +716,11 @@ void	SetFreq(uint16_t freq);
 void	SetShip(uint8_t ship);
 
 /*
+ * Request to pickup a flag by the server.
+ */
+void	PickupFlag(uint16_t flag_id);
+
+/*
  * Queue a file for transfer. The file will be transferred as soon
  * as possible and an EVENT_TRANSFER event will be generated when
  * the transfer completes.
