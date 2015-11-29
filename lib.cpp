@@ -140,7 +140,6 @@ struct MOD_TL_DATA_
 	CORE_DATA	cd;		/* core_data exported to modules */
 } MOD_TL_DATA;
 
-static LIB_ENTRY* find_lib_entry(MOD_TL_DATA *mod_tld, char *libname);
 static int	unload_library(THREAD_DATA *td, char *libname);
 static void	expire_timers_lib(THREAD_DATA *td, LIB_ENTRY *le, int expire_all);
 static void libman_export_userevents(THREAD_DATA *td);
@@ -336,7 +335,7 @@ libman_export_usercalls(THREAD_DATA *td)
 	USER_CALL *uc;
 	while ((uc = SIMPLEQ_FIRST(&mod_tld->usercall_list_head)) != NULL) {
 			SIMPLEQ_REMOVE_HEAD(&mod_tld->usercall_list_head, entry);
-			LIB_ENTRY *le = find_lib_entry(mod_tld, uc->libname);
+			LIB_ENTRY *le = libman_find_lib(uc->libname);
 			if (le) {
 				cd->usercall_functionname = uc->functionname;
 				cd->usercall_arg = uc->arg;
@@ -642,7 +641,6 @@ void
 cmd_inslib(CORE_DATA *cd)
 {
 	THREAD_DATA *td = (THREAD_DATA*)get_thread_data();
-	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
 	if (cd->cmd_argc != 2) {
 		RmtMessageFmt(cd->cmd_name, "Usage: %s <lib name>",
@@ -651,11 +649,11 @@ cmd_inslib(CORE_DATA *cd)
 	}
 
 	char *libname = cd->cmd_argv[1];
-	LIB_ENTRY *le = find_lib_entry(mod_tld, libname);
+	LIB_ENTRY *le = libman_find_lib(libname);
 
 	if (le == NULL) {
 		libman_load_library(td, libname);
-		if (find_lib_entry(mod_tld, libname) != NULL)
+		if (libman_find_lib(libname) != NULL)
 			RmtMessageFmt(cd->cmd_name, "Library loaded");
 		else
 			RmtMessageFmt(cd->cmd_name, "Library failed to load");
@@ -684,10 +682,12 @@ cmd_rmlib(CORE_DATA *cd)
 	}
 }
 
-static
 LIB_ENTRY*
-find_lib_entry(MOD_TL_DATA *mod_tld, char *libname)
+libman_find_lib(char *libname)
 {
+	THREAD_DATA *td = get_thread_data();
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+
 	LIB_ENTRY *le;
 	LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
 		if (strcasecmp(le->libname, libname) == 0)
@@ -731,7 +731,7 @@ unload_library(THREAD_DATA *td, char *libname)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
-	LIB_ENTRY *le = find_lib_entry(mod_tld, libname);
+	LIB_ENTRY *le = libman_find_lib(libname);
 	if (le == NULL)
 		return -1;
 
@@ -777,6 +777,17 @@ unload_library(THREAD_DATA *td, char *libname)
 
 	return 0;
 }
+
+
+void
+libman_get_current_libname(char *dst, size_t dst_sz)
+{
+	THREAD_DATA *td = get_thread_data();
+	LIB_ENTRY *le = td->lib_entry;
+
+	strlcpy(dst, le->libname, dst_sz);
+}
+
 
 void
 libman_instance_shutdown(THREAD_DATA *td)

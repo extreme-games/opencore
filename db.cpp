@@ -41,6 +41,7 @@ struct db_result {
 	char name[24];
 	int type;
 	char *query;
+	char libname[64];
 };
 TAILQ_HEAD(result_head, db_result);
 
@@ -61,6 +62,7 @@ struct db_query {
 	uintptr_t user_data;
 	DB_CONTEXT *dbc;
 	char name[24];
+	char libname[64];
 	int type;
 };
 TAILQ_HEAD(query_head, db_query);
@@ -231,6 +233,7 @@ db_entrypoint(void *unused)
 				if (dbr) {
 					memset(dbr, 0, sizeof(DB_RESULT));
 
+					strlcpy(dbr->libname, dbq->libname, sizeof(dbr->libname));
 					dbr->type = dbq->type;
 					strncpy(dbr->name, dbq->name, sizeof(dbr->name));
 					dbr->user_data = dbq->user_data;
@@ -372,7 +375,10 @@ db_instance_export_events(ticks_ms_t max_time)
 			strncpy(cd->query_name, dbr->name, sizeof(cd->query_name));
 			cd->query_type = dbr->type;
 
-			libman_export_event(td, EVENT_QUERY_RESULT, cd);
+			LIB_ENTRY *le = libman_find_lib(dbr->libname);
+			if (le) {
+				libman_export_event(td, EVENT_QUERY_RESULT, cd, le);
+			}
 
 			if (dbr->rs) resultset_free(dbr->rs, dbr->nrows, dbr->ncols);
 			free(dbr);
@@ -463,7 +469,9 @@ int
 QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt, ...)
 {
 	va_list ap;
+	va_list ap2;
 	va_start(ap, fmt);
+	va_copy(ap2, ap);
 
 	int rv = -1;
 
@@ -471,7 +479,7 @@ QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt,
 	if (size >= 0) {
 		char *query = (char*)malloc(size + 1);
 		if (query) {
-			if (vsnprintf(query, size + 1, fmt, ap) < size + 1) {
+			if (vsnprintf(query, size + 1, fmt, ap2) < size + 1) {
 				rv = Query(query_type, user_data, name, query);
 			}
 			
@@ -480,6 +488,7 @@ QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt,
 	}
 
 	va_end(ap);
+	va_end(ap2);
 	
 	return rv;
 }
@@ -524,6 +533,7 @@ Query(int query_type, uintptr_t user_data, const char *name, const char *query)
 		DB_QUERY *dbq = (DB_QUERY*)malloc(sizeof(DB_QUERY));
 		if (dbq) {
 			memset(dbq, 0, sizeof(DB_QUERY));
+			libman_get_current_libname(dbq->libname, sizeof(dbq->libname));
 			dbq->query = strdup(query);
 			dbq->user_data = user_data;
 			strncpy(dbq->name, name ? name : "", sizeof(dbq->name));
