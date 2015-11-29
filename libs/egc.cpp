@@ -19,7 +19,6 @@ extern "C" {
 #define CMD_TRANSFER 3
 #define CMD_ADD 4
 #define CMD_REMOVE 5
-#define CMD_BUY 6
 
 
 #define QUERY_BALANCE 1
@@ -27,7 +26,6 @@ extern "C" {
 #define QUERY_TRANSFER 3
 #define QUERY_ADD 4
 #define QUERY_REMOVE 5
-#define QUERY_BUY 6
 
 typedef struct player_info PLAYER_INFO;
 struct player_info {
@@ -57,7 +55,6 @@ GameEvent(CORE_DATA *cd)
 		RegisterCommand(CMD_TRANSFER, "!transfer", "egc", 0, CMD_PRIVATE | CMD_PUBLIC, NULL, "Transfer money between players", NULL);
 		RegisterCommand(CMD_ADD, "!add", "egc", 2, CMD_PRIVATE, NULL, "Check your balance", NULL);
 		RegisterCommand(CMD_REMOVE, "!remove", "egc", 2, CMD_PRIVATE, NULL, "Remove money from an account", NULL);
-		RegisterCommand(CMD_BUY, "!buy", "egc", 0, CMD_PRIVATE | CMD_PUBLIC, NULL, "Buy a prize", NULL);
 		break;
 	case EVENT_ENTER:
 		pi(cd, cd->p1)->last_command_tick = GetTicksMs() - COMMAND_INTERVAL;
@@ -95,9 +92,9 @@ GameEvent(CORE_DATA *cd)
 				DelimArgs(comment, sizeof(comment), cd->cmd_argr[1], 2, ':', true);
 				QueryEscape(sfcomment, sizeof(sfcomment), comment);
 
-				QueryFmt(QUERY_SETBALANCE, 0, cd->cmd_name, "CALL Egc_SetBalance('%s', %f, '%s: %s');",
+				QueryFmt(QUERY_SETBALANCE, 0, cd->cmd_name, "CALL Egc_SetBalance('%s', %0.2f, '%s: %s');",
 						sfname, balancef, sfcmd_name, strlen(sfcomment) > 0 ? sfcomment : "No comment");
-				ReplyFmt("Setting balance for \"%s\" to $%f...", name, balancef);
+				ReplyFmt("Setting balance for \"%s\" to $%0.2f...", name, balancef);
 			} else {
 				Reply("Usage: !setbalance <player>:<balance>:<comment>");
 			}
@@ -114,9 +111,9 @@ GameEvent(CORE_DATA *cd)
 				DelimArgs(dest, sizeof(dest), cd->cmd_argr[1], 1, ':', true);
 				QueryEscape(sfdest, sizeof(sfdest), dest);
 
-				QueryFmt(QUERY_TRANSFER, 0, cd->cmd_name, "CALL Egc_Transfer('%s', '%s', %f, NULL);",
+				QueryFmt(QUERY_TRANSFER, 0, cd->cmd_name, "CALL Egc_Transfer('%s', '%s', %0.2f, NULL);",
 						sfcmd_name, sfdest, amountf);
-				ReplyFmt("Transferring $%f from \"%s\" to \"%s\"...", amountf, cd->cmd_name, dest);
+				ReplyFmt("Transferring $%0.2f from \"%s\" to \"%s\"...", amountf, cd->cmd_name, dest);
 			} else if (cd->cmd_level >= 2 && cd->cmd_argc > 1 && ArgCount(cd->cmd_argr[1], ':') >= 4) {
 				char source[24];
 				char sfsource[48];
@@ -136,9 +133,9 @@ GameEvent(CORE_DATA *cd)
 				QueryEscape(sfdest, sizeof(sfdest), dest);
 				QueryEscape(sfcomment, sizeof(sfcomment), comment);
 
-				QueryFmt(QUERY_TRANSFER, 0, cd->cmd_name, "CALL Egc_Transfer('%s', '%s', %f, '%s: %s');",
+				QueryFmt(QUERY_TRANSFER, 0, cd->cmd_name, "CALL Egc_Transfer('%s', '%s', %0.2f, '%s: %s');",
 						sfsource, amountf, sfdest, sfcmd_name, sfcomment);
-				ReplyFmt("Transferring $%f from \"%s\" to \"%s\"...", amountf, cd->cmd_name, dest);
+				ReplyFmt("Transferring $%0.2f from \"%s\" to \"%s\"...", amountf, cd->cmd_name, dest);
 			} else {
 				Reply("Usage: !transfer <amount>:<destination>");
 				if (cd->cmd_level >= 2) Reply("Usage: !transfer <source>:<amount>:<destination>:<comment>");
@@ -166,14 +163,12 @@ GameEvent(CORE_DATA *cd)
 					spname = "Egc_Remove";
 					verb = "Removing";
 				}
-				QueryFmt(query_type, 0, cd->cmd_name, "CALL %s('%s', %f, '%s: %s');",
+				QueryFmt(query_type, 0, cd->cmd_name, "CALL %s('%s', %0.2f, '%s: %s');",
 						spname, sftarget, amountf, sfcmd_name, sfcomment);
-				ReplyFmt("%s $%f from \"%s\"...", verb, amountf, target);
+				ReplyFmt("%s $%0.2f from \"%s\"...", verb, amountf, target);
 			} else {
 				ReplyFmt("Usage: %s <target>:<amount>:<comment>", cd->cmd_id == CMD_ADD ? "!add" : "!remove");
 			}
-			break;
-		case CMD_BUY:
 			break;
 		default:
 			break;
@@ -185,7 +180,8 @@ GameEvent(CORE_DATA *cd)
 			case QUERY_BALANCE:
 				if (cd->query_nrows == 1 && cd->query_ncols == 1) {
 					char *balance = cd->query_resultset[0][0];	
-					RmtMessageFmt(cd->query_name, "Balance: $%s", balance ? balance : "0");
+					double balancef = atof(balance ? balance : "0");
+					RmtMessageFmt(cd->query_name, "Balance: $%0.2f", balancef);
 				}
 				break;
 			case QUERY_SETBALANCE:
