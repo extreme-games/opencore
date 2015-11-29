@@ -1,0 +1,380 @@
+[11/21 18:40:20] Core: Added type: master
+[11/21 18:40:20] Core: Starting master into #master
+[11/21 18:40:20] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/21 18:40:20] DevBot-EG-Opencore\None: Connecting to server
+[11/21 18:40:21] DevBot-EG-Opencore\None: Registering new name: DevBot-EG-Opencore
+[11/21 18:40:21] DevBot-EG-Opencore\None: Logged in to server
+[11/21 18:40:21] DevBot-EG-Opencore\None: Changing arenas: #master
+[11/21 18:40:21] DevBot-EG-Opencore\#master: Queued file download: flagging48b.lvl
+[11/21 18:40:21] DevBot-EG-Opencore\#master: Initiating file download: flagging48b.lvl
+[11/21 18:40:30] DevBot-EG-Opencore\#master: "mejiae" to "DevBot-EG-Opencore" in #master: !help 
+[11/21 18:40:37] DevBot-EG-Opencore\#master: Received file: flagging48b.lvl
+[11/26 10:42:22] Core: Added type: master
+[11/26 10:42:22] Core: Starting master into #master
+[11/26 10:42:22] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 10:42:22] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 10:42:22] DevBot-EG-Opencore\None: Connecting to server
+[11/26 10:42:23] DevBot-EG-Opencore\None: Logged in to server
+[11/26 10:42:23] DevBot-EG-Opencore\None: Changing arenas: #master
+[11/26 10:42:38] DevBot-EG-Opencore\#master: "cycad" to "DevBot-EG-Opencore" in #master: !help 
+[11/26 10:42:41] DevBot-EG-Opencore\#master: "cycad" to "DevBot-EG-Opencore" in #master: !about 
+[11/26 10:44:07] Core: Added type: master
+[11/26 10:44:07] Core: Starting master into #ccdbd
+[11/26 10:44:07] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 10:44:07] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 10:44:07] DevBot-EG-Opencore\None: Connecting to server
+[11/26 10:44:07] DevBot-EG-Opencore\None: Logged in to server
+[11/26 10:44:07] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 10:44:07] DevBot-EG-Opencore\#ccdbd: Queued file download: #ccdbd.lvl
+[11/26 10:44:07] DevBot-EG-Opencore\#ccdbd: Initiating file download: #ccdbd.lvl
+[11/26 10:44:26] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 10:44:29] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help 
+[11/26 10:44:39] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 
+[11/26 10:44:43] DevBot-EG-Opencore\#ccdbd: Received file: #ccdbd.lvl
+[11/26 10:44:43] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 5b2 cycad
+[11/26 10:45:46] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 3b1 eel
+[11/26 10:46:05] DevBot-EG-Opencore\#ccdbd: "eel" to "DevBot-EG-Opencore" in #ccdbd: !accept 
+[11/26 10:46:06] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !die 
+[11/26 10:46:06] DevBot-EG-Opencore\#ccdbd: Die issued by cycad
+[11/26 10:46:31] Core: Added type: master
+[11/26 10:46:31] Core: Starting master into #ccdbd
+[11/26 10:46:31] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 10:46:31] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 10:46:31] DevBot-EG-Opencore\None: Connecting to server
+[11/26 10:46:31] DevBot-EG-Opencore\None: Logged in to server
+[11/26 10:46:31] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 10:46:44] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 3b1 mcs
+[11/26 10:46:55] DevBot-EG-Opencore\#ccdbd: "McS" to "DevBot-EG-Opencore" in #ccdbd: !accept 
+[11/26 10:48:08] DevBot-EG-Opencore\#ccdbd: "eel" to "DevBot-EG-Opencore" in #ccdbd: !stats mcs
+[11/26 10:48:20] DevBot-EG-Opencore\#ccdbd: "eel" to "DevBot-EG-Opencore" in #ccdbd: !challenge 5 mcs
+[11/26 10:48:42] DevBot-EG-Opencore\#ccdbd: "eel" to "DevBot-EG-Opencore" in #ccdbd: !challenge 5 cyc
+[11/26 10:48:46] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 1b1 eel
+[11/26 10:48:50] DevBot-EG-Opencore\#ccdbd: PID search for player not in arena, this is probably a plugin error
+
+[11/26 10:48:51] DevBot-EG-Opencore\#ccdbd: "eel" to "DevBot-EG-Opencore" in #ccdbd: !reject 
+[11/26 10:48:57] DevBot-EG-Opencore\#ccdbd: "eel" to "DevBot-EG-Opencore" in #ccdbd: !challenge 1 cycad
+[11/26 10:49:02] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !accept 
+[11/26 10:49:53] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 5b1 eel
+[11/26 10:50:23] DevBot-EG-Opencore\#ccdbd: PID search for player not in arena, this is probably a plugin error
+
+[11/26 10:51:19] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 3b1 eel
+[11/26 10:51:27] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !reject 
+[11/26 10:51:40] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 3b1 eel
+[11/26 10:52:01] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !accept 
+[11/26 10:52:10] DevBot-EG-Opencore\#ccdbd: PID search for player not in arena, this is probably a plugin error
+
+[11/26 10:52:28] DevBot-EG-Opencore\#ccdbd: "Hydrange" to "DevBot-EG-Opencore" in #ccdbd: !accept 
+[11/26 10:54:46] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !die 
+[11/26 10:54:46] DevBot-EG-Opencore\#ccdbd: Die issued by cycad
+[11/26 15:53:11] Core: Added type: master
+[11/26 15:53:11] Core: Starting master into #ccdbd
+[11/26 15:53:11] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 15:53:11] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 15:53:11] DevBot-EG-Opencore\None: Connecting to server
+[11/26 15:53:11] DevBot-EG-Opencore\None: Logged in to server
+[11/26 15:53:11] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 15:57:13] Core: Added type: master
+[11/26 15:57:13] Core: Starting master into #ccdbd
+[11/26 15:57:13] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 15:57:13] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 15:57:13] DevBot-EG-Opencore\None: Connecting to server
+[11/26 15:57:14] DevBot-EG-Opencore\None: Logged in to server
+[11/26 15:57:14] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 15:57:23] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 15:57:50] Core: Added type: master
+[11/26 15:57:50] Core: Starting master into #ccdbd
+[11/26 15:57:50] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 15:57:50] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 15:57:50] DevBot-EG-Opencore\None: Connecting to server
+[11/26 15:57:51] DevBot-EG-Opencore\None: Logged in to server
+[11/26 15:57:51] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 15:58:31] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 15:58:35] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help 
+[11/26 15:58:38] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 15:58:53] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 15:59:13] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 15:59:20] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 20
+[11/26 16:04:22] Core: Added type: master
+[11/26 16:04:22] Core: Starting master into #ccdbd
+[11/26 16:04:22] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:04:22] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:04:22] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:04:22] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:04:22] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:04:26] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 16:04:34] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 16:04:58] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !die 
+[11/26 16:04:58] DevBot-EG-Opencore\#ccdbd: Die issued by cycad
+[11/26 16:18:47] Core: Added type: master
+[11/26 16:18:47] Core: Starting master into #ccdbd
+[11/26 16:18:47] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:18:47] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:18:47] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:18:48] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:18:48] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:18:53] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 16:18:58] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !about 
+[11/26 16:19:01] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help duelbot
+[11/26 16:19:05] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 16:19:13] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !challenge 5b2 cycad
+[11/26 16:19:19] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rating cycad
+[11/26 16:19:24] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 16:19:27] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 16:19:39] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 16:19:42] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 16:19:46] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 16:19:52] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !about 
+[11/26 16:19:57] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 16:19:59] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help 
+[11/26 16:20:04] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help duelbot
+[11/26 16:20:25] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !pubtop10 
+[11/26 16:20:41] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !die 
+[11/26 16:20:41] DevBot-EG-Opencore\#ccdbd: Die issued by cycad
+[11/26 16:22:12] Core: Added type: master
+[11/26 16:22:12] Core: Starting master into #ccdbd
+[11/26 16:22:12] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:22:12] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:22:12] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:22:12] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:22:12] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:22:17] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 16:22:25] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !die 
+[11/26 16:22:25] DevBot-EG-Opencore\#ccdbd: Die issued by cycad
+[11/26 16:23:56] Core: Added type: master
+[11/26 16:23:56] Core: Starting master into #ccdbd
+[11/26 16:23:56] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:23:56] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:23:56] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:23:57] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:23:57] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:24:02] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 16:24:06] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 16:24:09] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help 
+[11/26 16:24:11] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 16:24:13] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 16:29:48] Core: Database configured to be disabled
+[11/26 16:29:48] Core: Added type: master
+[11/26 16:29:48] Core: Starting master into #ccdbd
+[11/26 16:29:48] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:29:48] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:29:48] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:29:48] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:29:48] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:29:53] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 16:37:34] Core: Database thread created
+[11/26 16:37:34] Core: Added type: master
+[11/26 16:37:34] Core: Starting master into #ccdbd
+[11/26 16:37:34] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:37:34] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:37:34] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:37:35] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:37:35] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:37:39] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !log 
+[11/26 16:37:39] Core: Connected to database
+[11/26 16:37:39] DevBot-EG-Opencore\#ccdbd: Query Error: Query 0
+[11/26 16:38:39] Core: Database thread created
+[11/26 16:38:39] Core: Added type: master
+[11/26 16:38:39] Core: Starting master into #ccdbd
+[11/26 16:38:39] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:38:39] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:38:39] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:38:39] Core: Connected to database
+[11/26 16:38:39] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:38:40] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:38:40] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:39:29] Core: Database thread created
+[11/26 16:39:29] Core: Added type: master
+[11/26 16:39:29] Core: Starting master into #ccdbd
+[11/26 16:39:29] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:39:29] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:39:29] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:39:29] Core: Connected to database
+[11/26 16:39:29] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:39:30] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:39:30] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:40:32] Core: Database thread created
+[11/26 16:40:32] Core: Added type: master
+[11/26 16:40:32] Core: Starting master into #ccdbd
+[11/26 16:40:32] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:40:32] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:40:32] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:40:32] Core: Connected to database
+[11/26 16:40:32] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:40:33] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:40:33] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:41:32] Core: Database thread created
+[11/26 16:41:32] Core: Added type: master
+[11/26 16:41:32] Core: Starting master into #ccdbd
+[11/26 16:41:32] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:41:32] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:41:32] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:41:32] Core: Connected to database
+[11/26 16:41:32] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:41:33] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:41:33] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:43:39] Core: Database thread created
+[11/26 16:43:39] Core: Added type: master
+[11/26 16:43:39] Core: Starting master into #ccdbd
+[11/26 16:43:39] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:43:39] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:43:39] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:43:39] Core: Connected to database
+[11/26 16:43:39] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:43:40] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:43:40] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:50:09] Core: Database thread created
+[11/26 16:50:09] Core: Added type: master
+[11/26 16:50:09] Core: Starting master into #ccdbd
+[11/26 16:50:09] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:50:09] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:50:09] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:50:09] Core: Connected to database
+[11/26 16:50:09] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:50:10] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:50:10] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:50:32] Core: Database thread created
+[11/26 16:50:32] Core: Added type: master
+[11/26 16:50:32] Core: Starting master into #ccdbd
+[11/26 16:50:32] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:50:32] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:50:32] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:50:32] Core: Connected to database
+[11/26 16:50:32] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:50:33] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:50:33] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:52:17] Core: Database thread created
+[11/26 16:52:17] Core: Added type: master
+[11/26 16:52:17] Core: Starting master into #ccdbd
+[11/26 16:52:17] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:52:17] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:52:17] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:52:17] Core: Connected to database
+[11/26 16:52:17] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:52:18] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:52:18] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 16:55:13] Core: Database thread created
+[11/26 16:55:13] Core: Added type: master
+[11/26 16:55:13] Core: Starting master into #ccdbd
+[11/26 16:55:13] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 16:55:13] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 16:55:13] DevBot-EG-Opencore\None: Connecting to server
+[11/26 16:55:13] Core: Connected to database
+[11/26 16:55:14] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 16:55:14] DevBot-EG-Opencore\None: Logged in to server
+[11/26 16:55:14] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:01:09] Core: Database thread created
+[11/26 17:01:09] Core: Added type: master
+[11/26 17:01:09] Core: Starting master into #ccdbd
+[11/26 17:01:09] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 17:01:09] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 17:01:09] DevBot-EG-Opencore\None: Connecting to server
+[11/26 17:01:09] Core: Connected to database
+[11/26 17:01:09] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 17:01:09] DevBot-EG-Opencore\None: Logged in to server
+[11/26 17:01:09] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:02:38] Core: Database thread created
+[11/26 17:02:38] Core: Added type: master
+[11/26 17:02:38] Core: Starting master into #ccdbd
+[11/26 17:02:38] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 17:02:38] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 17:02:38] DevBot-EG-Opencore\None: Connecting to server
+[11/26 17:02:38] Core: Connected to database
+[11/26 17:02:38] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 17:02:38] DevBot-EG-Opencore\None: Logged in to server
+[11/26 17:02:38] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:03:22] Core: Database thread created
+[11/26 17:03:22] Core: Added type: master
+[11/26 17:03:22] Core: Starting master into #ccdbd
+[11/26 17:03:22] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 17:03:22] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 17:03:22] DevBot-EG-Opencore\None: Connecting to server
+[11/26 17:03:22] Core: Connected to database
+[11/26 17:03:23] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 17:03:23] DevBot-EG-Opencore\None: Logged in to server
+[11/26 17:03:23] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:08:41] Core: Database thread created
+[11/26 17:08:41] Core: Added type: master
+[11/26 17:08:41] Core: Starting master into #ccdbd
+[11/26 17:08:41] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 17:08:41] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 17:08:41] DevBot-EG-Opencore\None: Connecting to server
+[11/26 17:08:41] Core: Connected to database
+[11/26 17:08:41] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 17:08:42] DevBot-EG-Opencore\None: Logged in to server
+[11/26 17:08:42] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:08:53] Core: Database thread created
+[11/26 17:08:53] Core: Added type: master
+[11/26 17:08:53] Core: Starting master into #ccdbd
+[11/26 17:08:53] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 17:08:53] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 17:08:53] DevBot-EG-Opencore\None: Connecting to server
+[11/26 17:08:53] Core: Connected to database
+[11/26 17:08:53] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 17:08:53] DevBot-EG-Opencore\None: Logged in to server
+[11/26 17:08:53] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:45:41] Core: Database thread created
+[11/26 17:45:41] Core: Added type: master
+[11/26 17:45:41] Core: Starting master into #ccdbd
+[11/26 17:45:41] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 17:45:41] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 17:45:41] DevBot-EG-Opencore\None: Connecting to server
+[11/26 17:45:41] Core: Connected to database
+[11/26 17:45:41] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 17:45:42] DevBot-EG-Opencore\None: Logged in to server
+[11/26 17:45:42] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 17:50:31] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 17:50:35] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !rank 
+[11/26 17:56:41] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !about 
+[11/26 17:56:44] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 18:01:17] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 18:01:54] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats zhongwen
+[11/26 18:02:04] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !die 
+[11/26 18:02:04] DevBot-EG-Opencore\#ccdbd: Die issued by cycad
+[11/26 18:02:04] Core: Waiting on DB thread to exit
+[11/26 18:02:04] Core: DB thread exited
+[11/26 18:10:21] Core: Database thread created
+[11/26 18:10:21] Core: Added type: master
+[11/26 18:10:21] Core: Starting master into #ccdbd
+[11/26 18:10:21] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/26 18:10:21] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/26 18:10:21] DevBot-EG-Opencore\None: Connecting to server
+[11/26 18:10:21] Core: Connected to database
+[11/26 18:10:21] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/26 18:10:22] DevBot-EG-Opencore\None: Logged in to server
+[11/26 18:10:22] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/26 18:10:35] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 18:10:38] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 18:10:56] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats raerae
+[11/26 18:11:05] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats cycad
+[11/26 18:11:09] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats :ccyad
+[11/26 18:11:12] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats cycad
+[11/26 18:11:19] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats devbot-eg-opencore
+[11/26 18:11:26] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !stats 
+[11/26 18:11:43] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/26 20:04:51] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !help 
+[11/26 20:04:56] DevBot-EG-Opencore\#ccdbd: "cycad" to "DevBot-EG-Opencore" in #ccdbd: !top10 
+[11/27  6:39:39] DevBot-EG-Opencore\#ccdbd: Received core disconnect from server
+[11/27  6:39:52] Core: Removing dead bot (No checkin for 15 seconds): DevBot-EG-Opencore
+
+[11/27  6:39:52] Core: Waiting on DB thread to exit
+[11/27  6:39:52] Core: DB thread exited
+[11/28 20:13:46] Core: Database thread created
+[11/28 20:13:46] Core: Added type: master
+[11/28 20:13:46] Core: Starting master into #ccdbd
+[11/28 20:13:46] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/28 20:13:55] Core: Database thread created
+[11/28 20:13:55] Core: Added type: master
+[11/28 20:13:55] Core: Starting master into #ccdbd
+[11/28 20:13:55] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/28 20:16:27] Core: Database thread created
+[11/28 20:16:27] Core: Added type: master
+[11/28 20:16:27] Core: Starting master into #ccdbd
+[11/28 20:16:27] DevBot-EG-Opencore\None: core: Loaded successfully (Native)
+[11/28 20:16:27] DevBot-EG-Opencore\None: duelbot: Loaded successfully (Native)
+[11/28 20:16:27] DevBot-EG-Opencore\None: Connecting to server
+[11/28 20:16:27] Core: Connected to database
+[11/28 20:16:28] DevBot-EG-Opencore\None: Query Error: Query 0
+[11/28 20:16:28] DevBot-EG-Opencore\None: Logged in to server
+[11/28 20:16:28] DevBot-EG-Opencore\None: Changing arenas: #ccdbd
+[11/28 20:17:01] DevBot-EG-Opencore\#ccdbd: "mejiae" to "DevBot-EG-Opencore" in #ccdbd: !help 
+[11/28 20:17:04] DevBot-EG-Opencore\#ccdbd: "mejiae" to "DevBot-EG-Opencore" in #ccdbd: !top10 

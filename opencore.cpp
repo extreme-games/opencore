@@ -1349,6 +1349,13 @@ SetShip(uint8_t ship)
 
 
 void
+PickupFlag(uint16_t flag_id)
+{
+	pkt_send_flag_pickup_request(flag_id);
+}
+
+
+void
 StopBot(char *reason) 
 {
 	THREAD_DATA *td = get_thread_data();
