@@ -61,6 +61,13 @@ void	libman_load_library(THREAD_DATA *td, char *libname);
 void	libman_realloc_pinfo_array(THREAD_DATA *td, int new_size);
 void	libman_move_pinfo_entry(THREAD_DATA *td, int dest_index, int source_index);
 
+
+/*
+ * Find a library entry based on name.
+ */
+LIB_ENTRY* libman_find_lib(char *libname);
+void libman_get_current_libname(char *dst, size_t dst_sz);
+
 /*
  * This zeroes a players pinfo for a player in all libraries.
  */
