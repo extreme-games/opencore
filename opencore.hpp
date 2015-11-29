@@ -338,6 +338,10 @@ typedef uint32_t ticks_hs_t;
 
 #define EVENT_DETACH 25 /* p1 (p1 detached) */
 
+#define EVENT_USER_EVENT 26 /* userevent_Xxx */
+
+#define EVENT_USER_CALL 27 /* usercall_Xxx */
+
 
 typedef uint16_t FREQ;
 #define FREQ_NONE		(FREQ)0xFFFF
@@ -592,6 +596,13 @@ struct core_data
 	uint16_t	victory_freq;
 	uint32_t	victory_jackpot;
 
+	char	  	  *usercall_functionname;
+	char    	  *usercall_arg;
+
+	char		  *userevent_libname;
+	char	  	  *userevent_eventname;
+	char	  	  *userevent_arg;
+
 	char	 ac_old_arena[16];	/* arena change old arena */
 
 	ARENA_LIST *arena_list;	/* EVENT_ARENA_LIST */
@@ -776,6 +787,13 @@ void	SendPlayer(PLAYER *p, const char *arena);
 int Query(int query_type, uintptr_t user_data, const char *name, const char *query);
 int QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt, ...);
 void QueryEscape(char *result, size_t result_sz, const char *str);
+
+/*
+ * Usercall functions.
+ */
+bool UserEvent(const char *eventname, const char *arg);
+bool UserCall(const char *libname, const char *functionname, const char *arg);
+
 
 /*
  * Copy a field from a string into a buffer.

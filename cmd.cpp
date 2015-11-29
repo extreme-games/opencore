@@ -302,7 +302,7 @@ handle_command(THREAD_DATA *td, PLAYER *p,
 			cd->cmd_argr = argr;
 			cd->p1 = p;
 
-			libman_export_event_lib(td, EVENT_COMMAND, cd, ccd->lib_entry);
+			libman_export_event(td, EVENT_COMMAND, cd, ccd->lib_entry);
 		} else {
 			char *type = "";
 			if (cmd_type == CMD_REMOTE) type = "remote";
