@@ -40,6 +40,7 @@ void pkt_send_sync_request();
 void pkt_send_sync_response();
 void pkt_send_freq_change(uint16_t freq);
 void pkt_send_ship_change(uint8_t ship);
+void pkt_send_flag_pickup_request(uint16_t flag_id);
 
 #endif
 
