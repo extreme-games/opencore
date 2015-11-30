@@ -12,13 +12,16 @@ DEFS =
 
 
 default:
-	make features.so rabbit.so chat.so query.so chess.so egc.so
+	make features.so rabbit.so chat.so query.so chess.so egc.so prize.so
 
 query.so: query.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) query.cpp $(LIBS)
 
 egc.so: egc.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) egc.cpp $(LIBS)
+
+prize.so: prize.cpp
+	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) prize.cpp $(LIBS)
 
 chess.so: chess.cpp
 	$(CXX) -o $@ $(CXXFLAGS) -Wno-int-to-pointer-cast $(INCLUDEDIRS) $(LIBDIRS) $(DEFS) chess.cpp $(LIBS)
