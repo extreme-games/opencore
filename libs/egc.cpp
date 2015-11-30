@@ -48,13 +48,13 @@ GameEvent(CORE_DATA *cd)
 
 	switch (cd->event) {
 	case EVENT_START:
-		RegisterPlugin(OPENCORE_VERSION, "egc", "cycad", "1.0", __DATE__, __TIME__, "Prizes", sizeof(USER_DATA), sizeof(PLAYER_INFO));
+		RegisterPlugin(OPENCORE_VERSION, "egc", "cycad", "1.0", __DATE__, __TIME__, "egc", sizeof(USER_DATA), sizeof(PLAYER_INFO));
 
-		RegisterCommand(CMD_BALANCE, "!balance", "egc", 0, CMD_PRIVATE | CMD_PUBLIC, NULL, "Check your balance", NULL);
+		RegisterCommand(CMD_BALANCE, "!balance", "egc", 0, CMD_PRIVATE | CMD_PUBLIC, "[player]", "Check your balance", NULL);
 		RegisterCommand(CMD_SETBALANCE, "!setbalance", "egc", 2, CMD_PRIVATE | CMD_REMOTE, "<player>:<balance>:<comment>", "Set someones account balance", NULL);
-		RegisterCommand(CMD_TRANSFER, "!transfer", "egc", 0, CMD_PRIVATE | CMD_PUBLIC, NULL, "Transfer money between players", NULL);
-		RegisterCommand(CMD_ADD, "!add", "egc", 2, CMD_PRIVATE, NULL, "Check your balance", NULL);
-		RegisterCommand(CMD_REMOVE, "!remove", "egc", 2, CMD_PRIVATE, NULL, "Remove money from an account", NULL);
+		RegisterCommand(CMD_TRANSFER, "!transfer", "egc", 0, CMD_PRIVATE | CMD_PUBLIC, "<amount>:<player>", "Transfer money between players", NULL);
+		RegisterCommand(CMD_ADD, "!add", "egc", 2, CMD_PRIVATE | CMD_REMOTE, "<amount>:<player>:<comment>", "Add EGC to a player's account", NULL);
+		RegisterCommand(CMD_REMOVE, "!remove", "egc", 2, CMD_PRIVATE | CMD_REMOTE, "<amount>:<player>:<comment>", "Remove EGC from a player's account", NULL);
 		break;
 	case EVENT_ENTER:
 		pi(cd, cd->p1)->last_command_tick = GetTicksMs() - COMMAND_INTERVAL;
@@ -185,7 +185,6 @@ GameEvent(CORE_DATA *cd)
 				}
 				break;
 			case QUERY_SETBALANCE:
-				printf("rows:%d cols:%d value:%s\n", cd->query_nrows, cd->query_ncols, cd->query_resultset[0][0]);
 				if (cd->query_nrows == 1 && cd->query_ncols == 1 && cd->query_resultset[0][0] && strcasecmp(cd->query_resultset[0][0], "1") == 0) {
 					RmtMessage(cd->query_name, "Balance set");
 				} else {
