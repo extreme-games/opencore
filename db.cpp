@@ -6,6 +6,11 @@
 #include <string.h>
 #include <errno.h>
 
+#ifdef OSX
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 #include "mysql/mysql.h"
 #include "mysql/errmsg.h"
 #include "bsd/queue.h"
@@ -165,7 +170,18 @@ db_entrypoint(void *unused)
 	while (running) {
 		// wait for an event
 		struct timespec abstimeout;
+
+#ifdef OSX
+		clock_serv_t cclock;
+		mach_timespec_t mts;
+		host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+		clock_get_time(cclock, &mts);
+		mach_port_deallocate(mach_task_self(), cclock);
+		ts->tv_sec = mts.tv_sec;
+		ts->tv_nsec = mts->tv_nsec;
+#else
 		clock_gettime(CLOCK_REALTIME, &abstimeout);
+#endif
 		abstimeout.tv_sec += 30;
 		bool keepalive = false;
 		if (sem_timedwait(&g_sem, &abstimeout) == -1 && errno == ETIMEDOUT) {
