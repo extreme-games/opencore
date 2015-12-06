@@ -94,6 +94,10 @@ EVENT_ARENA_LIST = _opencore.EVENT_ARENA_LIST
 EVENT_QUERY_RESULT = _opencore.EVENT_QUERY_RESULT
 EVENT_CONFIG_CHANGE = _opencore.EVENT_CONFIG_CHANGE
 EVENT_FLAG_VICTORY = _opencore.EVENT_FLAG_VICTORY
+EVENT_ATTACH = _opencore.EVENT_ATTACH
+EVENT_DETACH = _opencore.EVENT_DETACH
+EVENT_USER_EVENT = _opencore.EVENT_USER_EVENT
+EVENT_USER_CALL = _opencore.EVENT_USER_CALL
 class point(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, point, name, value)
@@ -693,6 +697,21 @@ class core_data(_object):
     __swig_setmethods__["victory_jackpot"] = _opencore.core_data_victory_jackpot_set
     __swig_getmethods__["victory_jackpot"] = _opencore.core_data_victory_jackpot_get
     if _newclass:victory_jackpot = _swig_property(_opencore.core_data_victory_jackpot_get, _opencore.core_data_victory_jackpot_set)
+    __swig_setmethods__["usercall_functionname"] = _opencore.core_data_usercall_functionname_set
+    __swig_getmethods__["usercall_functionname"] = _opencore.core_data_usercall_functionname_get
+    if _newclass:usercall_functionname = _swig_property(_opencore.core_data_usercall_functionname_get, _opencore.core_data_usercall_functionname_set)
+    __swig_setmethods__["usercall_arg"] = _opencore.core_data_usercall_arg_set
+    __swig_getmethods__["usercall_arg"] = _opencore.core_data_usercall_arg_get
+    if _newclass:usercall_arg = _swig_property(_opencore.core_data_usercall_arg_get, _opencore.core_data_usercall_arg_set)
+    __swig_setmethods__["userevent_libname"] = _opencore.core_data_userevent_libname_set
+    __swig_getmethods__["userevent_libname"] = _opencore.core_data_userevent_libname_get
+    if _newclass:userevent_libname = _swig_property(_opencore.core_data_userevent_libname_get, _opencore.core_data_userevent_libname_set)
+    __swig_setmethods__["userevent_eventname"] = _opencore.core_data_userevent_eventname_set
+    __swig_getmethods__["userevent_eventname"] = _opencore.core_data_userevent_eventname_get
+    if _newclass:userevent_eventname = _swig_property(_opencore.core_data_userevent_eventname_get, _opencore.core_data_userevent_eventname_set)
+    __swig_setmethods__["userevent_arg"] = _opencore.core_data_userevent_arg_set
+    __swig_getmethods__["userevent_arg"] = _opencore.core_data_userevent_arg_get
+    if _newclass:userevent_arg = _swig_property(_opencore.core_data_userevent_arg_get, _opencore.core_data_userevent_arg_set)
     __swig_setmethods__["ac_old_arena"] = _opencore.core_data_ac_old_arena_set
     __swig_getmethods__["ac_old_arena"] = _opencore.core_data_ac_old_arena_get
     if _newclass:ac_old_arena = _swig_property(_opencore.core_data_ac_old_arena_get, _opencore.core_data_ac_old_arena_set)
@@ -811,6 +830,18 @@ def SetPosition(*args):
   return _opencore.SetPosition(*args)
 SetPosition = _opencore.SetPosition
 
+def SetFreq(*args):
+  return _opencore.SetFreq(*args)
+SetFreq = _opencore.SetFreq
+
+def SetShip(*args):
+  return _opencore.SetShip(*args)
+SetShip = _opencore.SetShip
+
+def PickupFlag(*args):
+  return _opencore.PickupFlag(*args)
+PickupFlag = _opencore.PickupFlag
+
 def QueueGetFile(*args):
   return _opencore.QueueGetFile(*args)
 QueueGetFile = _opencore.QueueGetFile
@@ -898,6 +929,14 @@ QueryFmt = _opencore.QueryFmt
 def QueryEscape(*args):
   return _opencore.QueryEscape(*args)
 QueryEscape = _opencore.QueryEscape
+
+def UserEvent(*args):
+  return _opencore.UserEvent(*args)
+UserEvent = _opencore.UserEvent
+
+def UserCall(*args):
+  return _opencore.UserCall(*args)
+UserCall = _opencore.UserCall
 
 def DelimArgs(*args):
   return _opencore.DelimArgs(*args)

@@ -21,7 +21,6 @@
 #include "lib.hpp"
 #include "util.hpp"
 
-#define DB_CONFIG_FILE "db.conf"
 
 static pthread_mutex_t g_mtx = PTHREAD_MUTEX_INITIALIZER;
 static pthread_key_t g_db_tls_key;
@@ -43,10 +42,11 @@ struct db_result {
 	unsigned int ncols;
 	char ***rs;
 	bool success;
-	void* user_data;
+	uintptr_t user_data;
 	char name[24];
 	int type;
 	char *query;
+	char libname[64];
 };
 TAILQ_HEAD(result_head, db_result);
 
@@ -64,9 +64,10 @@ struct db_query {
 	TAILQ_ENTRY(db_query) entry;
 
 	char *query;
-	void *user_data;
+	uintptr_t user_data;
 	DB_CONTEXT *dbc;
 	char name[24];
+	char libname[64];
 	int type;
 };
 TAILQ_HEAD(query_head, db_query);
@@ -194,13 +195,13 @@ db_entrypoint(void *unused)
 
 			if (m) {
 				mysql = m;
-				Log(OP_SMOD, "Connected to DB");
+				Log(OP_SMOD, "Connected to database");
 			} else if (last_error == CR_ALREADY_CONNECTED) {
 				// db was already connected
 				mysql = &lmysql;
 			} else {
 				mysql = NULL;
-				Log(OP_SMOD, "DB reconnection failure");
+				Log(OP_SMOD, "Database reconnection failure");
 			}
 			
 			last_connect_ticks = get_ticks_ms();
@@ -247,6 +248,7 @@ db_entrypoint(void *unused)
 				if (dbr) {
 					memset(dbr, 0, sizeof(DB_RESULT));
 
+					strlcpy(dbr->libname, dbq->libname, sizeof(dbr->libname));
 					dbr->type = dbq->type;
 					strncpy(dbr->name, dbq->name, sizeof(dbr->name));
 					dbr->user_data = dbq->user_data;
@@ -388,7 +390,10 @@ db_instance_export_events(ticks_ms_t max_time)
 			strncpy(cd->query_name, dbr->name, sizeof(cd->query_name));
 			cd->query_type = dbr->type;
 
-			libman_export_event(td, EVENT_QUERY_RESULT, cd);
+			LIB_ENTRY *le = libman_find_lib(dbr->libname);
+			if (le) {
+				libman_export_event(td, EVENT_QUERY_RESULT, cd, le);
+			}
 
 			if (dbr->rs) resultset_free(dbr->rs, dbr->nrows, dbr->ncols);
 			free(dbr);
@@ -418,7 +423,7 @@ db_init_once()
  * Init the core-wide database engine.
  */
 void
-db_init()
+db_init(const char *configfile)
 {
 	static pthread_once_t init_once = PTHREAD_ONCE_INIT;
 	pthread_once(&init_once, db_init_once);
@@ -426,17 +431,22 @@ db_init()
 	pthread_mutex_lock(&g_mtx);
 
 	// read the config
-	g_running = config_get_int("database.enabled", 0, DB_CONFIG_FILE) != 0;
-	config_get_string("database.username", username, sizeof(username), "user", DB_CONFIG_FILE);
-	config_get_string("database.password", password, sizeof(password), "password", DB_CONFIG_FILE);
-	config_get_string("database.server", server, sizeof(server), "localhost", DB_CONFIG_FILE);
-	config_get_string("database.dbname", dbname, sizeof(dbname), "db", DB_CONFIG_FILE);
-	port = config_get_int("database.port", 3306, DB_CONFIG_FILE);
+	g_running = config_get_int("database.enabled", 0, configfile) != 0;
+	config_get_string("database.username", username, sizeof(username), "user", configfile);
+	config_get_string("database.password", password, sizeof(password), "password", configfile);
+	config_get_string("database.server", server, sizeof(server), "localhost", configfile);
+	config_get_string("database.dbname", dbname, sizeof(dbname), "db", configfile);
+	port = config_get_int("database.port", 3306, configfile);
 
 	// spawn the db thread
-	if (g_running && pthread_create(&g_dbthread, NULL, db_entrypoint, NULL) != 0) {
-		Log(OP_SMOD, "Unable to create DB thread");
-		exit(-1);
+	if (g_running) {
+		if (pthread_create(&g_dbthread, NULL, db_entrypoint, NULL) != 0) {
+			Log(OP_SMOD, "Unable to create DB thread");
+			exit(-1);
+		}
+		Log(OP_MOD, "Database thread created");
+	} else {
+		Log(OP_SMOD, "Database configured to be disabled");
 	}
 
 	pthread_mutex_unlock(&g_mtx);
@@ -471,10 +481,12 @@ db_shutdown()
 
 
 int
-QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...)
+QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt, ...)
 {
 	va_list ap;
+	va_list ap2;
 	va_start(ap, fmt);
+	va_copy(ap2, ap);
 
 	int rv = -1;
 
@@ -482,7 +494,7 @@ QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...
 	if (size >= 0) {
 		char *query = (char*)malloc(size + 1);
 		if (query) {
-			if (vsnprintf(query, size + 1, fmt, ap) < size + 1) {
+			if (vsnprintf(query, size + 1, fmt, ap2) < size + 1) {
 				rv = Query(query_type, user_data, name, query);
 			}
 			
@@ -491,6 +503,7 @@ QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...
 	}
 
 	va_end(ap);
+	va_end(ap2);
 	
 	return rv;
 }
@@ -526,7 +539,7 @@ QueryEscape(char *result, size_t result_sz, const char *str)
 
 
 int
-Query(int query_type, void *user_data, const char *name, const char *query)
+Query(int query_type, uintptr_t user_data, const char *name, const char *query)
 {
 	int rv = -1;
 
@@ -535,6 +548,7 @@ Query(int query_type, void *user_data, const char *name, const char *query)
 		DB_QUERY *dbq = (DB_QUERY*)malloc(sizeof(DB_QUERY));
 		if (dbq) {
 			memset(dbq, 0, sizeof(DB_QUERY));
+			libman_get_current_libname(dbq->libname, sizeof(dbq->libname));
 			dbq->query = strdup(query);
 			dbq->user_data = user_data;
 			strncpy(dbq->name, name ? name : "", sizeof(dbq->name));

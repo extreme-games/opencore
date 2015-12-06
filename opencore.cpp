@@ -193,6 +193,7 @@ main(int argc, char *argv[])
 	g_pkt_game_handlers[0x06] = pkt_handle_game_0x06;
 	g_pkt_game_handlers[0x0A] = pkt_handle_game_0x0A;
 	g_pkt_game_handlers[0x0D] = pkt_handle_game_0x0D;
+	g_pkt_game_handlers[0x0E] = pkt_handle_game_0x0E;
 	g_pkt_game_handlers[0x14] = pkt_handle_game_0x14;
 	g_pkt_game_handlers[0x19] = pkt_handle_game_0x19;
 	g_pkt_game_handlers[0x1C] = pkt_handle_game_0x1C;
@@ -213,13 +214,17 @@ main(int argc, char *argv[])
 
 	load_op_file();
 
+	static const char* const masterconfig = "types/master.conf";
+
 	log_init();
-	db_init();
+	db_init(masterconfig);
 	botman_init();
 
 	/* run the master bot */
-	Log(OP_MOD, "Starting master into #master");
-	char *err = StartBot("master", "#master", NULL);
+	char arenaname[32] = { '\0' };
+	config_get_string("login.masterarena", arenaname, sizeof(arenaname), "#master", masterconfig);
+	LogFmt(OP_MOD, "Starting master into %s", arenaname);
+	char *err = StartBot("master", arenaname, NULL);
 	if (err) {
 		LogFmt(OP_MOD, "Error starting master bot: %s", err);
 		return -1;
@@ -1324,6 +1329,29 @@ SetPosition(uint16_t x, uint16_t y, uint16_t xv, uint16_t yv)
 
 	pkt_send_position_update(x, y, xv, yv);
 	td->net->ticks->last_pos_update_sent = get_ticks_ms();
+}
+
+
+void
+SetFreq(uint16_t freq)
+{
+	assert(freq >= 0 && freq <= 9999);
+	pkt_send_freq_change(freq);
+}
+
+
+void
+SetShip(uint8_t ship)
+{
+	assert(ship >= 0 && ship <= 8);
+	pkt_send_ship_change(ship);
+}
+
+
+void
+PickupFlag(uint16_t flag_id)
+{
+	pkt_send_flag_pickup_request(flag_id);
 }
 
 

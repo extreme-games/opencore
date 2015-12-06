@@ -48,13 +48,13 @@ struct timer_entry
 {
 	LIST_ENTRY(timer_entry) entry;
 
-	void		*data1;		/* user data 1 */
-	void		*data2;		/* user data 2 */
+	uintptr_t	data1;		/* user data 1 */
+	uintptr_t	data2;		/* user data 2 */
 
-	ticks_ms_t	 base;		/* when the timer was set */
-	ticks_ms_t	 duration;	/* the duration */
+	ticks_ms_t	base;		/* when the timer was set */
+	ticks_ms_t	duration;	/* the duration */
 
-	long		 id;		/* the id of the timer */
+	long		id;		/* the id of the timer */
 };
 
 LIST_HEAD(timer_head, timer_entry);
@@ -104,6 +104,29 @@ struct lib_entry
 
 LIST_HEAD(lib_head, lib_entry);
 
+typedef struct user_call USER_CALL;
+struct user_call {
+	SIMPLEQ_ENTRY(user_call) entry;
+
+	char libname[64];
+	char functionname[32];
+	char *arg;
+};
+
+SIMPLEQ_HEAD(user_call_head, user_call);
+
+typedef struct user_event USER_EVENT;
+struct user_event {
+	SIMPLEQ_ENTRY(user_event) entry;
+
+	char libname[64];
+	char eventname[32];
+	char *arg;
+};
+
+SIMPLEQ_HEAD(user_event_head, user_event);
+
+
 typedef
 struct MOD_TL_DATA_
 {
@@ -111,12 +134,17 @@ struct MOD_TL_DATA_
 
 	int	 	pinfo_nslots;	/* number of total pinfo slots allocated */
 
+	user_call_head usercall_list_head;
+	user_event_head userevent_list_head;
+
 	CORE_DATA	cd;		/* core_data exported to modules */
 } MOD_TL_DATA;
 
-static LIB_ENTRY* find_lib_entry(MOD_TL_DATA *mod_tld, char *libname);
 static int	unload_library(THREAD_DATA *td, char *libname);
 static void	expire_timers_lib(THREAD_DATA *td, LIB_ENTRY *le, int expire_all);
+static void libman_export_userevents(THREAD_DATA *td);
+static void libman_export_usercalls(THREAD_DATA *td);
+static void libman_export_usereventsandcalls(THREAD_DATA *td);
 
 CORE_DATA*
 libman_get_core_data(THREAD_DATA *td)
@@ -215,14 +243,13 @@ RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *version,
 
 static
 void
-export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le, bool set_thread_data)
+export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le)
 {
 	// NOTE: this is special cased to only export start events to unregistered cores
 	if (!le->registered && event != EVENT_START) return;
 
 	if (cd == NULL) cd = libman_get_core_data(td);
 
-	if (set_thread_data) td2cd(cd, td);
 	le2cd(cd, le);
 	try_set_pinfo(cd, le);
 
@@ -259,14 +286,7 @@ export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le, bool 
 
 
 void
-libman_export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le)
-{
-	export_event_lib(td, event, cd, le, true);
-}
-
-
-void
-libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd)
+libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
@@ -276,9 +296,77 @@ libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd)
 	/* set thread-specific data into core_data once */
 	td2cd(cd, td);
 
-	LIB_ENTRY *le;
-	LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
-		export_event_lib(td, event, cd, le, false);
+	if (le) {
+		export_event_lib(td, event, cd, le);
+	} else {
+		LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
+			export_event_lib(td, event, cd, le);
+		}
+	}
+
+	libman_export_usereventsandcalls(td);
+}
+
+
+void
+libman_export_usereventsandcalls(THREAD_DATA *td)
+{
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+
+	int n = 0;
+	static const int limit = 100;
+	while (!SIMPLEQ_EMPTY(&mod_tld->usercall_list_head) && !SIMPLEQ_EMPTY(&mod_tld->userevent_list_head)) {
+		libman_export_usercalls(td);
+		libman_export_userevents(td);
+
+		if (++n >= limit) {
+			LogFmt(OP_SMOD, "Recursive userevent/usercall cycle detected, breaking at %d", limit);
+			break;
+		}
+	}
+}
+
+void
+libman_export_usercalls(THREAD_DATA *td)
+{
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+	CORE_DATA *cd = libman_get_core_data(td);
+
+	USER_CALL *uc;
+	while ((uc = SIMPLEQ_FIRST(&mod_tld->usercall_list_head)) != NULL) {
+			SIMPLEQ_REMOVE_HEAD(&mod_tld->usercall_list_head, entry);
+			LIB_ENTRY *le = libman_find_lib(uc->libname);
+			if (le) {
+				cd->usercall_functionname = uc->functionname;
+				cd->usercall_arg = uc->arg;
+				libman_export_event(td, EVENT_USER_CALL, cd, le);
+			} else {
+				LogFmt(OP_SMOD, "Unable to perform usercall %s.%s(\"%s\")", uc->libname, uc->functionname, uc->arg ? uc->arg : "NULL");
+			}
+
+			free(uc->arg);
+			free(uc);
+	}
+}
+
+
+void
+libman_export_userevents(THREAD_DATA *td)
+{
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+	CORE_DATA *cd = libman_get_core_data(td);
+
+	USER_EVENT *ue;
+	while ((ue = SIMPLEQ_FIRST(&mod_tld->userevent_list_head)) != NULL) {
+			SIMPLEQ_REMOVE_HEAD(&mod_tld->userevent_list_head, entry);
+
+			cd->userevent_libname = (char*)ue->libname;
+			cd->userevent_eventname = (char*)ue->eventname;
+			cd->userevent_arg = ue->arg;
+			libman_export_event(td, EVENT_USER_EVENT, cd, NULL);
+
+			free(ue->arg);
+			free(ue);
 	}
 }
 
@@ -422,7 +510,7 @@ libman_load_library(THREAD_DATA *td, char *libname)
 
 	/* event_start */
 	bool unload = false;
-	libman_export_event_lib(td, EVENT_START, NULL, le);
+	libman_export_event(td, EVENT_START, NULL, le);
 	if (le->registered) {
 		LogFmt(OP_MOD, "%s: Loaded successfully (%s)", le->libname, le->type == TYPE_NATIVE ? "Native" : le->type == TYPE_PYTHON ? "Python" : "Unknown");
 	} else {
@@ -449,8 +537,8 @@ libman_load_library(THREAD_DATA *td, char *libname)
 		CORE_DATA *cd = libman_get_core_data(td);
 
 		cd->p1 = p;
-		libman_export_event_lib(td, EVENT_FIRSTSEEN, cd, le);
-		libman_export_event_lib(td, EVENT_ENTER, cd, le);
+		libman_export_event(td, EVENT_FIRSTSEEN, cd, le);
+		libman_export_event(td, EVENT_ENTER, cd, le);
 	}
 
 	LIST_INSERT_HEAD(&mod_tld->lib_list_head, le, entry);
@@ -476,7 +564,7 @@ KillTimer(long timer_id)
 }
 
 long
-SetTimer(ticks_ms_t duration, void *data1, void *data2)
+SetTimer(ticks_ms_t duration, uintptr_t data1, uintptr_t data2)
 {
 	THREAD_DATA *td = get_thread_data();
 	LIB_ENTRY *le = td->lib_entry;
@@ -526,7 +614,7 @@ expire_timers_lib(THREAD_DATA *td, LIB_ENTRY *le, int expire_all)
 			cd->timer_data2 = te->data2;
 			cd->timer_id = te->id;
 
-			libman_export_event_lib(td, EVENT_TIMER, cd, le);
+			libman_export_event(td, EVENT_TIMER, cd, le);
 
 			free(te);
 		}
@@ -541,7 +629,8 @@ libman_instance_init(THREAD_DATA *td)
 	td->mod_data->lib = mod_tld;
 
 	LIST_INIT(&mod_tld->lib_list_head);
-
+	SIMPLEQ_INIT(&mod_tld->usercall_list_head);
+	SIMPLEQ_INIT(&mod_tld->userevent_list_head);
 
 	CORE_DATA *cd = &mod_tld->cd;
 
@@ -552,7 +641,6 @@ void
 cmd_inslib(CORE_DATA *cd)
 {
 	THREAD_DATA *td = (THREAD_DATA*)get_thread_data();
-	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
 	if (cd->cmd_argc != 2) {
 		RmtMessageFmt(cd->cmd_name, "Usage: %s <lib name>",
@@ -561,11 +649,11 @@ cmd_inslib(CORE_DATA *cd)
 	}
 
 	char *libname = cd->cmd_argv[1];
-	LIB_ENTRY *le = find_lib_entry(mod_tld, libname);
+	LIB_ENTRY *le = libman_find_lib(libname);
 
 	if (le == NULL) {
 		libman_load_library(td, libname);
-		if (find_lib_entry(mod_tld, libname) != NULL)
+		if (libman_find_lib(libname) != NULL)
 			RmtMessageFmt(cd->cmd_name, "Library loaded");
 		else
 			RmtMessageFmt(cd->cmd_name, "Library failed to load");
@@ -594,10 +682,12 @@ cmd_rmlib(CORE_DATA *cd)
 	}
 }
 
-static
 LIB_ENTRY*
-find_lib_entry(MOD_TL_DATA *mod_tld, char *libname)
+libman_find_lib(char *libname)
 {
+	THREAD_DATA *td = get_thread_data();
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+
 	LIB_ENTRY *le;
 	LIST_FOREACH(le, &mod_tld->lib_list_head, entry) {
 		if (strcasecmp(le->libname, libname) == 0)
@@ -641,7 +731,7 @@ unload_library(THREAD_DATA *td, char *libname)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
 
-	LIB_ENTRY *le = find_lib_entry(mod_tld, libname);
+	LIB_ENTRY *le = libman_find_lib(libname);
 	if (le == NULL)
 		return -1;
 
@@ -656,11 +746,11 @@ unload_library(THREAD_DATA *td, char *libname)
 		CORE_DATA *cd = libman_get_core_data(td);
 		cd->p1 = &parray[i];
 
-		libman_export_event_lib(td, EVENT_DEADSLOT, cd, le);
+		libman_export_event(td, EVENT_DEADSLOT, cd, le);
 	}
 
 	/* event_stop */
-	libman_export_event_lib(td, EVENT_STOP, NULL, le);
+	libman_export_event(td, EVENT_STOP, NULL, le);
 
 	/* free pinfo */
 	if (le->pinfo_size > 0) {
@@ -688,6 +778,17 @@ unload_library(THREAD_DATA *td, char *libname)
 	return 0;
 }
 
+
+void
+libman_get_current_libname(char *dst, size_t dst_sz)
+{
+	THREAD_DATA *td = get_thread_data();
+	LIB_ENTRY *le = td->lib_entry;
+
+	strlcpy(dst, le->libname, dst_sz);
+}
+
+
 void
 libman_instance_shutdown(THREAD_DATA *td)
 {
@@ -700,5 +801,62 @@ libman_instance_shutdown(THREAD_DATA *td)
 	}
 
 	free(mod_tld);
+}
+
+
+bool
+UserEvent(const char *eventname, const char *arg)
+{
+	if (strlen(eventname) >= 32) return false;
+
+	THREAD_DATA *td = get_thread_data();
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+	LIB_ENTRY *le = td->lib_entry;
+
+	USER_EVENT *ue = (USER_EVENT*)malloc(sizeof(USER_EVENT));
+
+	strlcpy(ue->libname, le->libname, 64);
+	strlcpy(ue->eventname, eventname, 32);
+	if (arg) {
+		ue->arg = strdup(arg);
+		if (!ue->arg) {
+			free(ue);
+			return false;
+		}
+	} else {
+		ue->arg = NULL;
+	}
+
+	SIMPLEQ_INSERT_TAIL(&mod_tld->userevent_list_head, ue, entry);
+
+	return true;
+}
+
+
+bool
+UserCall(const char *libname, const char *eventname, const char *arg)
+{
+	if (strlen(libname) >= 64 || strlen(eventname) >= 32) return false;
+
+	THREAD_DATA *td = get_thread_data();
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
+
+	USER_CALL *uc = (USER_CALL*)malloc(sizeof(USER_CALL));
+
+	strlcpy(uc->libname, libname, 64);
+	strlcpy(uc->functionname, eventname, 32);
+	if (arg) {
+		uc->arg = strdup(arg);
+		if (!uc->arg) {
+			free(uc);
+			return false;
+		}
+	} else {
+		uc->arg = NULL;
+	}
+
+	SIMPLEQ_INSERT_TAIL(&mod_tld->usercall_list_head, uc, entry);
+
+	return true;
 }
 

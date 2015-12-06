@@ -334,6 +334,14 @@ typedef uint32_t ticks_hs_t;
 
 #define EVENT_FLAG_VICTORY 23 /* victory_freq, victory_jackpot */
 
+#define EVENT_ATTACH 24 /* p1, p2 (p1 attached to p2) */
+
+#define EVENT_DETACH 25 /* p1 (p1 detached) */
+
+#define EVENT_USER_EVENT 26 /* userevent_Xxx */
+
+#define EVENT_USER_CALL 27 /* usercall_Xxx */
+
 
 typedef uint16_t FREQ;
 #define FREQ_NONE		(FREQ)0xFFFF
@@ -562,8 +570,8 @@ struct core_data
 	FREQ	  old_freq;	/* the players old freq */
 
 	long	  timer_id;	/* unique timer id of the timer expiring */
-	void	 *timer_data1;	/* data1 as passed to SetTimer() */
-	void	 *timer_data2;	/* data2 as passed to SetTimer() */
+	uintptr_t timer_data1;	/* data1 as passed to SetTimer() */
+	uintptr_t timer_data2;	/* data2 as passed to SetTimer() */
 
 	int	  cmd_id;	/* id passed through RegisterCommand() */
 	char	 *cmd_name;	/* name of player issuing command */
@@ -579,7 +587,7 @@ struct core_data
 
 	bool		   query_success;
 	char		***query_resultset;
-	void		  *query_user_data;
+	uintptr_t	   query_user_data;
 	char		   query_name[24];
 	unsigned int   query_nrows;
 	unsigned int   query_ncols;
@@ -587,6 +595,13 @@ struct core_data
 
 	uint16_t	victory_freq;
 	uint32_t	victory_jackpot;
+
+	char	  	  *usercall_functionname;
+	char    	  *usercall_arg;
+
+	char		  *userevent_libname;
+	char	  	  *userevent_eventname;
+	char	  	  *userevent_arg;
 
 	char	 ac_old_arena[16];	/* arena change old arena */
 
@@ -659,7 +674,7 @@ void	RegisterPlugin(char *oc_version, char *plugin_name, char *author, char *ver
  * To handle multiple timers, store SetTimer's return value and
  * check it against CORE_DATA.timer_id during EVENT_TIMER.
  */ 
-long	SetTimer(ticks_ms_t duration, void *data1, void *data2);
+long	SetTimer(ticks_ms_t duration, uintptr_t data1, uintptr_t data2);
 
 /*
  * Kill a timer with id of 'timer_id'
@@ -689,6 +704,21 @@ void	Go(char *arena);
  * Set the bot's x and y coordinates (in pixels)
  */
 void	SetPosition(uint16_t x, uint16_t y, uint16_t xv, uint16_t yv);
+
+/*
+ * Set the bot's frequency (0-9999)
+ */
+void	SetFreq(uint16_t freq);
+
+/*
+ * Set the bot's ship type (0-8)
+ */
+void	SetShip(uint8_t ship);
+
+/*
+ * Request to pickup a flag by the server.
+ */
+void	PickupFlag(uint16_t flag_id);
 
 /*
  * Queue a file for transfer. The file will be transferred as soon
@@ -759,9 +789,16 @@ void	SendPlayer(PLAYER *p, const char *arena);
 /*
  * Database functions.
  */
-int Query(int query_type, void *user_data, const char *name, const char *query);
-int QueryFmt(int query_type, void *user_data, const char *name, const char *fmt, ...);
+int Query(int query_type, uintptr_t user_data, const char *name, const char *query);
+int QueryFmt(int query_type, uintptr_t user_data, const char *name, const char *fmt, ...);
 void QueryEscape(char *result, size_t result_sz, const char *str);
+
+/*
+ * Usercall functions.
+ */
+bool UserEvent(const char *eventname, const char *arg);
+bool UserCall(const char *libname, const char *functionname, const char *arg);
+
 
 /*
  * Copy a field from a string into a buffer.
@@ -817,9 +854,9 @@ ticks_ms_t	GetTicksMs();
 /*
  * Get a configuration integer value from the bots config.
  */
-int	GetConfigInt(char *key, int default_value);
-void GetConfigString(char *key, char *dest, int dst_sz, char *default_value);
-bool ConfigKeyExists(char *key);
+int	GetConfigInt(const char *key, int default_value);
+void GetConfigString(const char *key, char *dest, int dst_sz, const char *default_value);
+bool ConfigKeyExists(const char *key);
 
 /*
  * Retrieve a player-specific pinfo struct.  This is only valid if

@@ -308,3 +308,47 @@ pkt_send_server_key(uint32_t server_key)
 	queue_packet(p, SP_HIGH);
 }
 
+/*
+ * Send a frequency change packet to the server.
+ */
+void
+pkt_send_freq_change(uint16_t freq)
+{
+	PACKET *p = allocate_packet(3);
+	build_packet(p->data, "AB",
+	    0x0F,
+	    freq
+	    );
+
+	queue_packet_reliable(p, SP_NORMAL);
+}
+
+/*
+ * Send a ship change packet to the server.
+ */
+void
+pkt_send_ship_change(uint8_t ship)
+{
+	PACKET *p = allocate_packet(2);
+	build_packet(p->data, "AA",
+	    0x18,
+	    ship
+	    );
+
+	queue_packet_reliable(p, SP_NORMAL);
+}
+
+/*
+ * Send a flag pickup request packet to the server.
+ */
+void
+pkt_send_flag_pickup_request(uint16_t flag_id)
+{
+	PACKET *p = allocate_packet(3);
+	build_packet(p->data, "AB",
+	    0x18,
+	    flag_id
+	    );
+
+	queue_packet_reliable(p, SP_NORMAL);
+}

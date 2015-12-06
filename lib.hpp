@@ -45,14 +45,10 @@ CORE_DATA* libman_get_core_data(THREAD_DATA *td);
 
 /*
  * Export an event to all libraries. If 'cd' is null only a CODE_DATA
- * with basic initialization will be sent.
+ * with basic initialization will be sent.  If 'le' is specified, the event
+ * is only exported to the specified library.
  */
-void	libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd);
-
-/*
- * Export an event to a specific library specified by 'le'.
- */
-void	libman_export_event_lib(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le);
+void	libman_export_event(THREAD_DATA *td, int event, CORE_DATA *cd, LIB_ENTRY *le=NULL);
 
 /*
  * Load a library into the core.
@@ -64,6 +60,13 @@ void	libman_load_library(THREAD_DATA *td, char *libname);
  */
 void	libman_realloc_pinfo_array(THREAD_DATA *td, int new_size);
 void	libman_move_pinfo_entry(THREAD_DATA *td, int dest_index, int source_index);
+
+
+/*
+ * Find a library entry based on name.
+ */
+LIB_ENTRY* libman_find_lib(char *libname);
+void libman_get_current_libname(char *dst, size_t dst_sz);
 
 /*
  * This zeroes a players pinfo for a player in all libraries.
