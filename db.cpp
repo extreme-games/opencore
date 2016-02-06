@@ -1,6 +1,5 @@
 
 #include <pthread.h>
-#include <semaphore.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@
 static pthread_mutex_t g_mtx = PTHREAD_MUTEX_INITIALIZER;
 static pthread_key_t g_db_tls_key;
 static pthread_t g_dbthread = -1;
-static sem_t g_sem;
+static pthread_cond_t g_db_cond = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t g_db_cond_mtx = PTHREAD_MUTEX_INITIALIZER;
 
 static char username[128] = { '\0' };
 static char password[128] = { '\0' };
@@ -183,7 +183,10 @@ db_entrypoint(void *unused)
 #endif
 		abstimeout.tv_sec += 30;
 		bool keepalive = false;
-		if (sem_timedwait(&g_sem, &abstimeout) == -1 && errno == ETIMEDOUT) {
+		pthread_mutex_lock(&g_db_cond_mtx);
+		int rv = pthread_cond_timedwait(&g_db_cond, &g_db_cond_mtx, &abstimeout);
+		pthread_mutex_unlock(&g_db_cond_mtx);
+		if (rv == ETIMEDOUT) {
 			// if the wait timed out, just submit a keep alive to the db
 			keepalive = true;
 		}
@@ -411,11 +414,6 @@ db_init_once()
 		Log(OP_SMOD, "Error creating DB thread-specific storage");
 		exit(-1);
 	}
-
-	if (sem_init(&g_sem, 0, 0) != 0) {
-		Log(OP_SMOD, "Error creating DB semaphore");
-		exit(-1);
-	}
 }
 
 
@@ -467,10 +465,9 @@ db_shutdown()
 		g_running = false;
 		pthread_mutex_unlock(&g_mtx);
 		
-		sem_post(&g_sem);
+		pthread_cond_signal(&g_db_cond);
 		void *retval = NULL;
 		if (pthread_join(g_dbthread, &retval) == 0) {
-			sem_destroy(&g_sem);
 			pthread_mutex_destroy(&g_mtx);
 			Log(OP_SMOD, "DB thread exited");
 		} else {
@@ -566,7 +563,7 @@ Query(int query_type, uintptr_t user_data, const char *name, const char *query)
 					TAILQ_INSERT_TAIL(&query_list_head, dbq, entry);
 					pthread_mutex_unlock(&query_list_mtx);
 
-					sem_post(&g_sem);
+					pthread_cond_signal(&g_db_cond);
 
 					rv = 0;
 				} else {
