@@ -66,7 +66,7 @@ handleQueryResult(CORE_DATA *cd)
 			row = res[0];
 
 			if (cd->query_ncols == 14) {
-				PLAYER *p = FindPlayerName(cd->query_name, 0);
+				PLAYER *p = FindPlayerName(cd->query_name, MATCH_HERE);
 				if (p) {
 					// initialize pinfo from db
 					pi(cd,p)->elo = atoi(row[0]);
@@ -95,7 +95,7 @@ handleQueryResult(CORE_DATA *cd)
 			}
 		} else {
 			// player not in db, give him an elo rating
-			PLAYER *p = FindPlayerName(cd->query_name, 0);
+			PLAYER *p = FindPlayerName(cd->query_name, MATCH_HERE);
 
 			if (p) {
 				db_addnewplayer(cd, p);
