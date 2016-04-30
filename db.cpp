@@ -291,7 +291,14 @@ db_entrypoint(void *unused)
 									stored_result = true;
 								}
 							} else {
-								// no resultset / error
+								// check for error on query with no results
+								if (mysql_errno(mysql) == 0) {
+									dbr->success = true;
+									dbr->nrows = 0;
+									dbr->ncols = 0;
+								} else {
+									// error
+								}
 							}
 						} while (mysql_next_result(mysql) == 0);
 					}
