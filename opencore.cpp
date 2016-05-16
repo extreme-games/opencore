@@ -879,8 +879,8 @@ mainloop(THREAD_DATA *td)
 
 		/* read a packet or wait for a timeout */
 		ticks_taken = get_ticks_ms() - ticks;
-		int timeout = ticks_taken > STEP_INTERVAL ? 0 : STEP_INTERVAL - ticks_taken;
-		while (poll(n->pfd, 1, timeout) > 0) {
+		ticks_ms_t timeout = ticks_taken > STEP_INTERVAL ? 0 : STEP_INTERVAL - ticks_taken;
+		while (poll(n->pfd, 1, (int)timeout) > 0) {
 			/* process incoming packet, data is waiting */
 			pktl = (int)read(n->fd, pkt, MAX_PACKET);
 			if (pktl >= 0) {
@@ -904,7 +904,8 @@ mainloop(THREAD_DATA *td)
 				process_incoming_packet(td, pkt, pktl);
 			}
 
-			ticks_taken = get_ticks_ms() - lticks;
+			ticks_taken = get_ticks_ms() - ticks;
+			timeout = timeout > ticks_taken ? timeout - ticks_taken : 0;
 		}
 
 		/* update the tick count after potential sleeping in poll() */
