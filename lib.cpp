@@ -202,9 +202,13 @@ void
 try_set_pinfo(CORE_DATA *cd, LIB_ENTRY *le) {
 	cd->p1_pinfo = NULL;
 	cd->p2_pinfo = NULL;
+	cd->killer_pinfo = NULL;
+	cd->killed_pinfo = NULL;
 	if (cd && cd->pinfo_base && cd->parray && le->pinfo_size > 0) {
 		if (cd->p1) cd->p1_pinfo = GetPlayerInfo(cd, cd->p1);
 		if (cd->p2) cd->p2_pinfo = GetPlayerInfo(cd, cd->p2);
+		if (cd->killer) cd->killer_pinfo = GetPlayerInfo(cd, cd->killer);
+		if (cd->killed) cd->killed_pinfo = GetPlayerInfo(cd, cd->killed);
 	}
 }
 

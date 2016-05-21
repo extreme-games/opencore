@@ -459,8 +459,10 @@ pkt_handle_game_0x06(THREAD_DATA *td, uint8_t *buf, int len)
 		if (pkiller && pkilled) {
 			CORE_DATA *cd = libman_get_core_data(td);
 
-			cd->p1 = pkilled;
-			cd->p2 = pkiller;
+			cd->p1 = pkiller;
+			cd->killer = pkiller;
+			cd->p2 = pkilled;
+			cd->killed = pkilled;
 
 			libman_export_event(td, EVENT_KILL, cd);
 		}

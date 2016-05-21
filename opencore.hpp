@@ -215,7 +215,7 @@ typedef uint32_t ticks_hs_t;
 /*
  * EVENT_KILL occurs when a player is killed.
  *
- * p1 is killed by p2.
+ * p2 is killed by p1.
  */
 #define EVENT_KILL	3	/* p1, p2 */
 	
@@ -552,6 +552,7 @@ struct core_data
 
 	PLAYER   *p1;		/* player 1 */
 	void     *p1_pinfo; /* pinfo pointer */
+
 	PLAYER	 *p2;		/* player 2 */
 	void     *p2_pinfo; /* pinfo pointer */
 
@@ -580,6 +581,11 @@ struct core_data
 	int	  cmd_level;	/* access level of player issuing command */
 	char	**cmd_argv;	/* individual arguments on command line */
 	char	**cmd_argr;	/* remaining arguments on command line */
+
+	PLAYER   *killer;       /* EVENT_KILL values */
+	void     *killer_pinfo;
+	PLAYER   *killed;
+	void     *killed_pinfo;
 
 	uint8_t	  transfer_success;	/* set if the transfer was successful */
 	uint8_t	  transfer_direction;	/* TRANSFER_S2C or TRANSFER_C2S */
