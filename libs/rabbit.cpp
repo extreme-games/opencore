@@ -241,9 +241,9 @@ GameEvent(CORE_DATA *cd)
 		}
 		break;
 	case EVENT_KILL:
-		if (cd->p1->pid == ud(cd)->rabbit_pid) {
+		if (cd->p2->pid == ud(cd)->rabbit_pid) {
 			/* the rabbit died */
-			ArenaMessageFmt("%s wins the rabbit game by killing Rabbit %s!", cd->p2->name, cd->p1->name);
+			ArenaMessageFmt("%s wins the rabbit game by killing Rabbit %s!", cd->p1->name, cd->p2->name);
 			ud(cd)->rabbit_pid = PID_NONE;
 		}
 		break;
