@@ -90,9 +90,7 @@ struct MOD_TL_DATA_
 	int		 ptotal;	/* total slots allocated */
 } MOD_TL_DATA;
 
-RB_PROTOTYPE(pid_tree, player_pid_node, entry, pid_cmp);
 RB_GENERATE(pid_tree, player_pid_node, entry, pid_cmp);
-RB_PROTOTYPE(name_tree, player_name_node, entry, name_cmp);
 RB_GENERATE(name_tree, player_name_node, entry, name_cmp);
 
 static void	player_pointers_changed(THREAD_DATA *td);
@@ -101,7 +99,7 @@ static void	rebuild_player_lists(THREAD_DATA *td);
 int
 name_cmp(struct player_name_node *lhs, struct player_name_node *rhs)
 {
-	return strcasecmp(lhs->name, rhs->name);
+	return strncasecmp(lhs->name, rhs->name, sizeof(rhs->name));
 }
 
 int
@@ -178,7 +176,7 @@ empty_trees(MOD_TL_DATA *mod_tld)
  * after this.
  */
 void
-player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks)
+player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks, bool export_events)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->player;
 
@@ -190,14 +188,16 @@ player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks)
 	 * do this here instead of below so the player trees are in a valid
 	 * state during the event
 	 */
-	for (int i = 0; i < mod_tld->phere; ++i) {
-		p = &mod_tld->parray[i];
-		
-		if (p->here == 0 && ticks - p->leave_tick >= gone_ticks) {
-			/* event_deadslot */
-			CORE_DATA *cd = libman_get_core_data(td);
-			cd->p1 = p;
-			libman_export_event(td, EVENT_DEADSLOT, cd);
+	if (export_events) {
+		for (int i = 0; i < mod_tld->phere; ++i) {
+			p = &mod_tld->parray[i];
+			
+			if (p->here == 0 && ticks - p->leave_tick >= gone_ticks) {
+				/* event_deadslot */
+				CORE_DATA *cd = libman_get_core_data(td);
+				cd->p1 = p;
+				libman_export_event(td, EVENT_DEADSLOT, cd);
+			}
 		}
 	}
 
@@ -432,7 +432,7 @@ player_player_change(THREAD_DATA *td, PLAYER *p, FREQ new_freq, SHIP new_ship)
 }
 
 void
-player_player_left(THREAD_DATA *td, PLAYER_ID pid)
+player_player_left(THREAD_DATA *td, PLAYER_ID pid, bool export_events)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->player;
 
@@ -462,33 +462,35 @@ player_player_left(THREAD_DATA *td, PLAYER_ID pid)
 		}
 
 		/* event_leave */
-		CORE_DATA *cd = libman_get_core_data(td);
-		cd->old_freq = p->freq;
-		cd->old_ship = p->ship;
-		cd->p1 = p;
+		if (export_events) {
+			CORE_DATA *cd = libman_get_core_data(td);
+			cd->old_freq = p->freq;
+			cd->old_ship = p->ship;
+			cd->p1 = p;
 
-		p->here = 0;
-		p->leave_tick = get_ticks_ms();
-		p->pid = PID_NONE;
-		p->freq = FREQ_NONE;
-		p->ship = SHIP_NONE;
+			p->here = 0;
+			p->leave_tick = get_ticks_ms();
+			p->pid = PID_NONE;
+			p->freq = FREQ_NONE;
+			p->ship = SHIP_NONE;
 
-		if (p->pid == td->bot_pid) {
-			td->bot_pid = PID_NONE;
-			td->in_arena = 0;
+			if (p->pid == td->bot_pid) {
+				td->bot_pid = PID_NONE;
+				td->in_arena = 0;
+			}
+
+			libman_export_event(td, EVENT_LEAVE, cd);
 		}
-
-		libman_export_event(td, EVENT_LEAVE, cd);
 	}
 }
 
 void
 player_instance_init(THREAD_DATA *td)
 {
-	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)malloc(sizeof(MOD_TL_DATA));
-	memset(mod_tld, 0, sizeof(MOD_TL_DATA));
+	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)xzmalloc(sizeof(MOD_TL_DATA));
 
 	td->mod_data->player = mod_tld;
+
 
 	RB_INIT(&mod_tld->pid_tree_head);
 	RB_INIT(&mod_tld->name_tree_head);
@@ -500,7 +502,7 @@ player_instance_init(THREAD_DATA *td)
  * reconnects.
  */
 void
-player_simulate_player_leaves(THREAD_DATA *td)
+player_simulate_player_leaves(THREAD_DATA *td, bool export_events)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->player;
 
@@ -508,7 +510,7 @@ player_simulate_player_leaves(THREAD_DATA *td)
 	for (int i = 0; i < mod_tld->phere; ++i) {
 		p = &mod_tld->parray[i];
 		if (p->here)
-			player_player_left(td, p->pid);
+			player_player_left(td, p->pid, export_events);
 	}   
 }
 
@@ -520,8 +522,8 @@ player_instance_shutdown(THREAD_DATA *td)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->player;
 	
-	player_simulate_player_leaves(td);	
-	player_free_absent_players(td, (ticks_ms_t)0);
+	player_simulate_player_leaves(td, false);	
+	player_free_absent_players(td, (ticks_ms_t)0, false);
 
 	free(mod_tld->parray);
 
@@ -551,10 +553,9 @@ player_find_by_name(THREAD_DATA *td, const char *name, MATCH_TYPE match_type)
 
 	PLAYER *res = NULL;	/* final result */
 
-	PLAYER **pcache = &mod_tld->cache->last_name_lookup; 
-	if (*pcache && strcasecmp((*pcache)->name, name) == 0) {
+	if (mod_tld->cache->last_name_lookup && strcasecmp(mod_tld->cache->last_name_lookup->name, name) == 0) {
 		/* cache hit */
-		res = *pcache;
+		res = mod_tld->cache->last_name_lookup;
 	} else {
 		/* exact name match lookup needed */
 
@@ -579,7 +580,7 @@ player_find_by_name(THREAD_DATA *td, const char *name, MATCH_TYPE match_type)
 
 	if (res) {
 		/* store lookup to cache */
-		*pcache = res;
+		mod_tld->cache->last_name_lookup = res;
 
 		/* apply flags */
 		if ((match_type & MATCH_HERE) == 0 && res->here) {
@@ -612,9 +613,8 @@ player_find_by_pid(THREAD_DATA *td, PLAYER_ID pid, MATCH_TYPE match_type)
 	PLAYER *res = NULL;
 
 	/* check cache */
-	PLAYER **pcache = &mod_tld->cache->last_pid_lookup; 
-	if (*pcache && (*pcache)->pid == pid) {
-		res = *pcache;
+	if (mod_tld->cache->last_pid_lookup && mod_tld->cache->last_pid_lookup->pid == pid) {
+		res = mod_tld->cache->last_pid_lookup;
 	} else {
 		struct player_pid_node n, *elm;
 		n.pid = pid;
@@ -627,7 +627,7 @@ player_find_by_pid(THREAD_DATA *td, PLAYER_ID pid, MATCH_TYPE match_type)
 	}
 
 	if (res) {
-		*pcache = res;
+		mod_tld->cache->last_pid_lookup = res;
 	}
 
 	if ((match_type & MATCH_HERE) == 0) {

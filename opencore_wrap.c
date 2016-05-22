@@ -10013,6 +10013,216 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_core_data_killer_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  PLAYER *arg2 = (PLAYER *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:core_data_killer_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killer_set" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_PLAYER_, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_killer_set" "', argument " "2"" of type '" "PLAYER *""'"); 
+  }
+  arg2 = (PLAYER *)(argp2);
+  if (arg1) (arg1)->killer = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killer_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PLAYER *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:core_data_killer_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killer_get" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  result = (PLAYER *) ((arg1)->killer);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PLAYER_, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killer_pinfo_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:core_data_killer_pinfo_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killer_pinfo_set" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  {
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
+    arg2 = (void*)obj1;
+  }
+  if (arg1) (arg1)->killer_pinfo = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killer_pinfo_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:core_data_killer_pinfo_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killer_pinfo_get" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  result = (void *) ((arg1)->killer_pinfo);
+  {
+    Py_INCREF(result);
+    resultobj = (PyObject*)result;
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killed_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  PLAYER *arg2 = (PLAYER *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:core_data_killed_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killed_set" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_PLAYER_, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "core_data_killed_set" "', argument " "2"" of type '" "PLAYER *""'"); 
+  }
+  arg2 = (PLAYER *)(argp2);
+  if (arg1) (arg1)->killed = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killed_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PLAYER *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:core_data_killed_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killed_get" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  result = (PLAYER *) ((arg1)->killed);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_PLAYER_, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killed_pinfo_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:core_data_killed_pinfo_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killed_pinfo_set" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  {
+    if (arg2 && arg2 != Py_None) Py_DECREF(arg2);
+    Py_INCREF(obj1);
+    arg2 = (void*)obj1;
+  }
+  if (arg1) (arg1)->killed_pinfo = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_core_data_killed_pinfo_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  struct core_data *arg1 = (struct core_data *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:core_data_killed_pinfo_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_core_data, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "core_data_killed_pinfo_get" "', argument " "1"" of type '" "struct core_data *""'"); 
+  }
+  arg1 = (struct core_data *)(argp1);
+  result = (void *) ((arg1)->killed_pinfo);
+  {
+    Py_INCREF(result);
+    resultobj = (PyObject*)result;
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_core_data_transfer_success_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   struct core_data *arg1 = (struct core_data *) 0 ;
@@ -14342,6 +14552,14 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"core_data_cmd_argv_get", _wrap_core_data_cmd_argv_get, METH_VARARGS, NULL},
 	 { (char *)"core_data_cmd_argr_set", _wrap_core_data_cmd_argr_set, METH_VARARGS, NULL},
 	 { (char *)"core_data_cmd_argr_get", _wrap_core_data_cmd_argr_get, METH_VARARGS, NULL},
+	 { (char *)"core_data_killer_set", _wrap_core_data_killer_set, METH_VARARGS, NULL},
+	 { (char *)"core_data_killer_get", _wrap_core_data_killer_get, METH_VARARGS, NULL},
+	 { (char *)"core_data_killer_pinfo_set", _wrap_core_data_killer_pinfo_set, METH_VARARGS, NULL},
+	 { (char *)"core_data_killer_pinfo_get", _wrap_core_data_killer_pinfo_get, METH_VARARGS, NULL},
+	 { (char *)"core_data_killed_set", _wrap_core_data_killed_set, METH_VARARGS, NULL},
+	 { (char *)"core_data_killed_get", _wrap_core_data_killed_get, METH_VARARGS, NULL},
+	 { (char *)"core_data_killed_pinfo_set", _wrap_core_data_killed_pinfo_set, METH_VARARGS, NULL},
+	 { (char *)"core_data_killed_pinfo_get", _wrap_core_data_killed_pinfo_get, METH_VARARGS, NULL},
 	 { (char *)"core_data_transfer_success_set", _wrap_core_data_transfer_success_set, METH_VARARGS, NULL},
 	 { (char *)"core_data_transfer_success_get", _wrap_core_data_transfer_success_get, METH_VARARGS, NULL},
 	 { (char *)"core_data_transfer_direction_set", _wrap_core_data_transfer_direction_set, METH_VARARGS, NULL},

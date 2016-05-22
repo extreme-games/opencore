@@ -434,7 +434,7 @@ pkt_handle_game_0x04(THREAD_DATA *td, uint8_t *buf, int len)
 		PLAYER_ID pid;
 		extract_packet(buf, "AB", NULL, &pid);
 
-		player_player_left(td, pid);
+		player_player_left(td, pid, true);
 	}
 }
 
@@ -873,7 +873,7 @@ pkt_handle_game_0x28(THREAD_DATA *td, uint8_t *buf, int len)
 {
 	if (len >= 16) {
 		uint16_t x, y, xv, yv;
-		PLAYER_ID pid;
+		PLAYER_ID pid = 0;
 		uint8_t status;
 
 		extract_packet(buf, "AABBAAAABBB",

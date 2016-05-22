@@ -416,6 +416,9 @@ libman_realloc_pinfo_array(THREAD_DATA *td, int new_count)
 void
 libman_move_pinfo_entry(THREAD_DATA *td, int dest_index, int source_index)
 {
+	// dont copy if src and dest are the same
+	if (dest_index == source_index) return;
+
         assert(dest_index <= source_index);
 
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->lib;
@@ -746,10 +749,26 @@ unload_library(THREAD_DATA *td, char *libname)
 	PLAYER *parray = player_get_parray(td);
 	int phere = player_get_phere(td);
 	for (int i = 0; i < phere; ++i) {
-		/* event_deadslot */
+		/* event_leave / event_deadslot */
 		CORE_DATA *cd = libman_get_core_data(td);
-		cd->p1 = &parray[i];
+		PLAYER *p = &parray[i];
 
+		cd->p1 = p;
+		cd->old_freq = p->freq;
+		cd->old_ship = p->ship;
+
+		p->here = 0;
+		p->leave_tick = get_ticks_ms();
+		p->pid = PID_NONE;
+		p->freq = FREQ_NONE;
+		p->ship = SHIP_NONE;
+
+		if (p->pid == td->bot_pid) {
+			td->bot_pid = PID_NONE;
+			td->in_arena = 0;
+		}
+
+		libman_export_event(td, EVENT_LEAVE, cd, le);
 		libman_export_event(td, EVENT_DEADSLOT, cd, le);
 	}
 

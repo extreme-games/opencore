@@ -247,8 +247,8 @@ main(int argc, char *argv[])
 void
 disconnect_from_server(THREAD_DATA *td)
 {
-	player_simulate_player_leaves(td);
-	player_free_absent_players(td, (ticks_ms_t)0);
+	player_simulate_player_leaves(td, true);
+	player_free_absent_players(td, (ticks_ms_t)0, true);
 
 	pkt_send_disconnect();
 	send_outgoing_packets(td);
@@ -521,7 +521,7 @@ go(THREAD_DATA *td, SHIP ship, char *arena)
 	LogFmt(OP_REF, "Changing arenas: %s", td->arena_change_request);
 	pkt_send_arena_login(ship, td->arena_change_request);
 
-	player_simulate_player_leaves(td);
+	player_simulate_player_leaves(td, true);
 }
 
 void
@@ -782,8 +782,8 @@ BotEntryPoint(void *arg)
 
 	disconnect_from_server(td);
 
-	player_instance_shutdown(td);
 	libman_instance_shutdown(td);
+	player_instance_shutdown(td);
 	cmd_instance_shutdown(td);
 	db_instance_shutdown();
 
@@ -986,7 +986,7 @@ mainloop(THREAD_DATA *td)
 		/* free absent players if its time */
 		ticks_ms_t flush_check_interval = 60 * 60 * 1000;
 		if (ticks - td->arena->ticks->last_player_flush > flush_check_interval) {
-			player_free_absent_players(td, flush_check_interval);
+			player_free_absent_players(td, flush_check_interval, true);
 			td->arena->ticks->last_player_flush = ticks;
 		}
 
