@@ -406,6 +406,7 @@ db_instance_export_events(ticks_ms_t max_time)
 			}
 
 			if (dbr->rs) resultset_free(dbr->rs, dbr->nrows, dbr->ncols);
+			free(dbr->query);
 			free(dbr);
 		}
 
