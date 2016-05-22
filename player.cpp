@@ -52,17 +52,27 @@
 #define PA_INCREMENT 128
 
 struct
-player_node
+player_name_node
 {
-	RB_ENTRY(player_node) entry;
+	RB_ENTRY(player_name_node) entry;
 
-	PLAYER *p;
+	char       name[sizeof(PLAYER::name)];
+	PLAYER    *p;
 };
-int name_cmp(struct player_node *lhs, struct player_node *rhs);
-int pid_cmp(struct player_node *lhs, struct player_node *rhs);
+int name_cmp(struct player_name_node *lhs, struct player_name_node *rhs);
 
-RB_HEAD(pid_tree, player_node);
-RB_HEAD(name_tree, player_node);
+struct
+player_pid_node
+{
+	RB_ENTRY(player_pid_node) entry;
+
+	PLAYER_ID  pid;
+	PLAYER    *p;
+};
+int pid_cmp(struct player_pid_node *lhs, struct player_pid_node *rhs);
+
+RB_HEAD(pid_tree, player_pid_node);
+RB_HEAD(name_tree, player_name_node);
 
 typedef
 struct MOD_TL_DATA_
@@ -80,24 +90,24 @@ struct MOD_TL_DATA_
 	int		 ptotal;	/* total slots allocated */
 } MOD_TL_DATA;
 
-RB_PROTOTYPE(pid_tree, player_node, entry, pid_cmp);
-RB_GENERATE(pid_tree, player_node, entry, pid_cmp);
-RB_PROTOTYPE(name_tree, player_node, entry, name_cmp);
-RB_GENERATE(name_tree, player_node, entry, name_cmp);
+RB_PROTOTYPE(pid_tree, player_pid_node, entry, pid_cmp);
+RB_GENERATE(pid_tree, player_pid_node, entry, pid_cmp);
+RB_PROTOTYPE(name_tree, player_name_node, entry, name_cmp);
+RB_GENERATE(name_tree, player_name_node, entry, name_cmp);
 
 static void	player_pointers_changed(THREAD_DATA *td);
 static void	rebuild_player_lists(THREAD_DATA *td);
 
 int
-name_cmp(struct player_node *lhs, struct player_node *rhs)
+name_cmp(struct player_name_node *lhs, struct player_name_node *rhs)
 {
-	return strcasecmp(lhs->p->name, rhs->p->name);
+	return strcasecmp(lhs->name, rhs->name);
 }
 
 int
-pid_cmp(struct player_node *lhs, struct player_node *rhs)
+pid_cmp(struct player_pid_node *lhs, struct player_pid_node *rhs)
 {
-	return lhs->p->pid - rhs->p->pid;
+	return lhs->pid - rhs->pid;
 }
 
 int
@@ -128,14 +138,16 @@ build_trees(THREAD_DATA *td)
 	for (int i = 0; i < player_get_phere(td); ++i) {
 		PLAYER *p = &parray[i];
 
-		struct player_node *n = (struct player_node*)malloc(sizeof(struct player_node));
-		n->p = p;
-		RB_INSERT(name_tree, &mod_tld->name_tree_head, n);
+		struct player_name_node *nn = (struct player_name_node*)xmalloc(sizeof(struct player_name_node));
+		nn->p = p;
+		memcpy(nn->name, p->name, sizeof(nn->name));
+		RB_INSERT(name_tree, &mod_tld->name_tree_head, nn);
 
 		if (p->here) {
-			n = (struct player_node*)malloc(sizeof(struct player_node));
-			n->p = p;
-			RB_INSERT(pid_tree, &mod_tld->pid_tree_head, n);
+			struct player_pid_node *pn = (struct player_pid_node*)xmalloc(sizeof(struct player_pid_node));
+			pn->p = p;
+			pn->pid = p->pid;
+			RB_INSERT(pid_tree, &mod_tld->pid_tree_head, pn);
 		}
 	}
 }
@@ -144,17 +156,18 @@ static
 void
 empty_trees(MOD_TL_DATA *mod_tld)
 {
-	struct player_node *n, *nxt;
-	for (n = RB_MIN(pid_tree, &mod_tld->pid_tree_head); n != NULL; n = nxt) {
-		nxt = RB_NEXT(pid_tree, &mod_tld->pid_tree_head, n);
-		RB_REMOVE(pid_tree, &mod_tld->pid_tree_head, n);
-		free(n);
+	struct player_pid_node *pn, *pnxt;
+	for (pn = RB_MIN(pid_tree, &mod_tld->pid_tree_head); pn != NULL; pn = pnxt) {
+		pnxt = RB_NEXT(pid_tree, &mod_tld->pid_tree_head, pn);
+		RB_REMOVE(pid_tree, &mod_tld->pid_tree_head, pn);
+		free(pn);
 	}
 
-	for (n = RB_MIN(name_tree, &mod_tld->name_tree_head); n != NULL; n = nxt) {
-		nxt = RB_NEXT(name_tree, &mod_tld->name_tree_head, n);
-		RB_REMOVE(name_tree, &mod_tld->name_tree_head, n);
-		free(n);
+	struct player_name_node *nn, *nnxt;
+	for (nn = RB_MIN(name_tree, &mod_tld->name_tree_head); nn != NULL; nn = nnxt) {
+		nnxt = RB_NEXT(name_tree, &mod_tld->name_tree_head, nn);
+		RB_REMOVE(name_tree, &mod_tld->name_tree_head, nn);
+		free(nn);
 	}
 }
 
@@ -354,17 +367,19 @@ player_player_entered(THREAD_DATA *td, char *name, char *squad, PLAYER_ID pid, F
 	}
 
 	/* insert p & index into trees and export events */
-	struct player_node *n = (struct player_node*)malloc(sizeof(struct player_node));
-	n->p = p;
-	RB_INSERT(pid_tree, &mod_tld->pid_tree_head, n);
+	struct player_pid_node *pn = (struct player_pid_node*)xmalloc(sizeof(struct player_pid_node));
+	pn->p = p;
+	pn->pid = p->pid;
+	RB_INSERT(pid_tree, &mod_tld->pid_tree_head, pn);
 
 	CORE_DATA *cd = libman_get_core_data(td);
 	cd->p1 = p;
 	if (seen_before == false) {
 		/* insert into name tree */
-		n = (struct player_node*)malloc(sizeof(struct player_node));
-		n->p = p;
-		RB_INSERT(name_tree, &mod_tld->name_tree_head, n);
+		struct player_name_node *nn = (struct player_name_node*)xmalloc(sizeof(struct player_name_node));
+		memcpy(nn->name, p->name, sizeof(nn->name));
+		nn->p = p;
+		RB_INSERT(name_tree, &mod_tld->name_tree_head, nn);
 
 		/* initialize pinfo */
 		libman_zero_pinfo(td, p);
@@ -421,10 +436,8 @@ player_player_left(THREAD_DATA *td, PLAYER_ID pid)
 {
 	MOD_TL_DATA *mod_tld = (MOD_TL_DATA*)td->mod_data->player;
 
-	struct player_node n, *res;
-	PLAYER p;
-	p.pid = pid;
-	n.p = &p;
+	struct player_pid_node n, *res;
+	n.pid = pid;
 
 	/* 
 	 * take player out of the pid tree since he could have left
@@ -545,10 +558,8 @@ player_find_by_name(THREAD_DATA *td, const char *name, MATCH_TYPE match_type)
 	} else {
 		/* exact name match lookup needed */
 
-		struct player_node n, *elm;
-		PLAYER p;
-		n.p = &p;
-		strlcpy(p.name, name, 20);
+		struct player_name_node n, *elm;
+		strlcpy(n.name, name, sizeof(n.name));
 
 		elm = RB_FIND(name_tree, &mod_tld->name_tree_head, &n);
 		if (elm) {
@@ -605,10 +616,8 @@ player_find_by_pid(THREAD_DATA *td, PLAYER_ID pid, MATCH_TYPE match_type)
 	if (*pcache && (*pcache)->pid == pid) {
 		res = *pcache;
 	} else {
-		struct player_node n, *elm;
-		PLAYER p;
-		n.p = &p;
-		p.pid = pid;
+		struct player_pid_node n, *elm;
+		n.pid = pid;
 
 		elm = RB_FIND(pid_tree, &mod_tld->pid_tree_head, &n);
 
