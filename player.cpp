@@ -210,10 +210,12 @@ player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks, bool export_e
 		if (p->here == 0 && ticks - p->leave_tick >= gone_ticks) {
 			/* player is being removed, do not copy his data */
 		} else {
-			/* copy pinfo and player pointer over to new location */
-			newp = &mod_tld->parray[used_offset];
-			libman_move_pinfo_entry(td, used_offset, i);
-			memcpy(newp, p, sizeof(PLAYER));
+			/* copy pinfo and player pointer over to new location, if they are different */
+			if (used_offset != i) {
+				newp = &mod_tld->parray[used_offset];
+				libman_move_pinfo_entry(td, used_offset, i);
+				memcpy(newp, p, sizeof(PLAYER));
+			}
 			++used_offset;
 		}
 	}
