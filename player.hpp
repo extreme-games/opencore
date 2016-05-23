@@ -35,15 +35,14 @@ void	player_instance_shutdown(THREAD_DATA *td);
  * Remove players who have been absent for 'gone_ticks' milliseconds
  * or longer and generate an EVENT_DEADSLOT for each player removed.
  */
-void	player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks);
+void	player_free_absent_players(THREAD_DATA *td, ticks_ms_t gone_ticks, bool export_events);
 
 /*
- * Simulate EVENT_LEAVE for all present players. This only affects the core.
- * The event is not exported to librarys but all players are marked as
- * absent.  This is used when bot reconnects to clear out the present
+ * Simulate EVENT_LEAVE for all present players.
+ * This is used when bot reconnects to clear out the present
  * players.
  */
-void	player_simulate_player_leaves(THREAD_DATA *td);
+void	player_simulate_player_leaves(THREAD_DATA *td, bool export_events);
 
 /*
  * Get the total number of players in the player array.
@@ -72,7 +71,7 @@ PLAYER*	player_player_entered(THREAD_DATA *td, char *name, char *squad,
  * Called when a leave packet is encountered. The player is removed
  * from the pid tree and an EVENT_LEAVE is generated.
  */
-void	player_player_left(THREAD_DATA *td, PLAYER_ID pid);
+void	player_player_left(THREAD_DATA *td, PLAYER_ID pid, bool export_events);
 
 /*
  * Called when a ship or freq change event occurs.

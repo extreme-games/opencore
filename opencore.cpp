@@ -193,6 +193,7 @@ main(int argc, char *argv[])
 	g_pkt_game_handlers[0x06] = pkt_handle_game_0x06;
 	g_pkt_game_handlers[0x0A] = pkt_handle_game_0x0A;
 	g_pkt_game_handlers[0x0D] = pkt_handle_game_0x0D;
+	g_pkt_game_handlers[0x0E] = pkt_handle_game_0x0E;
 	g_pkt_game_handlers[0x14] = pkt_handle_game_0x14;
 	g_pkt_game_handlers[0x19] = pkt_handle_game_0x19;
 	g_pkt_game_handlers[0x1C] = pkt_handle_game_0x1C;
@@ -213,13 +214,17 @@ main(int argc, char *argv[])
 
 	load_op_file();
 
+	static const char* const masterconfig = "types/master.conf";
+
 	log_init();
-	db_init();
+	db_init(masterconfig);
 	botman_init();
 
 	/* run the master bot */
-	Log(OP_MOD, "Starting master into #master");
-	char *err = StartBot("master", "#master", NULL);
+	char arenaname[32] = { '\0' };
+	config_get_string("login.masterarena", arenaname, sizeof(arenaname), "#master", masterconfig);
+	LogFmt(OP_MOD, "Starting master into %s", arenaname);
+	char *err = StartBot("master", arenaname, NULL);
 	if (err) {
 		LogFmt(OP_MOD, "Error starting master bot: %s", err);
 		return -1;
@@ -242,8 +247,8 @@ main(int argc, char *argv[])
 void
 disconnect_from_server(THREAD_DATA *td)
 {
-	player_simulate_player_leaves(td);
-	player_free_absent_players(td, (ticks_ms_t)0);
+	player_simulate_player_leaves(td, true);
+	player_free_absent_players(td, (ticks_ms_t)0, true);
 
 	pkt_send_disconnect();
 	send_outgoing_packets(td);
@@ -516,7 +521,7 @@ go(THREAD_DATA *td, SHIP ship, char *arena)
 	LogFmt(OP_REF, "Changing arenas: %s", td->arena_change_request);
 	pkt_send_arena_login(ship, td->arena_change_request);
 
-	player_simulate_player_leaves(td);
+	player_simulate_player_leaves(td, true);
 }
 
 void
@@ -777,8 +782,8 @@ BotEntryPoint(void *arg)
 
 	disconnect_from_server(td);
 
-	player_instance_shutdown(td);
 	libman_instance_shutdown(td);
+	player_instance_shutdown(td);
 	cmd_instance_shutdown(td);
 	db_instance_shutdown();
 
@@ -874,8 +879,8 @@ mainloop(THREAD_DATA *td)
 
 		/* read a packet or wait for a timeout */
 		ticks_taken = get_ticks_ms() - ticks;
-		int timeout = ticks_taken > STEP_INTERVAL ? 0 : STEP_INTERVAL - ticks_taken;
-		while (poll(n->pfd, 1, timeout) > 0) {
+		ticks_ms_t timeout = ticks_taken > STEP_INTERVAL ? 0 : STEP_INTERVAL - ticks_taken;
+		while (poll(n->pfd, 1, (int)timeout) > 0) {
 			/* process incoming packet, data is waiting */
 			pktl = (int)read(n->fd, pkt, MAX_PACKET);
 			if (pktl >= 0) {
@@ -899,7 +904,8 @@ mainloop(THREAD_DATA *td)
 				process_incoming_packet(td, pkt, pktl);
 			}
 
-			ticks_taken = get_ticks_ms() - lticks;
+			ticks_taken = get_ticks_ms() - ticks;
+			timeout = timeout > ticks_taken ? timeout - ticks_taken : 0;
 		}
 
 		/* update the tick count after potential sleeping in poll() */
@@ -980,7 +986,7 @@ mainloop(THREAD_DATA *td)
 		/* free absent players if its time */
 		ticks_ms_t flush_check_interval = 60 * 60 * 1000;
 		if (ticks - td->arena->ticks->last_player_flush > flush_check_interval) {
-			player_free_absent_players(td, flush_check_interval);
+			player_free_absent_players(td, flush_check_interval, true);
 			td->arena->ticks->last_player_flush = ticks;
 		}
 
@@ -1324,6 +1330,29 @@ SetPosition(uint16_t x, uint16_t y, uint16_t xv, uint16_t yv)
 
 	pkt_send_position_update(x, y, xv, yv);
 	td->net->ticks->last_pos_update_sent = get_ticks_ms();
+}
+
+
+void
+SetFreq(uint16_t freq)
+{
+	assert(freq >= 0 && freq <= 9999);
+	pkt_send_freq_change(freq);
+}
+
+
+void
+SetShip(uint8_t ship)
+{
+	assert(ship >= 0 && ship <= 8);
+	pkt_send_ship_change(ship);
+}
+
+
+void
+PickupFlag(uint16_t flag_id)
+{
+	pkt_send_flag_pickup_request(flag_id);
 }
 
 

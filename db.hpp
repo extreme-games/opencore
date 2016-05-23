@@ -5,7 +5,7 @@
 
 #include "util.hpp"
 
-void db_init();
+void db_init(const char *configfile);
 void db_shutdown();
 
 void db_instance_init();

@@ -434,7 +434,7 @@ pkt_handle_game_0x04(THREAD_DATA *td, uint8_t *buf, int len)
 		PLAYER_ID pid;
 		extract_packet(buf, "AB", NULL, &pid);
 
-		player_player_left(td, pid);
+		player_player_left(td, pid, true);
 	}
 }
 
@@ -459,8 +459,10 @@ pkt_handle_game_0x06(THREAD_DATA *td, uint8_t *buf, int len)
 		if (pkiller && pkilled) {
 			CORE_DATA *cd = libman_get_core_data(td);
 
-			cd->p1 = pkilled;
-			cd->p2 = pkiller;
+			cd->p1 = pkiller;
+			cd->killer = pkiller;
+			cd->p2 = pkilled;
+			cd->killed = pkilled;
 
 			libman_export_event(td, EVENT_KILL, cd);
 		}
@@ -724,6 +726,45 @@ pkt_handle_game_0x0D(THREAD_DATA *td, uint8_t *buf, int len)
 }
 
 
+/* event_attach/event_detach */
+void
+pkt_handle_game_0x0E(THREAD_DATA *td, uint8_t *buf, int len)
+{
+	if (len >= 5) {
+		uint16_t attacher;
+		uint16_t target;
+
+		extract_packet(buf, "ABB",
+		    NULL,
+		    &attacher,
+		    &target
+		    );
+
+		PLAYER *p1 = player_find_by_pid(td, attacher, MATCH_HERE);
+
+		CORE_DATA *cd = libman_get_core_data(td);
+		if (p1) {
+			if (target == PID_NONE) {
+				cd->p1 = p1;
+				cd->p2 = NULL;		
+				libman_export_event(td, EVENT_DETACH, cd);
+			} else {
+				PLAYER *p2 = player_find_by_pid(td, target, MATCH_HERE);
+				if (p2) {
+					cd->p1 = p1;
+					cd->p2 = p2;
+					libman_export_event(td, EVENT_ATTACH, cd);
+				} else {
+					Log(OP_HSMOD, "Turret packet for nonexistent target pid!");
+				}
+			}
+		} else {
+			Log(OP_HSMOD, "Turret packet for nonexistent attacher pid!");
+		}
+	}
+}
+
+
 void
 pkt_handle_game_0x14(THREAD_DATA *td, uint8_t *buf, int len)
 {
@@ -832,7 +873,7 @@ pkt_handle_game_0x28(THREAD_DATA *td, uint8_t *buf, int len)
 {
 	if (len >= 16) {
 		uint16_t x, y, xv, yv;
-		PLAYER_ID pid;
+		PLAYER_ID pid = 0;
 		uint8_t status;
 
 		extract_packet(buf, "AABBAAAABBB",

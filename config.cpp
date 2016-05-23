@@ -33,7 +33,7 @@
 /* FIXME: refactor config_Xxx functions to share the same parsing code */
 /* FIXME: cache files, reopening a file each time is inefficient */
 int
-config_get_int(char *key, int default_value, char *filename) 
+config_get_int(const char *key, int default_value, const char *filename) 
 {
 	/* this is the default value to return */
 	int result = default_value;
@@ -69,11 +69,11 @@ config_get_int(char *key, int default_value, char *filename)
 
 /* FIXME: cache files, reopening a file each time is inefficient */
 void
-config_get_string(char *key, char *dest,
-		int max_len, char *default_value, char *filename)
+config_get_string(const char *key, char *dest,
+		int max_len, const char *default_value, const char *filename)
 {
 	/* this is the default value to return */
-	char *result = default_value;
+	const char *result = default_value;
 
 	/* the line buffer */
 	char line[512];
@@ -109,7 +109,7 @@ config_get_string(char *key, char *dest,
 
 
 bool
-config_key_exists(char *key, char *filename) 
+config_key_exists(const char *key, const char *filename) 
 {
 	/* this is the default value to return */
 	bool result = false;
@@ -166,7 +166,7 @@ get_config_line(FILE *f, char *buf, int size)
 
 
 int
-GetConfigInt(char *key, int default_value)
+GetConfigInt(const char *key, int default_value)
 {
 	THREAD_DATA *td = get_thread_data();
 
@@ -175,7 +175,7 @@ GetConfigInt(char *key, int default_value)
 
 
 void
-GetConfigString(char *key, char *dest, int dst_sz, char *default_value)
+GetConfigString(const char *key, char *dest, int dst_sz, const char *default_value)
 {
 	THREAD_DATA *td = get_thread_data();
 
@@ -184,7 +184,7 @@ GetConfigString(char *key, char *dest, int dst_sz, char *default_value)
 
 
 bool
-ConfigKeyExists(char *key)
+ConfigKeyExists(const char *key)
 {
 	THREAD_DATA *td = get_thread_data();
 

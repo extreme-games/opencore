@@ -149,8 +149,8 @@ GameEvent(CORE_DATA *cd)
 		    (long)cd->timer_data1, (long)cd->timer_data2);
 		break;
 	case EVENT_KILL:
-		ArenaMessageFmt("event_kill: %s killed by %s\n", cd->p1->name, cd->p2->name);
-		((PLAYER_INFO*)GetPlayerInfo(cd, cd->p2))->kills++;
+		ArenaMessageFmt("event_kill: %s killed by %s\n", cd->p2->name, cd->p1->name);
+		((PLAYER_INFO*)GetPlayerInfo(cd, cd->p1))->kills++;
 		break;
 	case EVENT_UPDATE:
 		ArenaMessageFmt("event_update: %s: %hu,%hu Status: %d%d%d%d%d%d%d%d\n", cd->p1->name, cd->p1->pos->x, cd->p1->pos->y,

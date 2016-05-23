@@ -36,7 +36,7 @@
  * If 'key' can't be found for any reason, 'default_value' is
  * returned.
  */
-int	config_get_int(char *key, int default_value, char *filename);
+int	config_get_int(const char *key, int default_value, const char *filename);
 
 /*
  * Get a string from a config file.
@@ -48,10 +48,10 @@ int	config_get_int(char *key, int default_value, char *filename);
  *	returned if 'key' cannot be found.
  * 'filename' is the file to look in.
  */
-void	config_get_string(char *key, char *dest, int max_len, char *default_value, char *filename);
+void	config_get_string(const char *key, char *dest, int max_len, const char *default_value, const char *filename);
 
 
-bool	config_key_exists(char *key, char *filename);
+bool	config_key_exists(const char *key, const char *filename);
 
 #endif
 
